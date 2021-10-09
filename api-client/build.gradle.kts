@@ -25,7 +25,7 @@ dependencies {
   implementation("com.squareup.moshi:moshi:1.12.0")
 //  implementation("com.squareup.moshi:moshi-kotlin:1.12.0")
   kapt("com.squareup.moshi:moshi-kotlin-codegen:1.12.0")
-  implementation("com.squareup.okhttp3:okhttp:4.9.1")
+  implementation("com.squareup.okhttp3:okhttp:4.9.2")
   testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
   implementation("de.gesellix:docker-remote-api-model-${remoteApiVersion.replace(".", "-")}:2021-10-04T21-50-00")
   implementation("de.gesellix:docker-engine:2021-09-29T15-30-00")
