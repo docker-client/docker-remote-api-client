@@ -39,10 +39,6 @@ tasks.withType(Test::class.java) {
   useJUnitPlatform()
 }
 
-//tasks.javadoc {
-//  options.tags = ["http.response.details:a:Http Response Details"]
-//}
-
 val javadocJar by tasks.registering(Jar::class) {
   dependsOn("classes")
   archiveClassifier.set("javadoc")

@@ -14,6 +14,12 @@ package de.gesellix.docker.remote.api.client
 import de.gesellix.docker.engine.RequestMethod.DELETE
 import de.gesellix.docker.engine.RequestMethod.GET
 import de.gesellix.docker.engine.RequestMethod.POST
+import de.gesellix.docker.remote.api.Network
+import de.gesellix.docker.remote.api.NetworkConnectRequest
+import de.gesellix.docker.remote.api.NetworkCreateRequest
+import de.gesellix.docker.remote.api.NetworkCreateResponse
+import de.gesellix.docker.remote.api.NetworkDisconnectRequest
+import de.gesellix.docker.remote.api.NetworkPruneResponse
 import de.gesellix.docker.remote.api.core.ApiClient
 import de.gesellix.docker.remote.api.core.ClientError
 import de.gesellix.docker.remote.api.core.ClientException
@@ -23,12 +29,6 @@ import de.gesellix.docker.remote.api.core.ResponseType
 import de.gesellix.docker.remote.api.core.ServerError
 import de.gesellix.docker.remote.api.core.ServerException
 import de.gesellix.docker.remote.api.core.Success
-import de.gesellix.docker.remote.api.Network
-import de.gesellix.docker.remote.api.NetworkConnectRequest
-import de.gesellix.docker.remote.api.NetworkCreateRequest
-import de.gesellix.docker.remote.api.NetworkCreateResponse
-import de.gesellix.docker.remote.api.NetworkDisconnectRequest
-import de.gesellix.docker.remote.api.NetworkPruneResponse
 import java.net.HttpURLConnection
 
 class NetworkApi(basePath: String = defaultBasePath) : ApiClient(basePath) {

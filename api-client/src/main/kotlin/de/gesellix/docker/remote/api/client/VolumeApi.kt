@@ -14,6 +14,10 @@ package de.gesellix.docker.remote.api.client
 import de.gesellix.docker.engine.RequestMethod.DELETE
 import de.gesellix.docker.engine.RequestMethod.GET
 import de.gesellix.docker.engine.RequestMethod.POST
+import de.gesellix.docker.remote.api.Volume
+import de.gesellix.docker.remote.api.VolumeConfig
+import de.gesellix.docker.remote.api.VolumeListResponse
+import de.gesellix.docker.remote.api.VolumePruneResponse
 import de.gesellix.docker.remote.api.core.ApiClient
 import de.gesellix.docker.remote.api.core.ClientError
 import de.gesellix.docker.remote.api.core.ClientException
@@ -23,10 +27,6 @@ import de.gesellix.docker.remote.api.core.ResponseType
 import de.gesellix.docker.remote.api.core.ServerError
 import de.gesellix.docker.remote.api.core.ServerException
 import de.gesellix.docker.remote.api.core.Success
-import de.gesellix.docker.remote.api.Volume
-import de.gesellix.docker.remote.api.VolumeConfig
-import de.gesellix.docker.remote.api.VolumeListResponse
-import de.gesellix.docker.remote.api.VolumePruneResponse
 
 class VolumeApi(basePath: String = defaultBasePath) : ApiClient(basePath) {
   companion object {
