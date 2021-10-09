@@ -13,6 +13,12 @@ package de.gesellix.docker.remote.api.client
 
 import de.gesellix.docker.engine.RequestMethod.GET
 import de.gesellix.docker.engine.RequestMethod.POST
+import de.gesellix.docker.remote.api.Swarm
+import de.gesellix.docker.remote.api.SwarmInitRequest
+import de.gesellix.docker.remote.api.SwarmJoinRequest
+import de.gesellix.docker.remote.api.SwarmSpec
+import de.gesellix.docker.remote.api.SwarmUnlockRequest
+import de.gesellix.docker.remote.api.UnlockKeyResponse
 import de.gesellix.docker.remote.api.core.ApiClient
 import de.gesellix.docker.remote.api.core.ClientError
 import de.gesellix.docker.remote.api.core.ClientException
@@ -22,12 +28,6 @@ import de.gesellix.docker.remote.api.core.ResponseType
 import de.gesellix.docker.remote.api.core.ServerError
 import de.gesellix.docker.remote.api.core.ServerException
 import de.gesellix.docker.remote.api.core.Success
-import de.gesellix.docker.remote.api.Swarm
-import de.gesellix.docker.remote.api.SwarmInitRequest
-import de.gesellix.docker.remote.api.SwarmJoinRequest
-import de.gesellix.docker.remote.api.SwarmSpec
-import de.gesellix.docker.remote.api.SwarmUnlockRequest
-import de.gesellix.docker.remote.api.UnlockKeyResponse
 
 class SwarmApi(basePath: String = defaultBasePath) : ApiClient(basePath) {
   companion object {
