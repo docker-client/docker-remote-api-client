@@ -12,8 +12,6 @@ plugins {
   id("io.freefair.maven-central.validate-poms")
 }
 
-val remoteApiVersion = "1.41"
-
 java {
   sourceCompatibility = JavaVersion.VERSION_1_8
   targetCompatibility = JavaVersion.VERSION_1_8
@@ -26,13 +24,22 @@ dependencies {
   kapt("com.squareup.moshi:moshi-kotlin-codegen:1.12.0")
   implementation("com.squareup.okhttp3:okhttp:[4.9,5)!!4.9.2")
 //  implementation("com.squareup.okhttp3:logging-interceptor:[4.9,5)!!4.9.2")
-  testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
-  implementation("de.gesellix:docker-remote-api-model-${remoteApiVersion.replace(".", "-")}:2021-10-04T21-50-00")
+  implementation("de.gesellix:docker-remote-api-model-1-41:2021-10-16T19-28-00")
   implementation("de.gesellix:docker-engine:2021-10-09T19-06-00")
   implementation("de.gesellix:docker-filesocket:2021-09-20T20-10-00")
 
   implementation("org.slf4j:slf4j-api:[1.7,)!!1.7.32")
   testImplementation("ch.qos.logback:logback-classic:[1.2,2)!!1.2.6")
+
+  testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
+  testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+  testRuntimeOnly("cglib:cglib-nodep:3.3.0")
+  testImplementation("org.junit.platform:junit-platform-launcher:1.8.0")
+  testImplementation("org.junit.platform:junit-platform-commons:1.8.0")
+
+  testImplementation("org.apache.commons:commons-compress:1.21")
+  testImplementation("de.gesellix:testutil:[2021-08-05T22-09-32,)")
 }
 
 tasks.withType(Test::class.java) {
@@ -76,7 +83,7 @@ publishing {
     register(publicationName, MavenPublication::class) {
       pom {
         name.set("docker-remote-api-client")
-        description.set("Client for the Docker remote api v${remoteApiVersion}")
+        description.set("Client for the Docker remote api")
         url.set("https://github.com/docker-client/docker-remote-api-client")
         licenses {
           license {

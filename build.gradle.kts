@@ -32,7 +32,8 @@ val dependencyVersions = listOf(
   "org.opentest4j:opentest4j:1.2.0"
 )
 
-val dependencyVersionsByGroup = mapOf<String, String>(
+val dependencyVersionsByGroup = mapOf(
+  "org.junit.platform" to "1.8.1"
 )
 
 subprojects {
