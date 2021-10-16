@@ -26,6 +26,7 @@ import okhttp3.ResponseBody
 import okio.Source
 import java.io.File
 import java.lang.reflect.Type
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 open class ApiClient(val baseUrl: String, val dockerClientConfig: DockerClientConfig = DockerClientConfig()) {
@@ -180,26 +181,41 @@ open class ApiClient(val baseUrl: String, val dockerClientConfig: DockerClientCo
     }
 
     // TODO: support multiple contentType options here.
-    val mediaType = (headers[ContentType] as String).substringBefore(";").toLowerCase()
+    val mediaType = (headers[ContentType] as String).substringBefore(";").lowercase(Locale.getDefault())
 
-    val request = when (requestConfig.method) {
-      DELETE -> Request.Builder().url(url).delete(requestBody(requestConfig.body, mediaType))
-      GET -> Request.Builder().url(url)
-      HEAD -> Request.Builder().url(url).head()
-      PATCH -> Request.Builder().url(url).patch(requestBody(requestConfig.body, mediaType))
-      PUT -> Request.Builder().url(url).put(requestBody(requestConfig.body, mediaType))
-      POST -> Request.Builder().url(url).post(requestBody(requestConfig.body, mediaType))
-      OPTIONS -> Request.Builder().url(url).method("OPTIONS", null)
+    val requestBuilder = when (requestConfig.method) {
+      DELETE -> Request.Builder()
+        .url(url)
+        .delete(requestBody(requestConfig.body, mediaType))
+      GET -> Request.Builder()
+        .url(url)
+      HEAD -> Request.Builder()
+        .url(url)
+        .head()
+      PATCH -> Request.Builder()
+        .url(url)
+        .patch(requestBody(requestConfig.body, mediaType))
+      PUT -> Request.Builder()
+        .url(url)
+        .put(requestBody(requestConfig.body, mediaType))
+      POST -> Request.Builder()
+        .url(url)
+        .post(requestBody(requestConfig.body, mediaType))
+      OPTIONS -> Request.Builder()
+        .url(url)
+        .method("OPTIONS", null)
       null -> throw IllegalStateException("Request method is null")
     }.apply {
       headers.forEach { header -> addHeader(header.key, header.value) }
     }.apply {
       tag(EnforceResponseContentTypeConfig::class.java, EnforceResponseContentTypeConfig(fallbackContentType))
-    }.build()
-    return request
+    }
+//    requestBuilder.cacheControl(FORCE_NETWORK)
+    return requestBuilder.build()
   }
 
   protected fun prepareClient(requestConfig: EngineRequest): OkHttpClient {
+//    Logger.getLogger(OkHttpClient::class.java.name).level = Level.FINE
 //    val engineResponse = engineClient.request(requestConfig)
     val actualClient = buildHttpClient(client.newBuilder())
       //      .proxy(proxy) // TODO
@@ -212,7 +228,7 @@ open class ApiClient(val baseUrl: String, val dockerClientConfig: DockerClientCo
 
   protected inline fun <reified T : Any?> request(request: Request, client: OkHttpClient, elementType: Type? = null): ApiInfrastructureResponse<T?> {
     val response = client.newCall(request).execute()
-    val mediaType = response.header(ContentType)?.substringBefore(";")?.toLowerCase()
+    val mediaType = response.header(ContentType)?.substringBefore(";")?.lowercase(Locale.getDefault())
 
     // TODO: handle specific mapping types. e.g. Map<int, Class<?>>
     when {
@@ -247,7 +263,7 @@ open class ApiClient(val baseUrl: String, val dockerClientConfig: DockerClientCo
 
   protected inline fun <reified T : Any?> requestStream(request: Request, client: OkHttpClient): ApiInfrastructureResponse<T?> {
     val response = client.newCall(request).execute()
-    val mediaType = response.header(ContentType)?.substringBefore(";")?.toLowerCase()
+    val mediaType = response.header(ContentType)?.substringBefore(";")?.lowercase(Locale.getDefault())
 
     // TODO: handle specific mapping types. e.g. Map<int, Class<?>>
     when {
@@ -282,7 +298,7 @@ open class ApiClient(val baseUrl: String, val dockerClientConfig: DockerClientCo
 
   protected inline fun requestFrames(request: Request, client: OkHttpClient, expectMultiplexedResponse: Boolean = false): ApiInfrastructureResponse<Frame> {
     val response = client.newCall(request).execute()
-    val mediaType = response.header(ContentType)?.substringBefore(";")?.toLowerCase()
+    val mediaType = response.header(ContentType)?.substringBefore(";")?.lowercase(Locale.getDefault())
 
     // TODO: handle specific mapping types. e.g. Map<int, Class<?>>
     when {
