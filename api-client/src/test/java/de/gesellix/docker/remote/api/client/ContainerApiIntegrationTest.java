@@ -16,6 +16,7 @@ import de.gesellix.docker.remote.api.core.Frame;
 import de.gesellix.docker.remote.api.core.LoggingExtensionsKt;
 import de.gesellix.docker.remote.api.core.StreamCallback;
 import de.gesellix.docker.remote.api.testutil.DisabledIfDaemonOnWindowsOs;
+import de.gesellix.docker.remote.api.testutil.DisabledIfNotPausable;
 import de.gesellix.docker.remote.api.testutil.DockerEngineAvailable;
 import de.gesellix.docker.remote.api.testutil.Failsafe;
 import de.gesellix.docker.remote.api.testutil.InjectDockerClient;
@@ -470,6 +471,7 @@ class ContainerApiIntegrationTest {
     removeContainer(engineApiClient, "container-kill-test");
   }
 
+  @DisabledIfNotPausable
   @Test
   public void containerPauseUnpause() {
     imageApi.imageCreate(testImage.getImageName(), null, null, testImage.getImageTag(), null, null, null, null, null);
