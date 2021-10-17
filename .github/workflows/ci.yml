@@ -30,6 +30,19 @@ jobs:
         run: docker version
       - name: docker info
         run: docker info
+      - name: Set up Go
+        if: matrix.os == 'windows-latest'
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+      - name: debug dns issues on Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          nslookup registry-1.docker.io
+          curl -v https://registry-1.docker.io/
+          curl -v https://registry-1.docker.io/v2/
+          curl -v --head https://registry-1.docker.io/v2/gesellix/echo-server/manifests/os-windows
+          go run .github/check.go
       - name: clean build
         run: ./gradlew clean build --info --stacktrace
       - name: Publish Test Report
