@@ -11,6 +11,7 @@
  */
 package de.gesellix.docker.remote.api.client
 
+import de.gesellix.docker.engine.DockerClientConfig
 import de.gesellix.docker.engine.RequestMethod.GET
 import de.gesellix.docker.engine.RequestMethod.POST
 import de.gesellix.docker.remote.api.ExecConfig
@@ -35,15 +36,18 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
+import java.net.Proxy
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 
-class ExecApi(basePath: String = defaultBasePath) : ApiClient(basePath) {
+class ExecApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, proxy: Proxy?) : ApiClient(dockerClientConfig, proxy) {
+  constructor(dockerClientConfig: DockerClientConfig = defaultClientConfig) : this(dockerClientConfig, null)
+
   companion object {
 
     @JvmStatic
-    val defaultBasePath: String by lazy {
-      System.getProperties().getProperty("docker.client.baseUrl", "http://localhost/v1.41")
+    val defaultClientConfig: DockerClientConfig by lazy {
+      DockerClientConfig()
     }
   }
 

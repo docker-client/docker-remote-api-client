@@ -11,6 +11,7 @@
  */
 package de.gesellix.docker.remote.api.client
 
+import de.gesellix.docker.engine.DockerClientConfig
 import de.gesellix.docker.engine.RequestMethod.GET
 import de.gesellix.docker.engine.RequestMethod.HEAD
 import de.gesellix.docker.engine.RequestMethod.POST
@@ -37,14 +38,16 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
+import java.net.Proxy
 
-class SystemApi(basePath: String = defaultBasePath) : ApiClient(basePath) {
+class SystemApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, proxy: Proxy?) : ApiClient(dockerClientConfig, proxy) {
+  constructor(dockerClientConfig: DockerClientConfig = defaultClientConfig) : this(dockerClientConfig, null)
 
   companion object {
 
     @JvmStatic
-    val defaultBasePath: String by lazy {
-      System.getProperties().getProperty("docker.client.baseUrl", "http://localhost/v1.41")
+    val defaultClientConfig: DockerClientConfig by lazy {
+      DockerClientConfig()
     }
   }
 

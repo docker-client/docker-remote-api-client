@@ -1,5 +1,6 @@
 package de.gesellix.docker.remote.api;
 
+import de.gesellix.docker.engine.DockerClientConfig;
 import de.gesellix.docker.remote.api.client.ConfigApi;
 import de.gesellix.docker.remote.api.client.ContainerApi;
 import de.gesellix.docker.remote.api.client.DistributionApi;
@@ -14,6 +15,8 @@ import de.gesellix.docker.remote.api.client.SwarmApi;
 import de.gesellix.docker.remote.api.client.SystemApi;
 import de.gesellix.docker.remote.api.client.TaskApi;
 import de.gesellix.docker.remote.api.client.VolumeApi;
+
+import java.net.Proxy;
 
 public class EngineApiClientImpl implements EngineApiClient {
 
@@ -33,20 +36,29 @@ public class EngineApiClientImpl implements EngineApiClient {
   private final VolumeApi volumeApi;
 
   public EngineApiClientImpl() {
-    configApi = new ConfigApi();
-    containerApi = new ContainerApi();
-    distributionApi = new DistributionApi();
-    execApi = new ExecApi();
-    imageApi = new ImageApi();
-    networkApi = new NetworkApi();
-    nodeApi = new NodeApi();
-    pluginApi = new PluginApi();
-    secretApi = new SecretApi();
-    serviceApi = new ServiceApi();
-    swarmApi = new SwarmApi();
-    systemApi = new SystemApi();
-    taskApi = new TaskApi();
-    volumeApi = new VolumeApi();
+    this(new DockerClientConfig());
+  }
+
+  public EngineApiClientImpl(DockerClientConfig dockerClientConfig) {
+    this(dockerClientConfig, null);
+//    this(dockerClientConfig, Proxy.NO_PROXY);
+  }
+
+  public EngineApiClientImpl(DockerClientConfig dockerClientConfig, Proxy proxy) {
+    configApi = new ConfigApi(dockerClientConfig, proxy);
+    containerApi = new ContainerApi(dockerClientConfig, proxy);
+    distributionApi = new DistributionApi(dockerClientConfig, proxy);
+    execApi = new ExecApi(dockerClientConfig, proxy);
+    imageApi = new ImageApi(dockerClientConfig, proxy);
+    networkApi = new NetworkApi(dockerClientConfig, proxy);
+    nodeApi = new NodeApi(dockerClientConfig, proxy);
+    pluginApi = new PluginApi(dockerClientConfig, proxy);
+    secretApi = new SecretApi(dockerClientConfig, proxy);
+    serviceApi = new ServiceApi(dockerClientConfig, proxy);
+    swarmApi = new SwarmApi(dockerClientConfig, proxy);
+    systemApi = new SystemApi(dockerClientConfig, proxy);
+    taskApi = new TaskApi(dockerClientConfig, proxy);
+    volumeApi = new VolumeApi(dockerClientConfig, proxy);
   }
 
   @Override

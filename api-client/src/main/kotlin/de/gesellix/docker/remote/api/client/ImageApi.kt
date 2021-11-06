@@ -11,6 +11,7 @@
  */
 package de.gesellix.docker.remote.api.client
 
+import de.gesellix.docker.engine.DockerClientConfig
 import de.gesellix.docker.engine.RequestMethod.DELETE
 import de.gesellix.docker.engine.RequestMethod.GET
 import de.gesellix.docker.engine.RequestMethod.POST
@@ -42,16 +43,19 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import okio.source
 import java.io.InputStream
+import java.net.Proxy
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 import java.util.*
 
-class ImageApi(basePath: String = defaultBasePath) : ApiClient(basePath) {
+class ImageApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, proxy: Proxy?) : ApiClient(dockerClientConfig, proxy) {
+  constructor(dockerClientConfig: DockerClientConfig = defaultClientConfig) : this(dockerClientConfig, null)
+
   companion object {
 
     @JvmStatic
-    val defaultBasePath: String by lazy {
-      System.getProperties().getProperty("docker.client.baseUrl", "http://localhost/v1.41")
+    val defaultClientConfig: DockerClientConfig by lazy {
+      DockerClientConfig()
     }
   }
 

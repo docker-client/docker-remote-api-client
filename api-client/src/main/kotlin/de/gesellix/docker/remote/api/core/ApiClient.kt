@@ -26,10 +26,15 @@ import okhttp3.ResponseBody
 import okio.Source
 import java.io.File
 import java.lang.reflect.Type
+import java.net.Proxy
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-open class ApiClient(val baseUrl: String, val dockerClientConfig: DockerClientConfig = DockerClientConfig()) {
+open class ApiClient(
+  private val dockerClientConfig: DockerClientConfig = DockerClientConfig(),
+  private val proxy: Proxy? = null
+) {
+
   companion object {
 
     protected const val ContentType = "Content-Type"
@@ -350,6 +355,7 @@ open class ApiClient(val baseUrl: String, val dockerClientConfig: DockerClientCo
   }
 
   open fun buildHttpClient(builder: OkHttpClient.Builder): OkHttpClient.Builder {
+    builder.proxy(proxy)
     val protocol = dockerClientConfig.scheme
     val socketFactoryConfiguration = socketFactories[protocol]
     if (socketFactoryConfiguration != null) {

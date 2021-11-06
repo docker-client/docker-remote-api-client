@@ -11,6 +11,7 @@
  */
 package de.gesellix.docker.remote.api.client
 
+import de.gesellix.docker.engine.DockerClientConfig
 import de.gesellix.docker.engine.RequestMethod.POST
 import de.gesellix.docker.remote.api.core.ApiClient
 import de.gesellix.docker.remote.api.core.ClientError
@@ -20,13 +21,16 @@ import de.gesellix.docker.remote.api.core.RequestConfig
 import de.gesellix.docker.remote.api.core.ResponseType
 import de.gesellix.docker.remote.api.core.ServerError
 import de.gesellix.docker.remote.api.core.ServerException
+import java.net.Proxy
 
-class SessionApi(basePath: String = defaultBasePath) : ApiClient(basePath) {
+class SessionApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, proxy: Proxy?) : ApiClient(dockerClientConfig, proxy) {
+  constructor(dockerClientConfig: DockerClientConfig = defaultClientConfig) : this(dockerClientConfig, null)
+
   companion object {
 
     @JvmStatic
-    val defaultBasePath: String by lazy {
-      System.getProperties().getProperty("docker.client.baseUrl", "http://localhost/v1.41")
+    val defaultClientConfig: DockerClientConfig by lazy {
+      DockerClientConfig()
     }
   }
 
