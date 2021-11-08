@@ -384,5 +384,7 @@ open class ApiClient(
       builder
         .sslSocketFactory(dockerSslSocket.sslSocketFactory, dockerSslSocket.trustManager)
     }
+    socketFactories["http"] = { builder -> builder }
+    socketFactories["tcp"] = { builder -> builder }
   }
 }
