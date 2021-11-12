@@ -246,7 +246,7 @@ class ExecApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, prox
 
     // TODO the caller of #execStart() should decide about timeout and callback
     val timeout = Duration.of(1, ChronoUnit.HOURS)
-    val callback = LoggingCallback()
+    val callback = LoggingCallback<Frame>()
 
     when (localVarResponse.responseType) {
       ResponseType.Success -> {

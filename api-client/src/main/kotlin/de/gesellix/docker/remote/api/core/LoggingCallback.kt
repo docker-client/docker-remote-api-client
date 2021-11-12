@@ -1,6 +1,6 @@
 package de.gesellix.docker.remote.api.core
 
-class LoggingCallback : StreamCallback<Any?> {
+class LoggingCallback<T> : StreamCallback<T?> {
 
   private val log by logger()
 
@@ -9,7 +9,7 @@ class LoggingCallback : StreamCallback<Any?> {
     job = cancellable
   }
 
-  override fun onNext(event: Any?) {
+  override fun onNext(event: T?) {
     log.info("$event")
   }
 }
