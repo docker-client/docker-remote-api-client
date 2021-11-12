@@ -24,6 +24,7 @@ import de.gesellix.docker.remote.api.ImageDeleteResponseItem
 import de.gesellix.docker.remote.api.ImagePruneResponse
 import de.gesellix.docker.remote.api.ImageSearchResponseItem
 import de.gesellix.docker.remote.api.ImageSummary
+import de.gesellix.docker.remote.api.PushImageInfo
 import de.gesellix.docker.remote.api.core.ApiClient
 import de.gesellix.docker.remote.api.core.ClientError
 import de.gesellix.docker.remote.api.core.ClientException
@@ -33,10 +34,12 @@ import de.gesellix.docker.remote.api.core.RequestConfig
 import de.gesellix.docker.remote.api.core.ResponseType
 import de.gesellix.docker.remote.api.core.ServerError
 import de.gesellix.docker.remote.api.core.ServerException
+import de.gesellix.docker.remote.api.core.StreamCallback
 import de.gesellix.docker.remote.api.core.Success
 import de.gesellix.docker.remote.api.core.SuccessStream
 import de.gesellix.docker.remote.api.core.toMultiValue
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -1116,24 +1119,32 @@ class ImageApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, pro
    * @throws ServerException If the API returns a server error response
    */
   @Throws(UnsupportedOperationException::class, ClientException::class, ServerException::class)
-  fun imagePush(name: String, xRegistryAuth: String, tag: String?) {
+  @JvmOverloads
+  fun imagePush(
+    name: String, xRegistryAuth: String, tag: String?,
+    callback: StreamCallback<PushImageInfo?>? = null, timeoutMillis: Long? = null /*= 24.hours.toLongMilliseconds()*/
+  ) {
     val localVariableConfig = imagePushRequestConfig(name = name, xRegistryAuth = xRegistryAuth, tag = tag)
 
-    val localVarResponse = requestStream<Any?>(
+    val localVarResponse = requestStream<PushImageInfo?>(
       localVariableConfig
     )
 
-    val timeout = Duration.of(10, ChronoUnit.MINUTES)
-    val callback = LoggingCallback()
+    val timeout = if (timeoutMillis == null) {
+      Duration.of(10, ChronoUnit.MINUTES)
+    } else {
+      Duration.of(timeoutMillis, ChronoUnit.MILLIS)
+    }
+    val actualCallback = callback ?: LoggingCallback<PushImageInfo?>()
 
     return when (localVarResponse.responseType) {
       ResponseType.Success -> {
         runBlocking {
           launch {
             withTimeout(timeout.toMillis()) {
-              callback.onStarting(this@launch::cancel)
-              (localVarResponse as SuccessStream<*>).data.collect { callback.onNext(it) }
-              callback.onFinished()
+              actualCallback.onStarting(this@launch::cancel)
+              ((localVarResponse as SuccessStream<*>).data as Flow<PushImageInfo>).collect { actualCallback.onNext(it) }
+              actualCallback.onFinished()
             }
           }
         }
