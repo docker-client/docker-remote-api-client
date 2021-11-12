@@ -234,7 +234,7 @@ class ImageApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, pro
     // from either `aux ID=sha:.*`,
     // or `stream Successfully built .*`,
     // or `stream Successfully tagged .*` messages.
-    val callback = LoggingCallback()
+    val callback = LoggingCallback<Any>()
 
     return when (localVarResponse.responseType) {
       ResponseType.Success -> {
@@ -568,7 +568,7 @@ class ImageApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, pro
     )
 
     val timeout = Duration.of(1, ChronoUnit.MINUTES)
-    val callback = LoggingCallback()
+    val callback = LoggingCallback<Any>()
 
     return when (localVarResponse.responseType) {
       ResponseType.Success -> {
@@ -992,7 +992,7 @@ class ImageApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, pro
     )
 
     val timeout = Duration.of(1, ChronoUnit.MINUTES)
-    val callback = LoggingCallback()
+    val callback = LoggingCallback<Any>()
 
     return when (localVarResponse.responseType) {
       ResponseType.Success -> {
