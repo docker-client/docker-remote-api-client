@@ -270,19 +270,20 @@ class ImageApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, pro
   }
 
   fun getImageId(buildInfos: List<BuildInfo>): ImageID? {
-    val firstAux = buildInfos.stream()
+    val reversedInfos = buildInfos.reversed()
+    val firstAux = reversedInfos.stream()
       .filter { (_, _, _, _, _, _, _, aux): BuildInfo -> aux != null }
       .findFirst()
     if (firstAux.isPresent) {
       return firstAux.get().aux
     } else {
-      val idFromStream = buildInfos.stream()
+      val idFromStream = reversedInfos.stream()
         .filter { (_, stream): BuildInfo -> stream?.contains("Successfully built ")!! }
         .findFirst()
       return if (idFromStream.isPresent) {
         ImageID(idFromStream.get().stream!!.removePrefix("Successfully built ").replaceAfter('\n', "").trim())
       } else {
-        val tagFromStream = buildInfos.stream()
+        val tagFromStream = reversedInfos.stream()
           .filter { (_, stream): BuildInfo -> stream?.contains("Successfully tagged ")!! }
           .findFirst()
         tagFromStream.map { (_, stream): BuildInfo ->
