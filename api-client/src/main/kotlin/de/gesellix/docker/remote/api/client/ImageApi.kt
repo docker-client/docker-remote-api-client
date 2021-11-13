@@ -18,6 +18,7 @@ import de.gesellix.docker.engine.RequestMethod.POST
 import de.gesellix.docker.remote.api.BuildInfo
 import de.gesellix.docker.remote.api.BuildPruneResponse
 import de.gesellix.docker.remote.api.ContainerConfig
+import de.gesellix.docker.remote.api.CreateImageInfo
 import de.gesellix.docker.remote.api.HistoryResponseItem
 import de.gesellix.docker.remote.api.IdResponse
 import de.gesellix.docker.remote.api.Image
@@ -571,6 +572,7 @@ class ImageApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, pro
    * @throws ServerException If the API returns a server error response
    */
   @Throws(UnsupportedOperationException::class, ClientException::class, ServerException::class)
+  @JvmOverloads
   fun imageCreate(
     fromImage: String?,
     fromSrc: String?,
@@ -580,7 +582,8 @@ class ImageApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, pro
     xRegistryAuth: String?,
     changes: List<String>?,
     platform: String?,
-    inputImage: InputStream?
+    inputImage: InputStream?,
+    callback: StreamCallback<CreateImageInfo?>? = null, timeoutMillis: Long? = null /*= 24.hours.toLongMilliseconds()*/
   ) {
     val localVariableConfig =
       imageCreateRequestConfig(
@@ -595,21 +598,25 @@ class ImageApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, pro
         inputImage = inputImage
       )
 
-    val localVarResponse = requestStream<Any?>(
+    val localVarResponse = requestStream<CreateImageInfo?>(
       localVariableConfig
     )
 
-    val timeout = Duration.of(1, ChronoUnit.MINUTES)
-    val callback = LoggingCallback<Any>()
+    val timeout = if (timeoutMillis == null) {
+      Duration.of(10, ChronoUnit.MINUTES)
+    } else {
+      Duration.of(timeoutMillis, ChronoUnit.MILLIS)
+    }
+    val actualCallback = callback ?: LoggingCallback<CreateImageInfo?>()
 
     return when (localVarResponse.responseType) {
       ResponseType.Success -> {
         runBlocking {
           launch {
             withTimeout(timeout.toMillis()) {
-              callback.onStarting(this@launch::cancel)
-              (localVarResponse as SuccessStream<*>).data.collect { callback.onNext(it) }
-              callback.onFinished()
+              actualCallback.onStarting(this@launch::cancel)
+              ((localVarResponse as SuccessStream<*>).data as Flow<CreateImageInfo?>).collect { actualCallback.onNext(it) }
+              actualCallback.onFinished()
             }
           }
         }
