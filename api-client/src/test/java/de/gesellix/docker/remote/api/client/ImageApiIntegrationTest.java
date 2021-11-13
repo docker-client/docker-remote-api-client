@@ -2,6 +2,7 @@ package de.gesellix.docker.remote.api.client;
 
 import com.squareup.moshi.Moshi;
 import de.gesellix.docker.builder.BuildContextBuilder;
+import de.gesellix.docker.remote.api.BuildInfo;
 import de.gesellix.docker.remote.api.BuildPruneResponse;
 import de.gesellix.docker.remote.api.ContainerCreateRequest;
 import de.gesellix.docker.remote.api.ContainerCreateResponse;
@@ -10,8 +11,10 @@ import de.gesellix.docker.remote.api.HistoryResponseItem;
 import de.gesellix.docker.remote.api.IdResponse;
 import de.gesellix.docker.remote.api.Image;
 import de.gesellix.docker.remote.api.ImageDeleteResponseItem;
+import de.gesellix.docker.remote.api.ImageID;
 import de.gesellix.docker.remote.api.ImageSearchResponseItem;
 import de.gesellix.docker.remote.api.ImageSummary;
+import de.gesellix.docker.remote.api.core.StreamCallback;
 import de.gesellix.docker.remote.api.testutil.DockerEngineAvailable;
 import de.gesellix.docker.remote.api.testutil.DockerRegistry;
 import de.gesellix.docker.remote.api.testutil.HttpTestServer;
@@ -23,6 +26,8 @@ import de.gesellix.docker.remote.api.testutil.TestImage;
 import de.gesellix.testutil.ResourceReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,10 +38,15 @@ import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static de.gesellix.docker.remote.api.testutil.Constants.LABEL_KEY;
 import static de.gesellix.docker.remote.api.testutil.Constants.LABEL_VALUE;
@@ -48,10 +58,13 @@ import static java.util.Collections.singletonMap;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DockerEngineAvailable
 class ImageApiIntegrationTest {
+
+  private static Logger log = LoggerFactory.getLogger(ImageApiIntegrationTest.class);
 
   @InjectDockerClient
   private EngineApiClient engineApiClient;
@@ -81,10 +94,43 @@ class ImageApiIntegrationTest {
     File inputDirectory = ResourceReader.getClasspathResourceAsFile(dockerfile, ImageApi.class).getParentFile();
     InputStream buildContext = newBuildContext(inputDirectory);
 
+    List<BuildInfo> infos = new ArrayList<>();
+    Duration timeout = Duration.of(1, ChronoUnit.MINUTES);
+    CountDownLatch latch = new CountDownLatch(1);
+    StreamCallback<BuildInfo> callback = new StreamCallback<BuildInfo>() {
+      @Override
+      public void onNext(BuildInfo element) {
+        log.info(element.toString());
+        infos.add(element);
+      }
+
+      @Override
+      public void onFailed(Exception e) {
+        log.error("Build failed", e);
+        latch.countDown();
+      }
+
+      @Override
+      public void onFinished() {
+        latch.countDown();
+      }
+    };
     assertDoesNotThrow(() -> imageApi.imageBuild(Paths.get(dockerfile).getFileName().toString(), "test:build", null, null, null, null, null, null,
                                                  null, null, null, null, null, null, null,
                                                  null, null, null, null, null, null, null,
-                                                 null, null, null, null, buildContext));
+                                                 null, null, null, null, buildContext,
+                                                 callback, timeout.toMillis()));
+    try {
+      latch.await(2, TimeUnit.MINUTES);
+    }
+    catch (InterruptedException e) {
+      log.error("Wait interrupted", e);
+    }
+
+    ImageID imageId = imageApi.getImageId(infos);
+    assertNotNull(imageId);
+    assertNotNull(imageId.getID());
+    assertTrue(imageId.getID().matches(".+"));
 
     Map<String, List<String>> filter = new HashMap<>();
     filter.put("label", singletonList(LABEL_KEY));
