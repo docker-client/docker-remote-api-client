@@ -24,6 +24,7 @@ class ImageApiTest {
   public void getImageIdFromAux() {
     List<BuildInfo> infos = new ArrayList<>();
     infos.add(new BuildInfo(null, null, null, null, null, null, null, new ImageID("sha256:expected-id")));
+    infos.add(new BuildInfo(null, "Successfully built the wind\ncaught it", null, null, null, null, null, null));
     infos.add(new BuildInfo(null, "Successfully built f9d5f290d048\nfoo bar", null, null, null, null, null, null));
     infos.add(new BuildInfo(null, "Successfully tagged image:tag\nbar baz", null, null, null, null, null, null));
 
@@ -35,6 +36,7 @@ class ImageApiTest {
   @Test
   public void getImageIdFromStreamWithBuildMessage() {
     List<BuildInfo> infos = new ArrayList<>();
+    infos.add(new BuildInfo(null, "Successfully built the wind\ncaught it", null, null, null, null, null, null));
     infos.add(new BuildInfo(null, "Successfully built f9d5f290d048\nfoo bar", null, null, null, null, null, null));
     infos.add(new BuildInfo(null, "Successfully tagged image:tag\nbar baz", null, null, null, null, null, null));
 
