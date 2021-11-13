@@ -1023,24 +1023,32 @@ class ImageApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, pro
    * @throws ServerException If the API returns a server error response
    */
   @Throws(UnsupportedOperationException::class, ClientException::class, ServerException::class)
-  fun imageLoad(quiet: Boolean?, imagesTarball: java.io.File?) {
+  @JvmOverloads
+  fun imageLoad(
+    quiet: Boolean?, imagesTarball: java.io.File?,
+    callback: StreamCallback<CreateImageInfo?>? = null, timeoutMillis: Long? = null /*= 24.hours.toLongMilliseconds()*/
+  ) {
     val localVariableConfig = imageLoadRequestConfig(quiet = quiet, imagesTarball = imagesTarball)
 
-    val localVarResponse = requestStream<Any?>(
+    val localVarResponse = requestStream<CreateImageInfo?>(
       localVariableConfig
     )
 
-    val timeout = Duration.of(1, ChronoUnit.MINUTES)
-    val callback = LoggingCallback<Any>()
+    val timeout = if (timeoutMillis == null) {
+      Duration.of(10, ChronoUnit.MINUTES)
+    } else {
+      Duration.of(timeoutMillis, ChronoUnit.MILLIS)
+    }
+    val actualCallback = callback ?: LoggingCallback<CreateImageInfo?>()
 
     return when (localVarResponse.responseType) {
       ResponseType.Success -> {
         runBlocking {
           launch {
             withTimeout(timeout.toMillis()) {
-              callback.onStarting(this@launch::cancel)
-              (localVarResponse as SuccessStream<*>).data.collect { callback.onNext(it) }
-              callback.onFinished()
+              actualCallback.onStarting(this@launch::cancel)
+              ((localVarResponse as SuccessStream<*>).data as Flow<CreateImageInfo>).collect { actualCallback.onNext(it) }
+              actualCallback.onFinished()
             }
           }
         }
