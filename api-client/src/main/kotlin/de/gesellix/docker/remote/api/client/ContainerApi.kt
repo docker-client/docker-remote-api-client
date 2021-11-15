@@ -424,7 +424,8 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
       path = "/containers/{id}/changes".replace("{" + "id" + "}", id),
       query = localVariableQuery,
       headers = localVariableHeaders,
-      body = localVariableBody
+      body = localVariableBody,
+      elementType = ContainerChangeResponseItem::class.java
     )
   }
 
