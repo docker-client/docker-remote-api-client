@@ -318,7 +318,7 @@ class ContainerApiIntegrationTest {
   }
 
   @Test
-  public void containerLogsWithTty() {
+  public void containerLogsWithTty() throws InterruptedException {
     imageApi.imageCreate(testImage.getImageName(), null, null, testImage.getImageTag(), null, null, null, null, null);
 
     ContainerCreateRequest containerCreateRequest = new ContainerCreateRequest(
@@ -342,8 +342,9 @@ class ContainerApiIntegrationTest {
     );
     containerApi.containerCreate(containerCreateRequest, "container-logs-with-tty-test");
     containerApi.containerStart("container-logs-with-tty-test", null);
+    Thread.sleep(500);
 
-    Duration timeout = Duration.of(5, SECONDS);
+    Duration timeout = Duration.of(10, SECONDS);
     LogFrameStreamCallback callback = new LogFrameStreamCallback();
 
     new Thread(() -> containerApi.containerLogs(
@@ -366,7 +367,9 @@ class ContainerApiIntegrationTest {
     catch (InterruptedException e) {
       e.printStackTrace();
     }
-    assertSame(callback.frames.stream().findAny().get().getStreamType(), Frame.StreamType.RAW);
+    Optional<Frame> anyFrame = callback.frames.stream().findAny();
+    assertTrue(anyFrame.isPresent());
+    assertSame(anyFrame.get().getStreamType(), Frame.StreamType.RAW);
 
     removeContainer(engineApiClient, "container-logs-with-tty-test");
   }
