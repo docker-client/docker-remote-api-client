@@ -28,6 +28,7 @@ import de.gesellix.docker.remote.api.core.RequestConfig
 import de.gesellix.docker.remote.api.core.ResponseType
 import de.gesellix.docker.remote.api.core.ServerError
 import de.gesellix.docker.remote.api.core.ServerException
+import de.gesellix.docker.remote.api.core.StreamCallback
 import de.gesellix.docker.remote.api.core.Success
 import de.gesellix.docker.remote.api.core.SuccessStream
 import kotlinx.coroutines.cancel
@@ -234,28 +235,37 @@ class ExecApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, prox
    * @throws ServerException If the API returns a server error response
    */
   @Throws(UnsupportedOperationException::class, ClientException::class, ServerException::class)
-  fun execStart(id: String, execStartConfig: ExecStartConfig?) {
+  @JvmOverloads
+  fun execStart(
+    id: String, execStartConfig: ExecStartConfig?,
+    callback: StreamCallback<Frame?>? = null, timeoutMillis: Long? = null /*= 24.hours.toLongMilliseconds()*/
+  ) {
     val localVariableConfig = execStartRequestConfig(id = id, execStartConfig = execStartConfig)
 
-    // TODO do we need to inspect the exec, because it might have been created with tty==false?
-//    val expectMultiplexedResponse = !(execInspect(id).processConfig?.tty ?: false)
-    val expectMultiplexedResponse = !(execStartConfig?.tty ?: false)
+    val expectMultiplexedResponse: Boolean = if (execStartConfig?.tty != null) {
+      !(execStartConfig.tty ?: false)
+    } else {
+      !(execInspect(id).processConfig?.tty ?: false)
+    }
     val localVarResponse = requestFrames(
       localVariableConfig, expectMultiplexedResponse
     )
 
-    // TODO the caller of #execStart() should decide about timeout and callback
-    val timeout = Duration.of(1, ChronoUnit.HOURS)
-    val callback = LoggingCallback<Frame>()
+    val timeout = if (timeoutMillis == null) {
+      Duration.of(10, ChronoUnit.MINUTES)
+    } else {
+      Duration.of(timeoutMillis, ChronoUnit.MILLIS)
+    }
+    val actualCallback = callback ?: LoggingCallback<Frame?>()
 
     when (localVarResponse.responseType) {
       ResponseType.Success -> {
         runBlocking {
           launch {
             withTimeoutOrNull(timeout.toMillis()) {
-              callback.onStarting(this@launch::cancel)
-              ((localVarResponse as SuccessStream<*>).data as Flow<Frame>).collect { callback.onNext(it) }
-              callback.onFinished()
+              actualCallback.onStarting(this@launch::cancel)
+              ((localVarResponse as SuccessStream<*>).data as Flow<Frame>).collect { actualCallback.onNext(it) }
+              actualCallback.onFinished()
             }
           }
         }
