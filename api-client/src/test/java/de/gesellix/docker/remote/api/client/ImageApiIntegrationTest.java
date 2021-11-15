@@ -127,7 +127,7 @@ class ImageApiIntegrationTest {
       log.error("Wait interrupted", e);
     }
 
-    ImageID imageId = imageApi.getImageId(infos);
+    ImageID imageId = BuildInfoExtensionsKt.getImageId(infos);
     assertNotNull(imageId);
     assertNotNull(imageId.getID());
     assertTrue(imageId.getID().matches(".+"));
