@@ -13,12 +13,14 @@ import de.gesellix.docker.remote.api.ServiceSpecModeReplicated;
 import de.gesellix.docker.remote.api.ServiceSpecUpdateConfig;
 import de.gesellix.docker.remote.api.ServiceUpdateResponse;
 import de.gesellix.docker.remote.api.ServiceUpdateStatus;
+import de.gesellix.docker.remote.api.Task;
 import de.gesellix.docker.remote.api.TaskSpec;
 import de.gesellix.docker.remote.api.TaskSpecContainerSpec;
 import de.gesellix.docker.remote.api.core.Cancellable;
 import de.gesellix.docker.remote.api.core.Frame;
 import de.gesellix.docker.remote.api.core.LoggingExtensionsKt;
 import de.gesellix.docker.remote.api.core.StreamCallback;
+import de.gesellix.docker.remote.api.testutil.AwaitUtil;
 import de.gesellix.docker.remote.api.testutil.DisabledIfDaemonOnWindowsOs;
 import de.gesellix.docker.remote.api.testutil.DockerEngineAvailable;
 import de.gesellix.docker.remote.api.testutil.InjectDockerClient;
@@ -29,9 +31,11 @@ import org.slf4j.Logger;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
@@ -60,6 +64,8 @@ class ServiceApiIntegrationTest {
   private TestImage testImage;
 
   ServiceApi serviceApi;
+
+  private final AwaitUtil awaitUtil = new AwaitUtil();
 
   @BeforeEach
   public void setup() {
@@ -158,8 +164,12 @@ class ServiceApiIntegrationTest {
                                              null, null,
                                              new EndpointSpec(null, singletonList(new EndpointPortConfig(null, Tcp, 8080, 8080, Ingress)))),
                              null);
-    // TODO TGe: we try to wait a bit to work around an error like '{"message":"rpc error: code = Unknown desc = update out of sequence"}'
-    Thread.sleep(5000);
+    awaitUtil.await(() -> {
+      List<Task> tasks = engineApiClient.getTaskApi().taskList(new Moshi.Builder().build().adapter(Map.class).toJson(singletonMap("service", Collections.singletonMap("test-service", true))));
+      Optional<Task> runningTask = tasks.stream().filter(t -> t.getStatus() != null && t.getStatus().getState() == t.getDesiredState()).findAny();
+      return runningTask.isPresent();
+    }, Duration.of(20, SECONDS));
+
     Service serviceInspect = serviceApi.serviceInspect("test-service", false);
     Integer serviceVersion = serviceInspect.getVersion().getIndex();
     assertTrue(serviceVersion > 0);
@@ -183,21 +193,13 @@ class ServiceApiIntegrationTest {
     ServiceUpdateResponse updateResponse = serviceApi.serviceUpdate("test-service", serviceVersion, spec, null, null, null);
     assertTrue(updateResponse.getWarnings() == null || updateResponse.getWarnings().isEmpty());
 
-    CountDownLatch wait = new CountDownLatch(1);
-    Timer timer = new Timer();
-    timer.schedule(new TimerTask() {
-      @Override
-      public void run() {
-        ServiceUpdateStatus updateStatus = serviceApi.serviceInspect("test-service", false).getUpdateStatus();
-        if (updateStatus.getState() == ServiceUpdateStatus.State.Completed) {
-          wait.countDown();
-          timer.cancel();
-        }
-      }
-    }, 500, 500);
-    wait.await(10, TimeUnit.SECONDS);
-    Service serviceInspect2 = serviceApi.serviceInspect("test-service", false);
-    assertEquals("another-value", serviceInspect2.getSpec().getLabels().get("another-label"));
+    awaitUtil.await(() -> {
+      ServiceUpdateStatus updateStatus = serviceApi.serviceInspect("test-service", false).getUpdateStatus();
+      return updateStatus != null && updateStatus.getState() == ServiceUpdateStatus.State.Completed;
+    }, Duration.of(20, SECONDS));
+
+    serviceInspect = serviceApi.serviceInspect("test-service", false);
+    assertEquals("another-value", serviceInspect.getSpec().getLabels().get("another-label"));
     serviceApi.serviceDelete("test-service");
   }
 
