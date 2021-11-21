@@ -24,7 +24,7 @@ dependencies {
   kapt("com.squareup.moshi:moshi-kotlin-codegen:1.12.0")
   implementation("com.squareup.okhttp3:okhttp:[4.9,5)!!4.9.2")
 //  implementation("com.squareup.okhttp3:logging-interceptor:[4.9,5)!!4.9.2")
-  implementation("de.gesellix:docker-remote-api-model-1-41:2021-11-20T21-03-00")
+  implementation("de.gesellix:docker-remote-api-model-1-41:2021-11-21T21-26-00")
   implementation("de.gesellix:docker-engine:2021-11-06T21-36-00")
   implementation("de.gesellix:docker-filesocket:2021-11-06T18-40-00")
 
