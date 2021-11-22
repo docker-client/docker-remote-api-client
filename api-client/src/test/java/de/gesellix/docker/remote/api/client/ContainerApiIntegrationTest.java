@@ -9,6 +9,9 @@ import de.gesellix.docker.remote.api.ContainerTopResponse;
 import de.gesellix.docker.remote.api.ContainerUpdateRequest;
 import de.gesellix.docker.remote.api.ContainerUpdateResponse;
 import de.gesellix.docker.remote.api.EngineApiClient;
+import de.gesellix.docker.remote.api.ExecConfig;
+import de.gesellix.docker.remote.api.ExecStartConfig;
+import de.gesellix.docker.remote.api.IdResponse;
 import de.gesellix.docker.remote.api.RestartPolicy;
 import de.gesellix.docker.remote.api.core.Cancellable;
 import de.gesellix.docker.remote.api.core.ClientException;
@@ -20,13 +23,20 @@ import de.gesellix.docker.remote.api.testutil.DisabledIfNotPausable;
 import de.gesellix.docker.remote.api.testutil.DockerEngineAvailable;
 import de.gesellix.docker.remote.api.testutil.Failsafe;
 import de.gesellix.docker.remote.api.testutil.InjectDockerClient;
+import de.gesellix.docker.remote.api.testutil.TarUtil;
 import de.gesellix.docker.remote.api.testutil.TestImage;
+import okio.Okio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -163,6 +173,54 @@ class ContainerApiIntegrationTest {
     containerApi.containerCreate(containerCreateRequest, "container-export");
     assertDoesNotThrow(() -> containerApi.containerExport("container-export"));
     removeContainer(engineApiClient, "container-export");
+  }
+
+  @Test
+  public void containerArchiveInfoGetAndPut() throws IOException {
+    imageApi.imageCreate(testImage.getImageName(), null, null, testImage.getImageTag(), null, null, null, null, null);
+
+    ContainerCreateRequest containerCreateRequest = new ContainerCreateRequest(
+        null, null, null,
+        false, false, false,
+        null,
+        false, null, null,
+        null,
+        singletonList("-"),
+        null,
+        null,
+        testImage.getImageWithTag(),
+        null, null, null,
+        null, null,
+        null,
+        singletonMap(LABEL_KEY, LABEL_VALUE),
+        null, null,
+        null,
+        null,
+        null
+    );
+    containerApi.containerCreate(containerCreateRequest, "container-archive-info-test");
+    containerApi.containerStart("container-archive-info-test", null);
+
+    File archive = containerApi.containerArchive("container-archive-info-test", "/gattaca.txt");
+    File extractedDir = new TarUtil().unTar(archive);
+    String fileContent = Okio.buffer(Okio.source(new File(extractedDir, "gattaca.txt"))).readUtf8();
+    assertEquals("The wind\ncaught it.\n", fileContent.replaceAll("\r", ""));
+
+    IdResponse containerExec = engineApiClient.getExecApi().containerExec(
+        "container-archive-info-test",
+        new ExecConfig(null, null, null, null, null, null,
+                       Arrays.asList("mkdir", "/tmp/test/"), null, null, null));
+    engineApiClient.getExecApi().execStart(
+        containerExec.getId(),
+        new ExecStartConfig(null, null));
+
+    InputStream archiveStream = new FileInputStream(archive);
+    containerApi.putContainerArchive("container-archive-info-test", "/tmp/test/", archiveStream, null, null);
+
+    Map<String, Object> archiveCopyInfo = (Map<String, Object>) containerApi.containerArchiveInfo("container-archive-info-test", "/tmp/test/gattaca.txt");
+    assertEquals("gattaca.txt", archiveCopyInfo == null ? null : archiveCopyInfo.get("name"));
+
+    removeContainer(engineApiClient, "container-archive-info-test");
   }
 
   @Test

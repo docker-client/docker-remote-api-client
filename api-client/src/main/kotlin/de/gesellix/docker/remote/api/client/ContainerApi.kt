@@ -11,6 +11,7 @@
  */
 package de.gesellix.docker.remote.api.client
 
+import com.squareup.moshi.Moshi
 import de.gesellix.docker.engine.DockerClientConfig
 import de.gesellix.docker.engine.RequestMethod.*
 import de.gesellix.docker.remote.api.ContainerChangeResponseItem
@@ -40,9 +41,12 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
+import okio.source
+import java.io.InputStream
 import java.net.HttpURLConnection.HTTP_NOT_FOUND
 import java.net.HttpURLConnection.HTTP_NOT_MODIFIED
 import java.net.Proxy
+import java.util.*
 
 class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, proxy: Proxy?) : ApiClient(dockerClientConfig, proxy) {
   constructor(dockerClientConfig: DockerClientConfig = defaultClientConfig) : this(dockerClientConfig, null)
@@ -66,15 +70,15 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
    * @throws ServerException If the API returns a server error response
    */
   @Throws(UnsupportedOperationException::class, ClientException::class, ServerException::class)
-  fun containerArchive(id: String, path: String) {
+  fun containerArchive(id: String, path: String): java.io.File {
     val localVariableConfig = containerArchiveRequestConfig(id = id, path = path)
 
-    val localVarResponse = request<Any?>(
+    val localVarResponse = request<java.io.File?>(
       localVariableConfig
     )
 
     return when (localVarResponse.responseType) {
-      ResponseType.Success -> Unit
+      ResponseType.Success -> (localVarResponse as Success<*>).data as java.io.File
       ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
       ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
       ResponseType.ClientError -> {
@@ -123,15 +127,23 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
    * @throws ServerException If the API returns a server error response
    */
   @Throws(UnsupportedOperationException::class, ClientException::class, ServerException::class)
-  fun containerArchiveInfo(id: String, path: String) {
+  fun containerArchiveInfo(id: String, path: String): Any? {
     val localVariableConfig = containerArchiveInfoRequestConfig(id = id, path = path)
 
     val localVarResponse = request<Any?>(
       localVariableConfig
     )
 
-    return when (localVarResponse.responseType) {
-      ResponseType.Success -> Unit
+    when (localVarResponse.responseType) {
+      ResponseType.Success -> {
+        val stats = localVarResponse.headers["X-Docker-Container-Path-Stat".lowercase()]?.first()
+        return if (stats == null) {
+          null
+        } else {
+          val jsonAdapter = Moshi.Builder().build().adapter(Map::class.java)
+          jsonAdapter.fromJson(String(Base64.getDecoder().decode(stats)))
+        }
+      }
       ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
       ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
       ResponseType.ClientError -> {
@@ -441,7 +453,8 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
    */
   @Suppress("UNCHECKED_CAST")
   @Throws(UnsupportedOperationException::class, ClientException::class, ServerException::class)
-  fun containerCreate(body: ContainerCreateRequest, name: String?): ContainerCreateResponse {
+  @JvmOverloads
+  fun containerCreate(body: ContainerCreateRequest, name: String? = ""): ContainerCreateResponse {
     val localVariableConfig = containerCreateRequestConfig(body = body, name = name)
 
     val localVarResponse = request<ContainerCreateResponse>(
@@ -1653,7 +1666,7 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
    * @throws ServerException If the API returns a server error response
    */
   @Throws(UnsupportedOperationException::class, ClientException::class, ServerException::class)
-  fun putContainerArchive(id: String, path: String, inputStream: java.io.File, noOverwriteDirNonDir: String?, copyUIDGID: String?) {
+  fun putContainerArchive(id: String, path: String, inputStream: InputStream, noOverwriteDirNonDir: String?, copyUIDGID: String?) {
     val localVariableConfig = putContainerArchiveRequestConfig(id = id, path = path, inputStream = inputStream, noOverwriteDirNonDir = noOverwriteDirNonDir, copyUIDGID = copyUIDGID)
 
     val localVarResponse = request<Any?>(
@@ -1685,8 +1698,8 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
    * @param copyUIDGID If &#x60;1&#x60;, &#x60;true&#x60;, then it will copy UID/GID maps to the dest file or dir  (optional)
    * @return RequestConfig
    */
-  fun putContainerArchiveRequestConfig(id: String, path: String, inputStream: java.io.File, noOverwriteDirNonDir: String?, copyUIDGID: String?): RequestConfig {
-    val localVariableBody: Any? = inputStream
+  fun putContainerArchiveRequestConfig(id: String, path: String, inputStream: InputStream, noOverwriteDirNonDir: String?, copyUIDGID: String?): RequestConfig {
+    val localVariableBody: Any = inputStream.source()
     val localVariableQuery: MultiValueMap = mutableMapOf<String, List<String>>()
       .apply {
         put("path", listOf(path))
