@@ -2,22 +2,30 @@ package de.gesellix.docker.remote.api.testutil;
 
 import okio.BufferedSink;
 import okio.Okio;
+import okio.Sink;
+import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 
 public class TarUtil {
 
   public File unTar(File tarFile) throws IOException {
+    return unTar(new FileInputStream(tarFile));
+  }
+
+  public File unTar(InputStream tar) throws IOException {
     File destDir = Files.createTempDirectory("de-gesellix-tests").toFile();
     destDir.deleteOnExit();
 
-    TarArchiveInputStream tis = new TarArchiveInputStream(new FileInputStream(tarFile));
+    TarArchiveInputStream tis = new TarArchiveInputStream(tar);
     TarArchiveEntry tarEntry;
     while ((tarEntry = tis.getNextTarEntry()) != null) {
       File outputFile = new File(destDir, tarEntry.getName());
@@ -38,5 +46,26 @@ public class TarUtil {
     }
     tis.close();
     return destDir;
+  }
+
+  public InputStream tar(File file) throws IOException {
+    File destDir = Files.createTempDirectory("de-gesellix-tests").toFile();
+    destDir.deleteOnExit();
+
+    File tmpFile = new File(destDir, file.getName() + ".tar");
+    tmpFile.deleteOnExit();
+
+    TarArchiveOutputStream tos = new TarArchiveOutputStream(new FileOutputStream(tmpFile));
+    ArchiveEntry archiveEntry = tos.createArchiveEntry(file, file.getName());
+    tos.putArchiveEntry(archiveEntry);
+    Sink sink = Okio.sink(tos);
+    Okio.buffer(Okio.source(file)).readAll(sink);
+    sink.flush();
+    tos.closeArchiveEntry();
+    tos.flush();
+    tos.finish();
+    tos.close();
+
+    return new FileInputStream(tmpFile);
   }
 }

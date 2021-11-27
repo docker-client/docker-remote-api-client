@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
@@ -171,7 +170,13 @@ class ContainerApiIntegrationTest {
         null
     );
     containerApi.containerCreate(containerCreateRequest, "container-export");
-    assertDoesNotThrow(() -> containerApi.containerExport("container-export"));
+    Long size = assertDoesNotThrow(() -> {
+      InputStream inputStream = containerApi.containerExport("container-export");
+      long byteCount = Okio.buffer(Okio.source(inputStream)).readAll(Okio.blackhole());
+      inputStream.close();
+      return byteCount;
+    });
+    assertTrue(size > 0);
     removeContainer(engineApiClient, "container-export");
   }
 
@@ -201,9 +206,10 @@ class ContainerApiIntegrationTest {
     containerApi.containerCreate(containerCreateRequest, "container-archive-info-test");
     containerApi.containerStart("container-archive-info-test", null);
 
-    File archive = containerApi.containerArchive("container-archive-info-test", "/gattaca.txt");
+    InputStream archive = containerApi.containerArchive("container-archive-info-test", "/gattaca.txt");
     File extractedDir = new TarUtil().unTar(archive);
-    String fileContent = Okio.buffer(Okio.source(new File(extractedDir, "gattaca.txt"))).readUtf8();
+    File gattaca = new File(extractedDir, "gattaca.txt");
+    String fileContent = Okio.buffer(Okio.source(gattaca)).readUtf8();
     assertEquals("The wind\ncaught it.\n", fileContent.replaceAll("\r", ""));
 
     IdResponse containerExec = engineApiClient.getExecApi().containerExec(
@@ -214,8 +220,7 @@ class ContainerApiIntegrationTest {
         containerExec.getId(),
         new ExecStartConfig(null, null));
 
-    InputStream archiveStream = new FileInputStream(archive);
-    containerApi.putContainerArchive("container-archive-info-test", "/tmp/test/", archiveStream, null, null);
+    containerApi.putContainerArchive("container-archive-info-test", "/tmp/test/", new TarUtil().tar(gattaca), null, null);
 
     Map<String, Object> archiveCopyInfo = (Map<String, Object>) containerApi.containerArchiveInfo("container-archive-info-test", "/tmp/test/gattaca.txt");
     assertEquals("gattaca.txt", archiveCopyInfo == null ? null : archiveCopyInfo.get("name"));

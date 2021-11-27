@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
+import okio.Source
 import okio.source
 import java.io.InputStream
 import java.net.HttpURLConnection.HTTP_NOT_FOUND
@@ -64,21 +65,21 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
    * Get a tar archive of a resource in the filesystem of container id.
    * @param id ID or name of the container
    * @param path Resource in the container’s filesystem to archive.
-   * @return void
+   * @return InputStream
    * @throws UnsupportedOperationException If the API returns an informational or redirection response
    * @throws ClientException If the API returns a client error response
    * @throws ServerException If the API returns a server error response
    */
   @Throws(UnsupportedOperationException::class, ClientException::class, ServerException::class)
-  fun containerArchive(id: String, path: String): java.io.File {
+  fun containerArchive(id: String, path: String): InputStream {
     val localVariableConfig = containerArchiveRequestConfig(id = id, path = path)
 
-    val localVarResponse = request<java.io.File?>(
+    val localVarResponse = request<InputStream?>(
       localVariableConfig
     )
 
     return when (localVarResponse.responseType) {
-      ResponseType.Success -> (localVarResponse as Success<*>).data as java.io.File
+      ResponseType.Success -> (localVarResponse as Success<*>).data as InputStream
       ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
       ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
       ResponseType.ClientError -> {
@@ -584,15 +585,15 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
    * @throws ServerException If the API returns a server error response
    */
   @Throws(UnsupportedOperationException::class, ClientException::class, ServerException::class)
-  fun containerExport(id: String): java.io.File {
+  fun containerExport(id: String): InputStream {
     val localVariableConfig = containerExportRequestConfig(id = id)
 
-    val localVarResponse = request<java.io.File>(
+    val localVarResponse = request<InputStream>(
       localVariableConfig
     )
 
     return when (localVarResponse.responseType) {
-      ResponseType.Success -> (localVarResponse as Success<*>).data as java.io.File
+      ResponseType.Success -> (localVarResponse as Success<*>).data as InputStream
       ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
       ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
       ResponseType.ClientError -> {
@@ -829,7 +830,7 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
    * @param until Only return logs before this time, as a UNIX timestamp (optional, default to 0)
    * @param timestamps Add timestamps to every log line (optional, default to false)
    * @param tail Only return this number of log lines from the end of the logs. Specify as an integer or &#x60;all&#x60; to output all log lines.  (optional, default to "all")
-   * @return java.io.File
+   * @return void
    * @throws UnsupportedOperationException If the API returns an informational or redirection response
    * @throws ClientException If the API returns a client error response
    * @throws ServerException If the API returns a server error response
@@ -1699,7 +1700,7 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
    * @return RequestConfig
    */
   fun putContainerArchiveRequestConfig(id: String, path: String, inputStream: InputStream, noOverwriteDirNonDir: String?, copyUIDGID: String?): RequestConfig {
-    val localVariableBody: Any = inputStream.source()
+    val localVariableBody: Source = inputStream.source()
     val localVariableQuery: MultiValueMap = mutableMapOf<String, List<String>>()
       .apply {
         put("path", listOf(path))

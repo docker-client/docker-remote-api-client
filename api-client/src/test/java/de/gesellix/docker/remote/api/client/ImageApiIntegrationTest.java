@@ -24,6 +24,7 @@ import de.gesellix.docker.remote.api.testutil.NetworkInterfaces;
 import de.gesellix.docker.remote.api.testutil.TarUtil;
 import de.gesellix.docker.remote.api.testutil.TestImage;
 import de.gesellix.testutil.ResourceReader;
+import okio.Okio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -50,8 +51,6 @@ import java.util.concurrent.TimeUnit;
 
 import static de.gesellix.docker.remote.api.testutil.Constants.LABEL_KEY;
 import static de.gesellix.docker.remote.api.testutil.Constants.LABEL_VALUE;
-import static java.nio.file.Files.readAttributes;
-import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
@@ -154,7 +153,7 @@ class ImageApiIntegrationTest {
 
   @Test
   public void imageCreateImportFromUrl() throws IOException {
-    File tarFile = imageApi.imageGet(testImage.getImageWithTag());
+    InputStream tarFile = imageApi.imageGet(testImage.getImageWithTag());
     File destDir = new TarUtil().unTar(tarFile);
     File rootLayerTar = new ManifestUtil().getRootLayerLocation(destDir);
     URL importUrl = rootLayerTar.toURI().toURL();
@@ -172,7 +171,7 @@ class ImageApiIntegrationTest {
 
   @Test
   public void imageCreateImportFromInputStream() throws IOException {
-    File tarFile = imageApi.imageGet(testImage.getImageWithTag());
+    InputStream tarFile = imageApi.imageGet(testImage.getImageWithTag());
     File destDir = new TarUtil().unTar(tarFile);
     File rootLayerTar = new ManifestUtil().getRootLayerLocation(destDir);
     try (InputStream source = new FileInputStream(rootLayerTar)) {
@@ -227,8 +226,10 @@ class ImageApiIntegrationTest {
   @Test
   public void imageGet() throws IOException {
     imageApi.imageTag(testImage.getImageWithTag(), "test", "export");
-    File exportedImage = imageApi.imageGet("test:export");
-    assertTrue(16896 < Long.parseLong(readAttributes(exportedImage.toPath(), "size", NOFOLLOW_LINKS).get("size").toString()));
+    InputStream exportedImage = imageApi.imageGet("test:export");
+    long byteCount = Okio.buffer(Okio.source(exportedImage)).readAll(Okio.blackhole());
+    exportedImage.close();
+    assertTrue(16896 < byteCount);
 
     imageApi.imageDelete("test:export", null, null);
   }
@@ -238,8 +239,10 @@ class ImageApiIntegrationTest {
     imageApi.imageTag(testImage.getImageWithTag(), "test", "export-all-1");
     imageApi.imageTag(testImage.getImageWithTag(), "test", "export-all-2");
 
-    File exportedImages = imageApi.imageGetAll(asList("test:export-all-1", "test:export-all-2"));
-    assertTrue(22016 < Long.parseLong(readAttributes(exportedImages.toPath(), "size", NOFOLLOW_LINKS).get("size").toString()));
+    InputStream exportedImages = imageApi.imageGetAll(asList("test:export-all-1", "test:export-all-2"));
+    long byteCount = Okio.buffer(Okio.source(exportedImages)).readAll(Okio.blackhole());
+    exportedImages.close();
+    assertTrue(22016 < byteCount);
 
     imageApi.imageDelete("test:export-all-1", null, null);
     imageApi.imageDelete("test:export-all-2", null, null);
@@ -250,7 +253,7 @@ class ImageApiIntegrationTest {
     List<String> originalRepoDigests = imageApi.imageInspect(testImage.getImageWithTag()).getRepoDigests();
 
     imageApi.imageTag(testImage.getImageWithTag(), "test", "load-image");
-    File tarFile = imageApi.imageGet("test:load-image");
+    InputStream tarFile = imageApi.imageGet("test:load-image");
     imageApi.imageDelete("test:load-image", null, null);
 
     assertDoesNotThrow(() -> imageApi.imageLoad(false, tarFile));

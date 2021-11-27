@@ -25,6 +25,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import okio.Source
 import java.io.File
+import java.io.InputStream
 import java.lang.reflect.Type
 import java.net.Proxy
 import java.util.*
@@ -96,8 +97,8 @@ open class ApiClient(
 //    if (mediaType == null && body.contentLength() == 0L) {
 //      return null
 //    }
-    if (T::class.java == File::class.java) {
-      return body.consumeFile() as T
+    if (T::class.java == InputStream::class.java) {
+      return body.consumeInputStream() as T
     }
     return when (mediaType) {
       JsonMediaType -> when (type) {
