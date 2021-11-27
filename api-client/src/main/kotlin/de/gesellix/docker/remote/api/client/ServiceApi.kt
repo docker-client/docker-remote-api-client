@@ -297,7 +297,7 @@ class ServiceApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, p
    * @param since Only return logs since this time, as a UNIX timestamp (optional, default to 0)
    * @param timestamps Add timestamps to every log line (optional, default to false)
    * @param tail Only return this number of log lines from the end of the logs. Specify as an integer or &#x60;all&#x60; to output all log lines.  (optional, default to "all")
-   * @return java.io.File
+   * @return void
    * @throws UnsupportedOperationException If the API returns an informational or redirection response
    * @throws ClientException If the API returns a client error response
    * @throws ServerException If the API returns a server error response

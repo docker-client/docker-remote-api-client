@@ -46,6 +46,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
+import okio.Source
 import okio.source
 import java.io.InputStream
 import java.net.Proxy
@@ -741,14 +742,14 @@ class ImageApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, pro
    * Export an image
    * Get a tarball containing all images and metadata for a repository.  If &#x60;name&#x60; is a specific name and tag (e.g. &#x60;ubuntu:latest&#x60;), then only that image (and its parents) are returned. If &#x60;name&#x60; is an image ID, similarly only that image (and its parents) are returned, but with the exclusion of the &#x60;repositories&#x60; file in the tarball, as there were no image names referenced.  ### Image tarball format  An image tarball contains one directory per image layer (named using its long ID), each containing these files:  - &#x60;VERSION&#x60;: currently &#x60;1.0&#x60; - the file format version - &#x60;json&#x60;: detailed layer information, similar to &#x60;docker inspect layer_id&#x60; - &#x60;layer.tar&#x60;: A tarfile containing the filesystem changes in this layer  The &#x60;layer.tar&#x60; file contains &#x60;aufs&#x60; style &#x60;.wh..wh.aufs&#x60; files and directories for storing attribute changes and deletions.  If the tarball defines a repository, the tarball should also include a &#x60;repositories&#x60; file at the root that contains a list of repository and tag names mapped to layer IDs.  &#x60;&#x60;&#x60;json {   \&quot;hello-world\&quot;: {     \&quot;latest\&quot;: \&quot;565a9d68a73f6706862bfe8409a7f659776d4d60a8d096eb4a3cbce6999cc2a1\&quot;   } } &#x60;&#x60;&#x60;
    * @param name Image name or ID
-   * @return java.io.File
+   * @return InputStream
    * @throws UnsupportedOperationException If the API returns an informational or redirection response
    * @throws ClientException If the API returns a client error response
    * @throws ServerException If the API returns a server error response
    */
   @Suppress("UNCHECKED_CAST")
   @Throws(UnsupportedOperationException::class, ClientException::class, ServerException::class)
-  fun imageGet(name: String): java.io.File {
+  fun imageGet(name: String): InputStream {
     return this.imageGetAll(Collections.singletonList(name))
   }
 
@@ -756,22 +757,22 @@ class ImageApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, pro
    * Export several images
    * Get a tarball containing all images and metadata for several image repositories.  For each value of the &#x60;names&#x60; parameter: if it is a specific name and tag (e.g. &#x60;ubuntu:latest&#x60;), then only that image (and its parents) are returned; if it is an image ID, similarly only that image (and its parents) are returned and there would be no names referenced in the &#39;repositories&#39; file for this image ID.  For details on the format, see the [export image endpoint](#operation/ImageGet).
    * @param names Image names to filter by (optional)
-   * @return java.io.File
+   * @return InputStream
    * @throws UnsupportedOperationException If the API returns an informational or redirection response
    * @throws ClientException If the API returns a client error response
    * @throws ServerException If the API returns a server error response
    */
   @Suppress("UNCHECKED_CAST")
   @Throws(UnsupportedOperationException::class, ClientException::class, ServerException::class)
-  fun imageGetAll(names: List<String>?): java.io.File {
+  fun imageGetAll(names: List<String>?): InputStream {
     val localVariableConfig = imageGetAllRequestConfig(names = names)
 
-    val localVarResponse = request<java.io.File>(
+    val localVarResponse = request<InputStream>(
       localVariableConfig
     )
 
     return when (localVarResponse.responseType) {
-      ResponseType.Success -> (localVarResponse as Success<*>).data as java.io.File
+      ResponseType.Success -> (localVarResponse as Success<*>).data as InputStream
       ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
       ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
       ResponseType.ClientError -> {
@@ -999,7 +1000,7 @@ class ImageApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, pro
   @Throws(UnsupportedOperationException::class, ClientException::class, ServerException::class)
   @JvmOverloads
   fun imageLoad(
-    quiet: Boolean?, imagesTarball: java.io.File?,
+    quiet: Boolean?, imagesTarball: InputStream?,
     callback: StreamCallback<CreateImageInfo?>? = null, timeoutMillis: Long? = null /*= 24.hours.toLongMilliseconds()*/
   ) {
     val localVariableConfig = imageLoadRequestConfig(quiet = quiet, imagesTarball = imagesTarball)
@@ -1048,8 +1049,8 @@ class ImageApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, pro
    * @param imagesTarball Tar archive containing images (optional)
    * @return RequestConfig
    */
-  fun imageLoadRequestConfig(quiet: Boolean?, imagesTarball: java.io.File?): RequestConfig {
-    val localVariableBody: Any? = imagesTarball
+  fun imageLoadRequestConfig(quiet: Boolean?, imagesTarball: InputStream?): RequestConfig {
+    val localVariableBody: Source? = imagesTarball?.source()
     val localVariableQuery: MultiValueMap = mutableMapOf<String, List<String>>()
       .apply {
         if (quiet != null) {

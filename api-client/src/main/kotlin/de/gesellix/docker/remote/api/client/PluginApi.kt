@@ -26,6 +26,9 @@ import de.gesellix.docker.remote.api.core.ResponseType
 import de.gesellix.docker.remote.api.core.ServerError
 import de.gesellix.docker.remote.api.core.ServerException
 import de.gesellix.docker.remote.api.core.Success
+import okio.Source
+import okio.source
+import java.io.InputStream
 import java.net.Proxy
 
 class PluginApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, proxy: Proxy?) : ApiClient(dockerClientConfig, proxy) {
@@ -107,7 +110,7 @@ class PluginApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, pr
    * @throws ServerException If the API returns a server error response
    */
   @Throws(UnsupportedOperationException::class, ClientException::class, ServerException::class)
-  fun pluginCreate(name: String, tarContext: java.io.File?) {
+  fun pluginCreate(name: String, tarContext: InputStream?) {
     val localVariableConfig = pluginCreateRequestConfig(name = name, tarContext = tarContext)
 
     val localVarResponse = request<Any?>(
@@ -136,8 +139,8 @@ class PluginApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, pr
    * @param tarContext Path to tar containing plugin rootfs and manifest (optional)
    * @return RequestConfig
    */
-  fun pluginCreateRequestConfig(name: String, tarContext: java.io.File?): RequestConfig {
-    val localVariableBody: Any? = tarContext
+  fun pluginCreateRequestConfig(name: String, tarContext: InputStream?): RequestConfig {
+    val localVariableBody: Source? = tarContext?.source()
     val localVariableQuery: MultiValueMap = mutableMapOf<String, List<String>>()
       .apply {
         put("name", listOf(name))

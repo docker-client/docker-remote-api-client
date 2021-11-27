@@ -11,6 +11,7 @@ import okhttp3.internal.closeQuietly
 import okio.appendingSink
 import okio.buffer
 import java.io.File
+import java.io.InputStream
 import java.lang.reflect.Type
 import java.nio.file.Files
 
@@ -25,6 +26,13 @@ fun ResponseBody?.consumeFile(): File? {
   sink.close()
   closeQuietly()
   return f
+}
+
+fun ResponseBody?.consumeInputStream(): InputStream? {
+  if (this == null) {
+    return null
+  }
+  return source().inputStream()
 }
 
 inline fun <reified T : Any?> ResponseBody?.consumeStream(mediaType: String?): Flow<T> {
