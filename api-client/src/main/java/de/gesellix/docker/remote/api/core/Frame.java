@@ -21,6 +21,9 @@ public class Frame {
   }
 
   public String getPayloadAsString() {
+    if (payload == null) {
+      return null;
+    }
     return new String(payload, StandardCharsets.UTF_8).trim();
   }
 
