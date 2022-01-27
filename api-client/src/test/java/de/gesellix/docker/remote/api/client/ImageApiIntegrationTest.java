@@ -221,6 +221,7 @@ class ImageApiIntegrationTest {
     imageApi.imageTag(testImage.getImageWithTag(), "test", "delete");
     List<ImageDeleteResponseItem> deletedImages = imageApi.imageDelete("test:delete", null, null);
     assertTrue(deletedImages.stream().anyMatch((e) -> e.getDeleted() != null || e.getUntagged() != null));
+    assertDoesNotThrow(() -> imageApi.imageDelete("image-delete-missing", null, null));
   }
 
   @Test
