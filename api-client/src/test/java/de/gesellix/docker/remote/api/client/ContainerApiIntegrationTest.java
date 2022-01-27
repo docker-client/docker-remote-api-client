@@ -322,6 +322,7 @@ class ContainerApiIntegrationTest {
     assertTrue(container.getState().getRunning());
 
     removeContainer(engineApiClient, "container-start-test");
+    assertDoesNotThrow(() -> containerApi.containerStop("container-start-test", null));
   }
 
   @Test

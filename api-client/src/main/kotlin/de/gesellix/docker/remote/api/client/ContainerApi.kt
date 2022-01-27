@@ -1388,6 +1388,9 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
       ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
       ResponseType.ClientError -> {
         val localVarError = localVarResponse as ClientError<*>
+        if (localVarError.statusCode == HTTP_NOT_FOUND) {
+          return
+        }
         throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
       }
       ResponseType.ServerError -> {
