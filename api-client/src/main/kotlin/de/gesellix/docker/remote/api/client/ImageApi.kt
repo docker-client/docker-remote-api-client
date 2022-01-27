@@ -49,6 +49,7 @@ import kotlinx.coroutines.withTimeout
 import okio.Source
 import okio.source
 import java.io.InputStream
+import java.net.HttpURLConnection.HTTP_NOT_FOUND
 import java.net.Proxy
 import java.time.Duration
 import java.time.temporal.ChronoUnit
@@ -698,6 +699,9 @@ class ImageApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, pro
       ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
       ResponseType.ClientError -> {
         val localVarError = localVarResponse as ClientError<*>
+        if (localVarError.statusCode == HTTP_NOT_FOUND) {
+          return emptyList()
+        }
         throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
       }
       ResponseType.ServerError -> {
