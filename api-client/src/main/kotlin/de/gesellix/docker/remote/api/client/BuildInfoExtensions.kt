@@ -12,13 +12,19 @@ fun List<BuildInfo>.getImageId(): ImageID? {
     return firstAux.get().aux
   } else {
     val idFromStream = reversedInfos.stream()
-      .filter { (_, stream): BuildInfo -> stream?.contains("Successfully built ")!! }
+      .filter { (_, stream): BuildInfo ->
+        val contains = stream?.contains("Successfully built ")
+        contains != null && contains
+      }
       .findFirst()
     return if (idFromStream.isPresent) {
       ImageID(idFromStream.get().stream!!.removePrefix("Successfully built ").replaceAfter('\n', "").trim())
     } else {
       val tagFromStream = reversedInfos.stream()
-        .filter { (_, stream): BuildInfo -> stream?.contains("Successfully tagged ")!! }
+        .filter { (_, stream): BuildInfo ->
+          val contains = stream?.contains("Successfully tagged ")
+          contains != null && contains
+        }
         .findFirst()
       tagFromStream.map { (_, stream): BuildInfo ->
         ImageID(stream!!.removePrefix("Successfully tagged ").replaceAfter('\n', "").trim())
@@ -26,4 +32,16 @@ fun List<BuildInfo>.getImageId(): ImageID? {
         .orElse(null)
     }
   }
+}
+
+fun List<BuildInfo>.getError(): BuildInfo? {
+  return this.stream()
+    .filter { (_, _, error): BuildInfo -> error != null }
+    .findFirst()
+    .orElse(null)
+}
+
+fun List<BuildInfo>.hasError(): Boolean {
+  return this.stream()
+    .anyMatch { (_, _, error): BuildInfo -> error != null }
 }
