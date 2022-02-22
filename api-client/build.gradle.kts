@@ -34,8 +34,8 @@ dependencies {
   implementation("de.gesellix:docker-engine:2022-02-22T23-12-00")
   implementation("de.gesellix:docker-filesocket:2022-02-22T19-32-00")
 
-  implementation("org.slf4j:slf4j-api:[1.7,)!!1.7.32")
-  testImplementation("ch.qos.logback:logback-classic:[1.2,2)!!1.2.7")
+  implementation("org.slf4j:slf4j-api:[1.7,1.8)!!1.7.36")
+  testImplementation("ch.qos.logback:logback-classic:[1.2,2)!!1.2.10")
 
   testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
@@ -48,7 +48,7 @@ dependencies {
   testImplementation("de.gesellix:testutil:[2021-08-05T22-09-32,)")
 }
 
-tasks.withType(Test::class.java) {
+tasks.withType(Test::class) {
   useJUnitPlatform()
 }
 
