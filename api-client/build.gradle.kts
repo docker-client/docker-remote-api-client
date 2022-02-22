@@ -4,7 +4,6 @@ import java.util.*
 plugins {
   id("java")
   id("org.jetbrains.kotlin.jvm")
-  id("org.jetbrains.kotlin.kapt")
   id("maven-publish")
   id("signing")
   id("com.github.ben-manes.versions")
@@ -21,7 +20,6 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.31")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
   implementation("com.squareup.moshi:moshi:1.12.0")
-  kapt("com.squareup.moshi:moshi-kotlin-codegen:1.12.0")
   implementation("com.squareup.okhttp3:okhttp:[4.9,5)!!4.9.3")
 //  implementation("com.squareup.okhttp3:logging-interceptor:[4.9,5)!!4.9.3")
   implementation("de.gesellix:docker-remote-api-model-1-41:2022-02-01T11-07-00")
