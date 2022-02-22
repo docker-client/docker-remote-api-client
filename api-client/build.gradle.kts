@@ -17,6 +17,14 @@ java {
 }
 
 dependencies {
+  constraints {
+    implementation("com.squareup.moshi:moshi") {
+      version {
+        strictly("[1.12.0,1.14.0)")
+        prefer("1.13.0")
+      }
+    }
+  }
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
   implementation("com.squareup.moshi:moshi:1.13.0")
