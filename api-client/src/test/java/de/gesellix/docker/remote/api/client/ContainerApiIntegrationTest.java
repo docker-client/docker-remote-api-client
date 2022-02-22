@@ -374,11 +374,12 @@ class ContainerApiIntegrationTest {
     catch (InterruptedException e) {
       e.printStackTrace();
     }
+
+    removeContainer(engineApiClient, "container-logs-test");
+
     Optional<Frame> frame = callback.frames.stream().findAny();
     assertTrue(frame.isPresent());
     assertSame(frame.get().getStreamType(), Frame.StreamType.STDOUT);
-
-    removeContainer(engineApiClient, "container-logs-test");
   }
 
   @Test
