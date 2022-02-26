@@ -204,25 +204,40 @@ class ContainerApiIntegrationTest {
         null
     );
     containerApi.containerCreate(containerCreateRequest, "container-archive-info-test");
-    containerApi.containerStart("container-archive-info-test", null);
 
+    // filesystem operations against a running Hyper-V container are not supported,
+    // so we prepare the container before starting it
     InputStream archive = containerApi.containerArchive("container-archive-info-test", "/gattaca.txt");
     File extractedDir = new TarUtil().unTar(archive);
     File gattaca = new File(extractedDir, "gattaca.txt");
     String fileContent = Okio.buffer(Okio.source(gattaca)).readUtf8();
     assertEquals("The wind\ncaught it.\n", fileContent.replaceAll("\r", ""));
 
+    String testPath = testImage.isWindowsContainer()
+                      ? "tmp\\test"
+                      : "/tmp/test/";
+    List<String> execCmd = testImage.isWindowsContainer()
+                           ? Arrays.asList("cmd", "/C", "mkdir " + testPath)
+                           : Arrays.asList("mkdir", testPath);
+
+    containerApi.containerStart("container-archive-info-test", null);
     IdResponse containerExec = engineApiClient.getExecApi().containerExec(
         "container-archive-info-test",
         new ExecConfig(null, null, null, null, null, null,
-                       Arrays.asList("mkdir", "/tmp/test/"), null, null, null));
+                       execCmd,
+                       null, null, null));
     engineApiClient.getExecApi().execStart(
         containerExec.getId(),
         new ExecStartConfig(null, null));
 
-    containerApi.putContainerArchive("container-archive-info-test", "/tmp/test/", new TarUtil().tar(gattaca), null, null);
+    // filesystem operations against a running Hyper-V container are not supported,
+    // so we stop the container before using the archive container api
+    containerApi.containerStop("container-archive-info-test", null);
+    containerApi.containerWait("container-archive-info-test", "not-running");
 
-    Map<String, Object> archiveCopyInfo = (Map<String, Object>) containerApi.containerArchiveInfo("container-archive-info-test", "/tmp/test/gattaca.txt");
+    containerApi.putContainerArchive("container-archive-info-test", testPath, new TarUtil().tar(gattaca), null, null);
+
+    Map<String, Object> archiveCopyInfo = (Map<String, Object>) containerApi.containerArchiveInfo("container-archive-info-test", testPath + "/gattaca.txt");
     assertEquals("gattaca.txt", archiveCopyInfo == null ? null : archiveCopyInfo.get("name"));
 
     removeContainer(engineApiClient, "container-archive-info-test");
