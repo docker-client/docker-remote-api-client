@@ -366,7 +366,7 @@ class ContainerApiIntegrationTest {
     containerApi.containerCreate(containerCreateRequest, "container-logs-test");
     containerApi.containerStart("container-logs-test", null);
 
-    Duration timeout = Duration.of(5, SECONDS);
+    Duration timeout = Duration.of(10, SECONDS);
     LogFrameStreamCallback callback = new LogFrameStreamCallback();
 
     new Thread(() -> containerApi.containerLogs(
