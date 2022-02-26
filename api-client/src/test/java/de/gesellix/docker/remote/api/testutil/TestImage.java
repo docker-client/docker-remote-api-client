@@ -9,13 +9,14 @@ public class TestImage {
   private final EngineApiClient engineApiClient;
   private final String repository;
   private final String tag;
+  private final boolean useWindowsContainer;
 
   public TestImage(EngineApiClient engineApiClient) {
     this.engineApiClient = engineApiClient;
 
-    boolean isWindows = Objects.requireNonNull(engineApiClient.getSystemApi().systemVersion().getOs()).equalsIgnoreCase("windows");
+    this.useWindowsContainer = Objects.requireNonNull(engineApiClient.getSystemApi().systemVersion().getOs()).equalsIgnoreCase("windows");
     this.repository = "gesellix/echo-server";
-    this.tag = isWindows ? "os-windows" : "os-linux";
+    this.tag = useWindowsContainer ? "os-windows" : "os-linux";
 
     // TODO consider NOT calling prepare inside the constructor
     prepare();
@@ -35,5 +36,9 @@ public class TestImage {
 
   public String getImageTag() {
     return tag;
+  }
+
+  public boolean isWindowsContainer() {
+    return useWindowsContainer;
   }
 }
