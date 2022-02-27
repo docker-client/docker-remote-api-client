@@ -2,6 +2,7 @@ package de.gesellix.docker.remote.api.client;
 
 import com.squareup.moshi.Moshi;
 import de.gesellix.docker.builder.BuildContextBuilder;
+import de.gesellix.docker.registry.DockerRegistry;
 import de.gesellix.docker.remote.api.BuildInfo;
 import de.gesellix.docker.remote.api.BuildPruneResponse;
 import de.gesellix.docker.remote.api.ContainerCreateRequest;
@@ -16,7 +17,6 @@ import de.gesellix.docker.remote.api.ImageSearchResponseItem;
 import de.gesellix.docker.remote.api.ImageSummary;
 import de.gesellix.docker.remote.api.core.StreamCallback;
 import de.gesellix.docker.remote.api.testutil.DockerEngineAvailable;
-import de.gesellix.docker.remote.api.testutil.DockerRegistry;
 import de.gesellix.docker.remote.api.testutil.HttpTestServer;
 import de.gesellix.docker.remote.api.testutil.InjectDockerClient;
 import de.gesellix.docker.remote.api.testutil.ManifestUtil;
@@ -307,7 +307,7 @@ class ImageApiIntegrationTest {
 
   @Test
   public void imagePushToCustomRegistry() {
-    DockerRegistry registry = new DockerRegistry(engineApiClient);
+    DockerRegistry registry = new DockerRegistry();
     registry.run();
     String registryUrl = registry.url();
 
