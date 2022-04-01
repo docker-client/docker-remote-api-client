@@ -16,7 +16,7 @@ val dependencyVersions = listOf(
   "com.squareup.okio:okio:3.0.0",
   "org.apiguardian:apiguardian-api:1.1.2",
   "org.jetbrains:annotations:23.0.0",
-  "org.jetbrains.kotlin:kotlin-reflect:1.6.10",
+  "org.jetbrains.kotlin:kotlin-reflect:1.6.20",
   "org.jetbrains.kotlin:kotlin-stdlib:1.6.10",
   "org.jetbrains.kotlin:kotlin-stdlib-common:1.6.10",
   "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10",
