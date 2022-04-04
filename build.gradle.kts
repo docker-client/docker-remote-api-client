@@ -21,7 +21,7 @@ val dependencyVersions = listOf(
   "org.jetbrains.kotlin:kotlin-stdlib-common:1.6.20",
   "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.20",
   "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.20",
-  "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0",
+  "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1",
   "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.0",
   "org.junit:junit-bom:5.8.2",
   "org.junit.jupiter:junit-jupiter-api:5.8.2",
