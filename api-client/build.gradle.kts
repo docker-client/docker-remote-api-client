@@ -24,6 +24,12 @@ dependencies {
         prefer("1.13.0")
       }
     }
+    implementation("com.squareup.okhttp3:okhttp") {
+      version {
+        strictly("[4.9,5)")
+        prefer("4.9.3")
+      }
+    }
     implementation("de.gesellix:docker-remote-api-model-1-41") {
       version {
         strictly("[2022-01-01T01-01-01,)")
@@ -39,17 +45,23 @@ dependencies {
         strictly("[2022-01-01T01-01-01,)")
       }
     }
+    implementation("org.slf4j:slf4j-api") {
+      version {
+        strictly("[1.7,1.8)")
+        prefer("1.7.36")
+      }
+    }
   }
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.20")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
   implementation("com.squareup.moshi:moshi:1.13.0")
-  implementation("com.squareup.okhttp3:okhttp:[4.9,5)!!4.9.3")
+  implementation("com.squareup.okhttp3:okhttp:4.9.3")
 //  implementation("com.squareup.okhttp3:logging-interceptor:[4.9,5)!!4.9.3")
   implementation("de.gesellix:docker-remote-api-model-1-41:2022-04-09T16-18-00")
   implementation("de.gesellix:docker-engine:2022-04-09T23-24-00")
   implementation("de.gesellix:docker-filesocket:2022-04-09T16-04-00")
 
-  implementation("org.slf4j:slf4j-api:[1.7,1.8)!!1.7.36")
+  implementation("org.slf4j:slf4j-api:1.7.36")
   testImplementation("ch.qos.logback:logback-classic:[1.2,2)!!1.2.10")
 
   testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
