@@ -24,6 +24,21 @@ dependencies {
         prefer("1.13.0")
       }
     }
+    implementation("de.gesellix:docker-remote-api-model-1-41") {
+      version {
+        strictly("[2022-01-01T01-01-01,)")
+      }
+    }
+    implementation("de.gesellix:docker-engine") {
+      version {
+        strictly("[2022-01-01T01-01-01,)")
+      }
+    }
+    implementation("de.gesellix:docker-filesocket") {
+      version {
+        strictly("[2022-01-01T01-01-01,)")
+      }
+    }
   }
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.20")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
