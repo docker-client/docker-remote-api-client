@@ -13,7 +13,6 @@ plugins {
 }
 
 val dependencyVersions = listOf(
-  "com.squareup.okio:okio:3.1.0",
   "org.apiguardian:apiguardian-api:1.1.2",
   "org.jetbrains:annotations:23.0.0",
   "org.jetbrains.kotlin:kotlin-reflect:1.6.20",
@@ -25,14 +24,11 @@ val dependencyVersions = listOf(
   "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.1",
   "org.junit:junit-bom:5.8.2",
   "org.junit.jupiter:junit-jupiter-api:5.8.2",
-  "org.junit.platform:junit-platform-engine:1.8.2",
-  "org.junit.platform:junit-platform-launcher:1.8.2",
-  "org.junit.platform:junit-platform-suite-api:1.8.2",
   "org.opentest4j:opentest4j:1.2.0"
 )
 
 val dependencyVersionsByGroup = mapOf(
-  "org.junit.platform" to "1.8.1"
+  "org.junit.platform" to "1.8.2"
 )
 
 subprojects {
