@@ -84,7 +84,7 @@ dependencies {
 
   testImplementation("org.apache.commons:commons-compress:1.21")
   testImplementation("de.gesellix:testutil:[2021-08-05T22-09-32,)")
-  testImplementation("de.gesellix:docker-registry:2022-04-21T23-12-00")
+  testImplementation("de.gesellix:docker-registry:2022-05-03T21-56-00")
 }
 
 tasks.withType(Test::class) {
