@@ -13,6 +13,7 @@ plugins {
 }
 
 val dependencyVersions = listOf(
+  "commons-io:commons-io:2.11.0",
   "org.apiguardian:apiguardian-api:1.1.2",
   "org.jetbrains:annotations:23.0.0",
   "org.jetbrains.kotlin:kotlin-reflect:1.6.21",
