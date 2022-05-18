@@ -21,8 +21,8 @@ import de.gesellix.docker.remote.api.ContainerConfig
 import de.gesellix.docker.remote.api.CreateImageInfo
 import de.gesellix.docker.remote.api.HistoryResponseItem
 import de.gesellix.docker.remote.api.IdResponse
-import de.gesellix.docker.remote.api.Image
 import de.gesellix.docker.remote.api.ImageDeleteResponseItem
+import de.gesellix.docker.remote.api.ImageInspect
 import de.gesellix.docker.remote.api.ImagePruneResponse
 import de.gesellix.docker.remote.api.ImageSearchResponseItem
 import de.gesellix.docker.remote.api.ImageSummary
@@ -880,15 +880,15 @@ class ImageApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, pro
    */
   @Suppress("UNCHECKED_CAST")
   @Throws(UnsupportedOperationException::class, ClientException::class, ServerException::class)
-  fun imageInspect(name: String): Image {
+  fun imageInspect(name: String): ImageInspect {
     val localVariableConfig = imageInspectRequestConfig(name = name)
 
-    val localVarResponse = request<Image>(
+    val localVarResponse = request<ImageInspect>(
       localVariableConfig
     )
 
     return when (localVarResponse.responseType) {
-      ResponseType.Success -> (localVarResponse as Success<*>).data as Image
+      ResponseType.Success -> (localVarResponse as Success<*>).data as ImageInspect
       ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
       ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
       ResponseType.ClientError -> {
