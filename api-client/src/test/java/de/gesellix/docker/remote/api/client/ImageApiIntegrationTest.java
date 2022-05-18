@@ -10,9 +10,9 @@ import de.gesellix.docker.remote.api.ContainerCreateResponse;
 import de.gesellix.docker.remote.api.EngineApiClient;
 import de.gesellix.docker.remote.api.HistoryResponseItem;
 import de.gesellix.docker.remote.api.IdResponse;
-import de.gesellix.docker.remote.api.Image;
 import de.gesellix.docker.remote.api.ImageDeleteResponseItem;
 import de.gesellix.docker.remote.api.ImageID;
+import de.gesellix.docker.remote.api.ImageInspect;
 import de.gesellix.docker.remote.api.ImageSearchResponseItem;
 import de.gesellix.docker.remote.api.ImageSummary;
 import de.gesellix.docker.remote.api.core.StreamCallback;
@@ -281,7 +281,7 @@ class ImageApiIntegrationTest {
   public void imageInspect() {
     imageApi.imageTag(testImage.getImageWithTag(), "test", "inspect");
 
-    Image image = imageApi.imageInspect("test:inspect");
+    ImageInspect image = imageApi.imageInspect("test:inspect");
     assertTrue(image.getId().startsWith("sha256:"));
 
     imageApi.imageDelete("test:inspect", null, null);
@@ -297,8 +297,8 @@ class ImageApiIntegrationTest {
   @Test
   public void imageTag() {
     imageApi.imageTag(testImage.getImageWithTag(), "test/image", "test-tag");
-    Image image1 = imageApi.imageInspect(testImage.getImageWithTag());
-    Image image2 = imageApi.imageInspect("test/image:test-tag");
+    ImageInspect image1 = imageApi.imageInspect(testImage.getImageWithTag());
+    ImageInspect image2 = imageApi.imageInspect("test/image:test-tag");
     assertFalse(image1.getId().isEmpty());
     assertEquals(image1.getId(), image2.getId());
 

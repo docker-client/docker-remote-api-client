@@ -16,7 +16,7 @@ import de.gesellix.docker.engine.RequestMethod.DELETE
 import de.gesellix.docker.engine.RequestMethod.GET
 import de.gesellix.docker.engine.RequestMethod.POST
 import de.gesellix.docker.remote.api.Volume
-import de.gesellix.docker.remote.api.VolumeConfig
+import de.gesellix.docker.remote.api.VolumeCreateOptions
 import de.gesellix.docker.remote.api.VolumeListResponse
 import de.gesellix.docker.remote.api.VolumePruneResponse
 import de.gesellix.docker.remote.api.core.ApiClient
@@ -52,7 +52,7 @@ class VolumeApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, pr
    */
   @Suppress("UNCHECKED_CAST")
   @Throws(UnsupportedOperationException::class, ClientException::class, ServerException::class)
-  fun volumeCreate(volumeConfig: VolumeConfig): Volume {
+  fun volumeCreate(volumeConfig: VolumeCreateOptions): Volume {
     val localVariableConfig = volumeCreateRequestConfig(volumeConfig = volumeConfig)
 
     val localVarResponse = request<Volume>(
@@ -80,7 +80,7 @@ class VolumeApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, pr
    * @param volumeConfig
    * @return RequestConfig
    */
-  fun volumeCreateRequestConfig(volumeConfig: VolumeConfig): RequestConfig {
+  fun volumeCreateRequestConfig(volumeConfig: VolumeCreateOptions): RequestConfig {
     val localVariableBody: Any? = volumeConfig
     val localVariableQuery: MultiValueMap = mutableMapOf()
     val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
