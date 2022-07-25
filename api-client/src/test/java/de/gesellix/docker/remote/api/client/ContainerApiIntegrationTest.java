@@ -5,6 +5,7 @@ import de.gesellix.docker.remote.api.ContainerCreateRequest;
 import de.gesellix.docker.remote.api.ContainerCreateResponse;
 import de.gesellix.docker.remote.api.ContainerInspectResponse;
 import de.gesellix.docker.remote.api.ContainerPruneResponse;
+import de.gesellix.docker.remote.api.ContainerSummary;
 import de.gesellix.docker.remote.api.ContainerTopResponse;
 import de.gesellix.docker.remote.api.ContainerUpdateRequest;
 import de.gesellix.docker.remote.api.ContainerUpdateResponse;
@@ -82,7 +83,7 @@ class ContainerApiIntegrationTest {
 
   @Test
   public void containerList() {
-    List<Map<String, Object>> containers = containerApi.containerList(null, null, null, null);
+    List<ContainerSummary> containers = containerApi.containerList(null, null, null, null);
     assertNotNull(containers);
   }
 
@@ -233,7 +234,7 @@ class ContainerApiIntegrationTest {
     // filesystem operations against a running Hyper-V container are not supported,
     // so we stop the container before using the archive container api
     containerApi.containerStop("container-archive-info-test", null);
-    containerApi.containerWait("container-archive-info-test", "not-running");
+    containerApi.containerWait("container-archive-info-test", ContainerApi.ConditionContainerWait.NotMinusRunning);
 
     containerApi.putContainerArchive("container-archive-info-test", testPath, new TarUtil().tar(gattaca), null, null);
 
@@ -484,7 +485,7 @@ class ContainerApiIntegrationTest {
         null, null, null, null, null, null,
         null, null, null, null, null, null,
         null, null, null,
-        null, null, null, null, null,
+        null, null, null, null,
         null, null, null, null, null,
         null, null, null, null,
         new RestartPolicy(RestartPolicy.Name.UnlessMinusStopped, null));
@@ -619,13 +620,13 @@ class ContainerApiIntegrationTest {
     filter.put("label", singletonList(LABEL_KEY));
     String filterJson = new Moshi.Builder().build().adapter(Map.class).toJson(filter);
 
-    Optional<Map<String, Object>> toBePruned = containerApi.containerList(true, null, null, filterJson).stream().filter((c) -> ((List<String>) c.get("Names")).contains("/container-prune-test")).findFirst();
+    Optional<ContainerSummary> toBePruned = containerApi.containerList(true, null, null, filterJson).stream().filter((c) -> c.getNames().contains("/container-prune-test")).findFirst();
     assertTrue(toBePruned.isPresent());
 
     ContainerPruneResponse pruneResponse = containerApi.containerPrune(filterJson);
-    assertTrue(pruneResponse.getContainersDeleted().contains(toBePruned.get().get("Id")));
+    assertTrue(pruneResponse.getContainersDeleted().contains(toBePruned.get().getId()));
 
-    Optional<Map<String, Object>> shouldBeMissing = containerApi.containerList(true, null, null, filterJson).stream().filter((c) -> ((List<String>) c.get("Names")).contains("/container-prune-test")).findFirst();
+    Optional<ContainerSummary> shouldBeMissing = containerApi.containerList(true, null, null, filterJson).stream().filter((c) -> c.getNames().contains("/container-prune-test")).findFirst();
     assertFalse(shouldBeMissing.isPresent());
 
     removeContainer(engineApiClient, "container-prune-test");

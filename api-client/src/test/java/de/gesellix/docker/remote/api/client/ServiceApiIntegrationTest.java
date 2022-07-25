@@ -6,11 +6,12 @@ import de.gesellix.docker.remote.api.EndpointSpec;
 import de.gesellix.docker.remote.api.EngineApiClient;
 import de.gesellix.docker.remote.api.LocalNodeState;
 import de.gesellix.docker.remote.api.Service;
+import de.gesellix.docker.remote.api.ServiceCreateRequest;
 import de.gesellix.docker.remote.api.ServiceServiceStatus;
-import de.gesellix.docker.remote.api.ServiceSpec;
 import de.gesellix.docker.remote.api.ServiceSpecMode;
 import de.gesellix.docker.remote.api.ServiceSpecModeReplicated;
 import de.gesellix.docker.remote.api.ServiceSpecUpdateConfig;
+import de.gesellix.docker.remote.api.ServiceUpdateRequest;
 import de.gesellix.docker.remote.api.ServiceUpdateResponse;
 import de.gesellix.docker.remote.api.ServiceUpdateStatus;
 import de.gesellix.docker.remote.api.Task;
@@ -88,19 +89,19 @@ class ServiceApiIntegrationTest {
     // - https://github.com/moby/moby/issues/41094
 
     serviceApi.serviceCreate(
-        new ServiceSpec("test-service", singletonMap(LABEL_KEY, LABEL_VALUE),
-                        new TaskSpec(null, new TaskSpecContainerSpec(testImage.getImageWithTag(), singletonMap(LABEL_KEY, LABEL_VALUE),
-                                                                     null, null, null, null, null,
-                                                                     null, null, null,
-                                                                     null, null, null, null,
-                                                                     null, null, null,
-                                                                     null, null, null, null,
-                                                                     null, null, null, null, null, null),
-                                     null, null, null, null, null, null, null, null),
-                        new ServiceSpecMode(new ServiceSpecModeReplicated(1L), null, null, null),
-                        new ServiceSpecUpdateConfig(1L, null, null, null, null, null),
-                        null, null,
-                        new EndpointSpec(null, singletonList(new EndpointPortConfig(null, Tcp, 8080, 8080, Ingress)))),
+        new ServiceCreateRequest("test-service", singletonMap(LABEL_KEY, LABEL_VALUE),
+                                 new TaskSpec(null, new TaskSpecContainerSpec(testImage.getImageWithTag(), singletonMap(LABEL_KEY, LABEL_VALUE),
+                                                                              null, null, null, null, null,
+                                                                              null, null, null,
+                                                                              null, null, null, null,
+                                                                              null, null, null,
+                                                                              null, null, null, null,
+                                                                              null, null, null, null, null, null),
+                                              null, null, null, null, null, null, null, null),
+                                 new ServiceSpecMode(new ServiceSpecModeReplicated(1L), null, null, null),
+                                 new ServiceSpecUpdateConfig(1L, null, null, null, null, null),
+                                 null, null,
+                                 new EndpointSpec(null, singletonList(new EndpointPortConfig(null, Tcp, 8080, 8080, Ingress)))),
         null);
 
     CountDownLatch wait1 = new CountDownLatch(1);
@@ -150,19 +151,19 @@ class ServiceApiIntegrationTest {
 
   @Test
   public void serviceCreateInspectUpdateDelete() throws InterruptedException {
-    serviceApi.serviceCreate(new ServiceSpec("test-service", singletonMap(LABEL_KEY, LABEL_VALUE),
-                                             new TaskSpec(null, new TaskSpecContainerSpec(testImage.getImageWithTag(), singletonMap(LABEL_KEY, LABEL_VALUE),
-                                                                                          null, null, null, null, null,
-                                                                                          null, null, null,
-                                                                                          null, null, null, null,
-                                                                                          null, null, null,
-                                                                                          null, null, null, null,
-                                                                                          null, null, null, null, null, null),
-                                                          null, null, null, null, null, null, null, null),
-                                             new ServiceSpecMode(new ServiceSpecModeReplicated(1L), null, null, null),
-                                             new ServiceSpecUpdateConfig(1L, null, null, null, null, null),
-                                             null, null,
-                                             new EndpointSpec(null, singletonList(new EndpointPortConfig(null, Tcp, 8080, 8080, Ingress)))),
+    serviceApi.serviceCreate(new ServiceCreateRequest("test-service", singletonMap(LABEL_KEY, LABEL_VALUE),
+                                                      new TaskSpec(null, new TaskSpecContainerSpec(testImage.getImageWithTag(), singletonMap(LABEL_KEY, LABEL_VALUE),
+                                                                                                   null, null, null, null, null,
+                                                                                                   null, null, null,
+                                                                                                   null, null, null, null,
+                                                                                                   null, null, null,
+                                                                                                   null, null, null, null,
+                                                                                                   null, null, null, null, null, null),
+                                                                   null, null, null, null, null, null, null, null),
+                                                      new ServiceSpecMode(new ServiceSpecModeReplicated(1L), null, null, null),
+                                                      new ServiceSpecUpdateConfig(1L, null, null, null, null, null),
+                                                      null, null,
+                                                      new EndpointSpec(null, singletonList(new EndpointPortConfig(null, Tcp, 8080, 8080, Ingress)))),
                              null);
     awaitUtil.await(() -> {
       List<Task> tasks = engineApiClient.getTaskApi().taskList(new Moshi.Builder().build().adapter(Map.class).toJson(singletonMap("service", Collections.singletonMap("test-service", true))));
@@ -177,19 +178,19 @@ class ServiceApiIntegrationTest {
     Map<String, String> labels = new HashMap<>();
     labels.putAll(serviceInspect.getSpec().getLabels());
     labels.put("another-label", "another-value");
-    ServiceSpec spec = new ServiceSpec("test-service", labels,
-                                       new TaskSpec(null, new TaskSpecContainerSpec(testImage.getImageWithTag(), labels,
-                                                                                    null, null, null, null, null,
-                                                                                    null, null, null,
-                                                                                    null, null, null, null,
-                                                                                    null, null, null,
-                                                                                    null, null, null, null,
-                                                                                    null, null, null, null, null, null),
-                                                    null, null, null, null, null, null, null, null),
-                                       new ServiceSpecMode(new ServiceSpecModeReplicated(1L), null, null, null),
-                                       new ServiceSpecUpdateConfig(1L, null, null, null, null, null),
-                                       null, null,
-                                       new EndpointSpec(null, singletonList(new EndpointPortConfig(null, Tcp, 8080, 8080, Ingress))));
+    ServiceUpdateRequest spec = new ServiceUpdateRequest("test-service", labels,
+                                                         new TaskSpec(null, new TaskSpecContainerSpec(testImage.getImageWithTag(), labels,
+                                                                                                      null, null, null, null, null,
+                                                                                                      null, null, null,
+                                                                                                      null, null, null, null,
+                                                                                                      null, null, null,
+                                                                                                      null, null, null, null,
+                                                                                                      null, null, null, null, null, null),
+                                                                      null, null, null, null, null, null, null, null),
+                                                         new ServiceSpecMode(new ServiceSpecModeReplicated(1L), null, null, null),
+                                                         new ServiceSpecUpdateConfig(1L, null, null, null, null, null),
+                                                         null, null,
+                                                         new EndpointSpec(null, singletonList(new EndpointPortConfig(null, Tcp, 8080, 8080, Ingress))));
     ServiceUpdateResponse updateResponse = serviceApi.serviceUpdate("test-service", serviceVersion, spec, null, null, null);
     assertTrue(updateResponse.getWarnings() == null || updateResponse.getWarnings().isEmpty());
 

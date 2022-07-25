@@ -1,6 +1,7 @@
 package de.gesellix.docker.remote.api.client;
 
 import de.gesellix.docker.remote.api.Config;
+import de.gesellix.docker.remote.api.ConfigCreateRequest;
 import de.gesellix.docker.remote.api.ConfigSpec;
 import de.gesellix.docker.remote.api.EngineApiClient;
 import de.gesellix.docker.remote.api.IdResponse;
@@ -37,7 +38,7 @@ class ConfigApiIntegrationTest {
     configApi = engineApiClient.getConfigApi();
 
     String encoded = Base64.getEncoder().encodeToString("config-data".getBytes());
-    defaultConfig = configApi.configCreate(new ConfigSpec("config-name", Collections.emptyMap(), encoded, null));
+    defaultConfig = configApi.configCreate(new ConfigCreateRequest("config-name", Collections.emptyMap(), encoded, null));
   }
 
   @AfterEach
@@ -48,7 +49,7 @@ class ConfigApiIntegrationTest {
   @Test
   public void configCreate() {
     String encoded = Base64.getEncoder().encodeToString("config-data".getBytes());
-    IdResponse response = configApi.configCreate(new ConfigSpec("my-config", Collections.emptyMap(), encoded, null));
+    IdResponse response = configApi.configCreate(new ConfigCreateRequest("my-config", Collections.emptyMap(), encoded, null));
     assertTrue(response.getId().matches("\\w{5,}"));
 
     configApi.configDelete(response.getId());
@@ -57,7 +58,7 @@ class ConfigApiIntegrationTest {
   @Test
   public void configDelete() {
     String encoded = Base64.getEncoder().encodeToString("config-data".getBytes());
-    IdResponse response = configApi.configCreate(new ConfigSpec("my-config", Collections.emptyMap(), encoded, null));
+    IdResponse response = configApi.configCreate(new ConfigCreateRequest("my-config", Collections.emptyMap(), encoded, null));
 
     assertDoesNotThrow(() -> configApi.configDelete(response.getId()));
   }

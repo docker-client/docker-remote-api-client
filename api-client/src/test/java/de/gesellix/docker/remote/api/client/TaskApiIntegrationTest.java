@@ -5,9 +5,9 @@ import de.gesellix.docker.remote.api.EndpointPortConfig;
 import de.gesellix.docker.remote.api.EndpointSpec;
 import de.gesellix.docker.remote.api.EngineApiClient;
 import de.gesellix.docker.remote.api.LocalNodeState;
+import de.gesellix.docker.remote.api.ServiceCreateRequest;
 import de.gesellix.docker.remote.api.ServiceCreateResponse;
 import de.gesellix.docker.remote.api.ServiceServiceStatus;
-import de.gesellix.docker.remote.api.ServiceSpec;
 import de.gesellix.docker.remote.api.ServiceSpecMode;
 import de.gesellix.docker.remote.api.ServiceSpecModeReplicated;
 import de.gesellix.docker.remote.api.ServiceSpecUpdateConfig;
@@ -71,19 +71,19 @@ class TaskApiIntegrationTest {
   @Test
   public void taskListInspect() throws InterruptedException {
     ServiceCreateResponse service = serviceApi.serviceCreate(
-        new ServiceSpec("test-service", singletonMap(LABEL_KEY, LABEL_VALUE),
-                        new TaskSpec(null, new TaskSpecContainerSpec(testImage.getImageWithTag(), singletonMap(LABEL_KEY, LABEL_VALUE),
-                                                                     null, null, null, null, null,
-                                                                     null, null, null,
-                                                                     null, null, null, null,
-                                                                     null, null, null,
-                                                                     null, null, null, null,
-                                                                     null, null, null, null, null, null),
-                                     null, null, null, null, null, null, null, null),
-                        new ServiceSpecMode(new ServiceSpecModeReplicated(1L), null, null, null),
-                        new ServiceSpecUpdateConfig(1L, null, null, null, null, null),
-                        null, null,
-                        new EndpointSpec(null, singletonList(new EndpointPortConfig(null, Tcp, 8080, 8080, Ingress)))),
+        new ServiceCreateRequest("test-service", singletonMap(LABEL_KEY, LABEL_VALUE),
+                                 new TaskSpec(null, new TaskSpecContainerSpec(testImage.getImageWithTag(), singletonMap(LABEL_KEY, LABEL_VALUE),
+                                                                              null, null, null, null, null,
+                                                                              null, null, null,
+                                                                              null, null, null, null,
+                                                                              null, null, null,
+                                                                              null, null, null, null,
+                                                                              null, null, null, null, null, null),
+                                              null, null, null, null, null, null, null, null),
+                                 new ServiceSpecMode(new ServiceSpecModeReplicated(1L), null, null, null),
+                                 new ServiceSpecUpdateConfig(1L, null, null, null, null, null),
+                                 null, null,
+                                 new EndpointSpec(null, singletonList(new EndpointPortConfig(null, Tcp, 8080, 8080, Ingress)))),
         null);
 
     CountDownLatch wait1 = new CountDownLatch(1);
@@ -127,19 +127,19 @@ class TaskApiIntegrationTest {
     // - https://github.com/moby/moby/issues/41094
 
     ServiceCreateResponse service = serviceApi.serviceCreate(
-        new ServiceSpec("test-service", singletonMap(LABEL_KEY, LABEL_VALUE),
-                        new TaskSpec(null, new TaskSpecContainerSpec(testImage.getImageWithTag(), singletonMap(LABEL_KEY, LABEL_VALUE),
-                                                                     null, null, null, null, null,
-                                                                     null, null, null,
-                                                                     null, null, null, null,
-                                                                     null, null, null,
-                                                                     null, null, null, null,
-                                                                     null, null, null, null, null, null),
-                                     null, null, null, null, null, null, null, null),
-                        new ServiceSpecMode(new ServiceSpecModeReplicated(1L), null, null, null),
-                        new ServiceSpecUpdateConfig(1L, null, null, null, null, null),
-                        null, null,
-                        new EndpointSpec(null, singletonList(new EndpointPortConfig(null, Tcp, 8080, 8080, Ingress)))),
+        new ServiceCreateRequest("test-service", singletonMap(LABEL_KEY, LABEL_VALUE),
+                                 new TaskSpec(null, new TaskSpecContainerSpec(testImage.getImageWithTag(), singletonMap(LABEL_KEY, LABEL_VALUE),
+                                                                              null, null, null, null, null,
+                                                                              null, null, null,
+                                                                              null, null, null, null,
+                                                                              null, null, null,
+                                                                              null, null, null, null,
+                                                                              null, null, null, null, null, null),
+                                              null, null, null, null, null, null, null, null),
+                                 new ServiceSpecMode(new ServiceSpecModeReplicated(1L), null, null, null),
+                                 new ServiceSpecUpdateConfig(1L, null, null, null, null, null),
+                                 null, null,
+                                 new EndpointSpec(null, singletonList(new EndpointPortConfig(null, Tcp, 8080, 8080, Ingress)))),
         null);
 
     CountDownLatch wait1 = new CountDownLatch(1);

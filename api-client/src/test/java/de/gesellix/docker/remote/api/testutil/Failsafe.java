@@ -6,7 +6,7 @@ public class Failsafe {
 
   public static void removeContainer(EngineApiClient engineApiClient, String container) {
     perform(() -> engineApiClient.getContainerApi().containerStop(container, 5));
-    perform(() -> engineApiClient.getContainerApi().containerWait(container, null));
+    perform(() -> engineApiClient.getContainerApi().containerWait(container));
     perform(() -> engineApiClient.getContainerApi().containerDelete(container, null, null, null));
   }
 
