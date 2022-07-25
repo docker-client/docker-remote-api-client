@@ -29,7 +29,7 @@ public class NetworkInterfaces {
   public List<String> getInet4Addresses() throws SocketException {
     List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
     return interfaces.stream()
-        .flatMap((i) -> getInet4Addresses(i))
+        .flatMap(NetworkInterfaces::getInet4Addresses)
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }
@@ -38,6 +38,6 @@ public class NetworkInterfaces {
     List<InetAddress> addresses = Collections.list(netint.getInetAddresses());
     return addresses.stream()
         .filter((it) -> it instanceof Inet4Address && !it.isLoopbackAddress())
-        .map((it) -> it.getHostAddress());
+        .map(InetAddress::getHostAddress);
   }
 }

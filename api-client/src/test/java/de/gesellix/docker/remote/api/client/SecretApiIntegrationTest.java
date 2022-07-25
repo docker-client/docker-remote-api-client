@@ -4,6 +4,7 @@ import de.gesellix.docker.remote.api.EngineApiClient;
 import de.gesellix.docker.remote.api.IdResponse;
 import de.gesellix.docker.remote.api.LocalNodeState;
 import de.gesellix.docker.remote.api.Secret;
+import de.gesellix.docker.remote.api.SecretCreateRequest;
 import de.gesellix.docker.remote.api.SecretSpec;
 import de.gesellix.docker.remote.api.testutil.DockerEngineAvailable;
 import de.gesellix.docker.remote.api.testutil.InjectDockerClient;
@@ -46,7 +47,7 @@ class SecretApiIntegrationTest {
     swarmUtil = new SwarmUtil(engineApiClient);
 
     String encoded = Base64.getEncoder().encodeToString("secret-data".getBytes());
-    defaultSecret = secretApi.secretCreate(new SecretSpec("secret-name", Collections.emptyMap(), encoded, null, null));
+    defaultSecret = secretApi.secretCreate(new SecretCreateRequest("secret-name", Collections.emptyMap(), encoded, null, null));
   }
 
   @AfterEach
@@ -59,7 +60,7 @@ class SecretApiIntegrationTest {
   @Test
   public void secretCreate() {
     String encoded = Base64.getEncoder().encodeToString("secret-data".getBytes());
-    IdResponse response = secretApi.secretCreate(new SecretSpec("my-secret", Collections.emptyMap(), encoded, null, null));
+    IdResponse response = secretApi.secretCreate(new SecretCreateRequest("my-secret", Collections.emptyMap(), encoded, null, null));
     assertTrue(response.getId().matches("\\w{5,}"));
 
     secretApi.secretDelete(response.getId());
@@ -68,7 +69,7 @@ class SecretApiIntegrationTest {
   @Test
   public void secretDelete() {
     String encoded = Base64.getEncoder().encodeToString("secret-data".getBytes());
-    IdResponse response = secretApi.secretCreate(new SecretSpec("my-secret", Collections.emptyMap(), encoded, null, null));
+    IdResponse response = secretApi.secretCreate(new SecretCreateRequest("my-secret", Collections.emptyMap(), encoded, null, null));
 
     assertDoesNotThrow(() -> secretApi.secretDelete(response.getId()));
   }

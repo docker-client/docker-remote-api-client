@@ -9,7 +9,6 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +17,7 @@ import java.nio.file.Files;
 public class TarUtil {
 
   public File unTar(File tarFile) throws IOException {
-    return unTar(new FileInputStream(tarFile));
+    return unTar(Files.newInputStream(tarFile.toPath()));
   }
 
   public File unTar(InputStream tar) throws IOException {
@@ -55,7 +54,7 @@ public class TarUtil {
     File tmpFile = new File(destDir, file.getName() + ".tar");
     tmpFile.deleteOnExit();
 
-    TarArchiveOutputStream tos = new TarArchiveOutputStream(new FileOutputStream(tmpFile));
+    TarArchiveOutputStream tos = new TarArchiveOutputStream(Files.newOutputStream(tmpFile.toPath()));
     ArchiveEntry archiveEntry = tos.createArchiveEntry(file, file.getName());
     tos.putArchiveEntry(archiveEntry);
     Sink sink = Okio.sink(tos);
@@ -66,6 +65,6 @@ public class TarUtil {
     tos.finish();
     tos.close();
 
-    return new FileInputStream(tmpFile);
+    return Files.newInputStream(tmpFile.toPath());
   }
 }
