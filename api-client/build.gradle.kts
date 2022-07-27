@@ -76,7 +76,7 @@ dependencies {
   testImplementation("ch.qos.logback:logback-classic:[1.2,2)!!1.2.11")
 
   testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
-  testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+  testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
   testRuntimeOnly("cglib:cglib-nodep:3.3.0")
   testImplementation("org.junit.platform:junit-platform-launcher:1.9.0")
