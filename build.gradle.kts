@@ -23,7 +23,7 @@ val dependencyVersions = listOf(
   "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10",
   "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4",
   "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.4",
-  "org.junit:junit-bom:5.9.0",
+  "org.junit:junit-bom:5.9.1",
   "org.junit.jupiter:junit-jupiter-api:5.9.0",
   "org.opentest4j:opentest4j:1.2.0"
 )
