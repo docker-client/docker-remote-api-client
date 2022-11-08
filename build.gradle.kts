@@ -9,7 +9,7 @@ plugins {
   id("net.ossindex.audit") version "0.4.11"
   id("io.freefair.maven-central.validate-poms") version "6.5.1"
   id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
-  id("org.jetbrains.kotlin.jvm") version "1.7.20" apply false
+  id("org.jetbrains.kotlin.jvm") version "1.7.21" apply false
 }
 
 val dependencyVersions = listOf(
