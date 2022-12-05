@@ -12,8 +12,9 @@ plugins {
 }
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_1_8
+  toolchain {
+    languageVersion.set(JavaLanguageVersion.of(8))
+  }
 }
 
 dependencies {
@@ -59,7 +60,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api") {
       version {
         strictly("[1.7,3)")
-        prefer("2.0.3")
+        prefer("2.0.5")
       }
     }
   }
@@ -87,8 +88,13 @@ dependencies {
   testImplementation("de.gesellix:docker-registry:2022-10-01T21-12-00")
 }
 
-tasks.withType(Test::class) {
-  useJUnitPlatform()
+tasks {
+  withType<JavaCompile> {
+    options.encoding = "UTF-8"
+  }
+  withType<Test> {
+    useJUnitPlatform()
+  }
 }
 
 val javadocJar by tasks.registering(Jar::class) {
