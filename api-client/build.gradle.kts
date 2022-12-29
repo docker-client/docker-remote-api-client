@@ -60,7 +60,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api") {
       version {
         strictly("[1.7,3)")
-        prefer("2.0.5")
+        prefer("2.0.6")
       }
     }
   }
@@ -74,7 +74,7 @@ dependencies {
   implementation("de.gesellix:docker-filesocket:2022-12-05T22-38-00")
 
   implementation("org.slf4j:slf4j-api:2.0.6")
-  testImplementation("ch.qos.logback:logback-classic:[1.2,2)!!1.3.3")
+  testImplementation("ch.qos.logback:logback-classic:[1.2,2)!!1.3.5")
 
   testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.1")
