@@ -44,17 +44,17 @@ dependencies {
     }
     implementation("de.gesellix:docker-remote-api-model-1-41") {
       version {
-        strictly("[2022-01-01T01-01-01,)")
+        strictly("[2022-12-01T01-01-01,)")
       }
     }
     implementation("de.gesellix:docker-engine") {
       version {
-        strictly("[2022-01-01T01-01-01,)")
+        strictly("[2022-12-01T01-01-01,)")
       }
     }
     implementation("de.gesellix:docker-filesocket") {
       version {
-        strictly("[2022-01-01T01-01-01,)")
+        strictly("[2022-12-01T01-01-01,)")
       }
     }
     implementation("org.slf4j:slf4j-api") {
@@ -71,20 +71,20 @@ dependencies {
 //  implementation("com.squareup.okhttp3:logging-interceptor:[4.9,5)!!4.10.0")
   implementation("de.gesellix:docker-remote-api-model-1-41:2022-12-05T22-47-00")
   implementation("de.gesellix:docker-engine:2022-12-05T23-21-00")
-  implementation("de.gesellix:docker-filesocket:2022-12-05T22-38-00")
+  implementation("de.gesellix:docker-filesocket:2023-01-10T21-53-00")
 
   implementation("org.slf4j:slf4j-api:2.0.6")
   testImplementation("ch.qos.logback:logback-classic:[1.2,2)!!1.3.5")
 
   testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
-  testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.1")
+  testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
   testRuntimeOnly("cglib:cglib-nodep:3.3.0")
-  testImplementation("org.junit.platform:junit-platform-launcher:1.9.1")
+  testImplementation("org.junit.platform:junit-platform-launcher:1.9.2")
   testImplementation("org.junit.platform:junit-platform-commons:1.9.1")
 
   testImplementation("org.apache.commons:commons-compress:1.22")
-  testImplementation("de.gesellix:testutil:[2021-08-05T22-09-32,)")
+  testImplementation("de.gesellix:testutil:[2022-12-01T01-01-01,)")
   testImplementation("de.gesellix:docker-registry:2022-12-06T00-21-00")
 }
 
