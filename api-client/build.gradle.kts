@@ -44,17 +44,17 @@ dependencies {
     }
     implementation("de.gesellix:docker-remote-api-model-1-41") {
       version {
-        strictly("[2022-01-01T01-01-01,)")
+        strictly("[2022-12-01T01-01-01,)")
       }
     }
     implementation("de.gesellix:docker-engine") {
       version {
-        strictly("[2022-01-01T01-01-01,)")
+        strictly("[2022-12-01T01-01-01,)")
       }
     }
     implementation("de.gesellix:docker-filesocket") {
       version {
-        strictly("[2022-01-01T01-01-01,)")
+        strictly("[2022-12-01T01-01-01,)")
       }
     }
     implementation("org.slf4j:slf4j-api") {
@@ -84,7 +84,7 @@ dependencies {
   testImplementation("org.junit.platform:junit-platform-commons:1.9.1")
 
   testImplementation("org.apache.commons:commons-compress:1.22")
-  testImplementation("de.gesellix:testutil:[2021-08-05T22-09-32,)")
+  testImplementation("de.gesellix:testutil:[2022-12-01T01-01-01,)")
   testImplementation("de.gesellix:docker-registry:2022-12-06T00-21-00")
 }
 
