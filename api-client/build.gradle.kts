@@ -64,7 +64,7 @@ dependencies {
       }
     }
   }
-  implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.22")
+  implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
   implementation("com.squareup.moshi:moshi:1.14.0")
   implementation("com.squareup.okhttp3:okhttp:4.10.0")
