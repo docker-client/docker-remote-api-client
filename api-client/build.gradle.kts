@@ -69,7 +69,7 @@ dependencies {
   implementation("com.squareup.moshi:moshi:1.14.0")
   implementation("com.squareup.okhttp3:okhttp:4.10.0")
 //  implementation("com.squareup.okhttp3:logging-interceptor:[4.9,5)!!4.10.0")
-  implementation("de.gesellix:docker-remote-api-model-1-41:2022-12-05T22-47-00")
+  implementation("de.gesellix:docker-remote-api-model-1-41:2023-01-10T23-23-00")
   implementation("de.gesellix:docker-engine:2022-12-05T23-21-00")
   implementation("de.gesellix:docker-filesocket:2023-01-10T21-53-00")
 
