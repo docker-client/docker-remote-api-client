@@ -71,7 +71,7 @@ dependencies {
 //  implementation("com.squareup.okhttp3:logging-interceptor:[4.9,5)!!4.10.0")
   implementation("de.gesellix:docker-remote-api-model-1-41:2023-01-10T23-23-00")
   implementation("de.gesellix:docker-engine:2023-01-11T07-55-00")
-  implementation("de.gesellix:docker-filesocket:2023-01-10T21-53-00")
+  implementation("de.gesellix:docker-filesocket:2023-03-13T00-10-00")
 
   implementation("org.slf4j:slf4j-api:2.0.6")
   testImplementation("ch.qos.logback:logback-classic:[1.2,2)!!1.3.5")
