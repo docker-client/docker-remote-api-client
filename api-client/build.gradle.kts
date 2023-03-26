@@ -74,7 +74,7 @@ dependencies {
   implementation("de.gesellix:docker-filesocket:2023-03-13T00-10-00")
 
   implementation("org.slf4j:slf4j-api:2.0.7")
-  testImplementation("ch.qos.logback:logback-classic:[1.2,2)!!1.3.5")
+  testImplementation("ch.qos.logback:logback-classic:[1.2,2)!!1.3.6")
 
   testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
