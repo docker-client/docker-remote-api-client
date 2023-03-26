@@ -83,7 +83,7 @@ dependencies {
   testImplementation("org.junit.platform:junit-platform-launcher:1.9.2")
   testImplementation("org.junit.platform:junit-platform-commons:1.9.2")
 
-  testImplementation("org.apache.commons:commons-compress:1.22")
+  testImplementation("org.apache.commons:commons-compress:1.23.0")
   testImplementation("de.gesellix:testutil:[2022-12-01T01-01-01,)")
   testImplementation("de.gesellix:docker-registry:2023-03-12T23-42-00")
 }
