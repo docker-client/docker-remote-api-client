@@ -30,7 +30,7 @@ val dependencyVersions = listOf(
 )
 
 val dependencyVersionsByGroup = mapOf(
-  "org.junit.platform" to "1.9.1"
+  "org.junit.platform" to "1.9.3"
 )
 
 subprojects {
