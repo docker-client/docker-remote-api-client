@@ -85,7 +85,7 @@ dependencies {
 
   testImplementation("org.apache.commons:commons-compress:1.23.0")
   testImplementation("de.gesellix:testutil:[2022-12-01T01-01-01,)")
-  testImplementation("de.gesellix:docker-registry:2023-04-05T20-06-00")
+  testImplementation("de.gesellix:docker-registry:2023-05-01T14-06-00")
 }
 
 tasks {
