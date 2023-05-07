@@ -62,6 +62,9 @@ inline fun ResponseBody?.consumeFrames(mediaType: String?, expectMultiplexedResp
     return emptyFlow()
   }
   when (mediaType) {
+    // TODO since api v1.42 we should be able to use the media-type instead of the 'expectMultiplexedResponse' flag
+    // see https://docs.docker.com/engine/api/version-history/#v142-api-changes
+    "application/vnd.docker.multiplexed-stream",
     "application/vnd.docker.raw-stream" -> {
       val reader = FrameReader(source(), expectMultiplexedResponse)
       val events = flow {
