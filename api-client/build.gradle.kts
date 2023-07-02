@@ -22,7 +22,7 @@ dependencies {
     implementation("com.squareup.moshi:moshi") {
       version {
         strictly("[1.12.0,2)")
-        prefer("1.14.0")
+        prefer("1.15.0")
       }
     }
     listOf(
@@ -74,7 +74,7 @@ dependencies {
   implementation("de.gesellix:docker-filesocket:2023-05-01T14-07-00")
 
   implementation("org.slf4j:slf4j-api:2.0.7")
-  testImplementation("ch.qos.logback:logback-classic:[1.2,2)!!1.3.6")
+  testImplementation("ch.qos.logback:logback-classic:[1.2,2)!!1.3.8")
 
   testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
@@ -84,7 +84,7 @@ dependencies {
   testImplementation("org.junit.platform:junit-platform-commons:1.9.3")
 
   testImplementation("org.apache.commons:commons-compress:1.23.0")
-  testImplementation("de.gesellix:testutil:[2022-12-01T01-01-01,)")
+  testImplementation("de.gesellix:testutil:[2023-07-01T01-01-01,)")
   testImplementation("de.gesellix:docker-registry:2023-05-01T14-06-00")
 }
 
