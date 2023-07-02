@@ -16,7 +16,7 @@ public class TestImage {
 
     this.useWindowsContainer = Objects.requireNonNull(engineApiClient.getSystemApi().systemVersion().getOs()).equalsIgnoreCase("windows");
     this.repository = "gesellix/echo-server";
-    this.tag = "2023-04-05T20-08-00";
+    this.tag = "2023-07-02T12-00-00";
 
     // TODO consider NOT calling prepare inside the constructor
     prepare();
