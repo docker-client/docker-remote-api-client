@@ -32,7 +32,7 @@ dependencies {
       implementation(it) {
         version {
           strictly("[3,4)")
-          prefer("3.3.0")
+          prefer("3.4.0")
         }
       }
     }
@@ -44,17 +44,17 @@ dependencies {
     }
     implementation("de.gesellix:docker-remote-api-model-1-41") {
       version {
-        strictly("[2023-04-01T01-01-01,)")
+        strictly("[2023-07-01T01-01-01,)")
       }
     }
     implementation("de.gesellix:docker-engine") {
       version {
-        strictly("[2023-04-01T01-01-01,)")
+        strictly("[2023-07-01T01-01-01,)")
       }
     }
     implementation("de.gesellix:docker-filesocket") {
       version {
-        strictly("[2023-04-01T01-01-01,)")
+        strictly("[2023-07-01T01-01-01,)")
       }
     }
     implementation("org.slf4j:slf4j-api") {
