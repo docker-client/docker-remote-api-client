@@ -142,7 +142,7 @@ class SystemApiIntegrationTest {
   public void systemVersion() {
     SystemVersion systemVersion = systemApi.systemVersion();
     // will break on CI or in other environments - TODO fixme
-    assertEquals("1.41", systemVersion.getApiVersion());
+    assertEquals("1.42", systemVersion.getApiVersion());
   }
 
   static class SystemEventsCallback implements StreamCallback<EventMessage> {
