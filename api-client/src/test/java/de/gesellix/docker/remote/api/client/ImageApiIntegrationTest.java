@@ -33,11 +33,11 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -174,7 +174,7 @@ class ImageApiIntegrationTest {
     InputStream tarFile = imageApi.imageGet(testImage.getImageWithTag());
     File destDir = new TarUtil().unTar(tarFile);
     File rootLayerTar = new ManifestUtil().getRootLayerLocation(destDir);
-    try (InputStream source = new FileInputStream(rootLayerTar)) {
+    try (InputStream source = Files.newInputStream(rootLayerTar.toPath())) {
       assertDoesNotThrow(() -> imageApi.imageCreate(null, "-", "test", "from-stream", null, null, singletonList(String.format("LABEL %1$s=\"%2$s\"", LABEL_KEY, LABEL_VALUE)), null, source));
     }
     imageApi.imageDelete("test:from-stream", null, null);
@@ -213,7 +213,7 @@ class ImageApiIntegrationTest {
   @Test
   public void imageList() {
     List<ImageSummary> images = imageApi.imageList(null, null, null);
-    assertEquals(1, images.stream().filter((i) -> i.getRepoTags() != null && i.getRepoTags().stream().filter((t) -> t.equals(testImage.getImageWithTag())).count() > 0).count());
+    assertEquals(1, images.stream().filter((i) -> i.getRepoTags() != null && i.getRepoTags().stream().anyMatch((t) -> t.equals(testImage.getImageWithTag()))).count());
   }
 
   @Test
