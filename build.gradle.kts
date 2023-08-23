@@ -17,7 +17,7 @@ val dependencyVersions = listOf(
   "org.apiguardian:apiguardian-api:1.1.2",
   "org.jetbrains:annotations:24.0.1",
   "org.jetbrains.kotlin:kotlin-reflect:1.9.0",
-  "org.jetbrains.kotlin:kotlin-scripting-jvm:1.9.0",
+  "org.jetbrains.kotlin:kotlin-scripting-jvm:1.9.10",
   "org.jetbrains.kotlin:kotlin-stdlib:1.9.0",
   "org.jetbrains.kotlin:kotlin-stdlib-common:1.9.0",
   "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.0",
