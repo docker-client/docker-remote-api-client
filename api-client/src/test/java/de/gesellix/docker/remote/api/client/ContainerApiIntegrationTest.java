@@ -666,17 +666,20 @@ class ContainerApiIntegrationTest {
 
     ContainerTopResponse processes = containerApi.containerTop("container-top-test", null);
     final String processTitle;
-    log.info("Process titles: " + processes.getTitles());
-    log.info("Processes: " + processes.getProcesses());
     if (processes.getTitles().contains("CMD")) {
       // Linux, macOS
       processTitle = "CMD";
-    }
-    else {
+    } else if (processes.getTitles().contains("COMMAND")) {
+      // macOS
+      processTitle = "COMMAND";
+    } else {
       // Windows
       processTitle = "Name";
     }
-    List<List<String>> mainProcesses = processes.getProcesses().stream().filter((p) -> p.get(processes.getTitles().indexOf(processTitle)).contains("main")).collect(Collectors.toList());
+    List<List<String>> mainProcesses = processes.getProcesses()
+        .stream()
+        .filter((p) -> p.get(processes.getTitles().indexOf(processTitle)).contains("main"))
+        .collect(Collectors.toList());
 
     assertEquals(1, mainProcesses.size());
 
