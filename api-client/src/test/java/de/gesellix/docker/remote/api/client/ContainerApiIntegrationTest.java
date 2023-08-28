@@ -666,6 +666,8 @@ class ContainerApiIntegrationTest {
 
     ContainerTopResponse processes = containerApi.containerTop("container-top-test", null);
     final String processTitle;
+    log.info("Process titles: " + processes.getTitles());
+    log.info("Processes: " + processes.getProcesses());
     if (processes.getTitles().contains("CMD")) {
       // Linux, macOS
       processTitle = "CMD";
