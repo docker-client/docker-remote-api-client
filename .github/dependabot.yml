@@ -16,6 +16,7 @@ updates:
         patterns:
           - "com.google.devtools.ksp"
           - "org.jetbrains.kotlin:*"
+          - "org.jetbrains.kotlin.jvm"
       moshi:
         patterns:
           - "com.squareup.moshi:*"
