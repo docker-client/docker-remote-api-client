@@ -42,20 +42,20 @@ class VolumeApiIntegrationTest {
 
   @Test
   public void volumeCreate() {
-    Volume volume = volumeApi.volumeCreate(new VolumeCreateOptions("my-volume", null, Collections.emptyMap(), Collections.emptyMap()));
+    Volume volume = volumeApi.volumeCreate(new VolumeCreateOptions("my-volume", null, Collections.emptyMap(), Collections.emptyMap(), null));
     assertTrue(volume.getMountpoint().endsWith(fileSeparator + "my-volume" + fileSeparator + "_data"));
     volumeApi.volumeDelete(volume.getName(), false);
   }
 
   @Test
   public void volumeDelete() {
-    Volume volume = volumeApi.volumeCreate(new VolumeCreateOptions("my-volume", null, Collections.emptyMap(), Collections.emptyMap()));
+    Volume volume = volumeApi.volumeCreate(new VolumeCreateOptions("my-volume", null, Collections.emptyMap(), Collections.emptyMap(), null));
     assertDoesNotThrow(() -> volumeApi.volumeDelete(volume.getName(), false));
   }
 
   @Test
   public void volumeInspect() {
-    volumeApi.volumeCreate(new VolumeCreateOptions("my-volume", null, Collections.emptyMap(), Collections.emptyMap()));
+    volumeApi.volumeCreate(new VolumeCreateOptions("my-volume", null, Collections.emptyMap(), Collections.emptyMap(), null));
     Volume volume = volumeApi.volumeInspect("my-volume");
     assertTrue(volume.getMountpoint().endsWith(fileSeparator + "my-volume" + fileSeparator + "_data"));
     volumeApi.volumeDelete(volume.getName(), false);
@@ -63,9 +63,9 @@ class VolumeApiIntegrationTest {
 
   @Test
   public void volumeList() {
-    Volume volume = volumeApi.volumeCreate(new VolumeCreateOptions("my-volume", null, Collections.emptyMap(), Collections.emptyMap()));
+    Volume volume = volumeApi.volumeCreate(new VolumeCreateOptions("my-volume", null, Collections.emptyMap(), Collections.emptyMap(), null));
     Optional<Volume> myVolume = volumeApi.volumeList(null).getVolumes().stream().filter((v) -> v.getName().equals(volume.getName())).findFirst();
-    assertEquals(volume.getMountpoint(), myVolume.orElse(new Volume("none", "none", "none", Collections.emptyMap(), "none", Collections.emptyMap(), Collections.emptyMap(), Volume.Scope.Local, null)).getMountpoint());
+    assertEquals(volume.getMountpoint(), myVolume.orElse(new Volume("none", "none", "none", Collections.emptyMap(), "none", Collections.emptyMap(), Collections.emptyMap(), Volume.Scope.Local, null, null)).getMountpoint());
     volumeApi.volumeDelete(volume.getName(), false);
   }
 
@@ -75,7 +75,7 @@ class VolumeApiIntegrationTest {
     filter.put("label", Collections.singletonList(LABEL_KEY));
     String filterJson = new Moshi.Builder().build().adapter(Map.class).toJson(filter);
 
-    Volume volume = volumeApi.volumeCreate(new VolumeCreateOptions("my-volume", null, Collections.emptyMap(), Collections.singletonMap(LABEL_KEY, LABEL_VALUE)));
+    Volume volume = volumeApi.volumeCreate(new VolumeCreateOptions("my-volume", null, Collections.emptyMap(), Collections.singletonMap(LABEL_KEY, LABEL_VALUE), null));
     VolumePruneResponse pruneResponse = volumeApi.volumePrune(filterJson);
     assertTrue(Objects.requireNonNull(pruneResponse.getVolumesDeleted()).stream().allMatch((v) -> v.equals(volume.getName())));
   }
