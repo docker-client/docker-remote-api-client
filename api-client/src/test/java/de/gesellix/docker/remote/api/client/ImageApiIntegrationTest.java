@@ -1,6 +1,42 @@
 package de.gesellix.docker.remote.api.client;
 
+import static de.gesellix.docker.remote.api.testutil.Constants.LABEL_KEY;
+import static de.gesellix.docker.remote.api.testutil.Constants.LABEL_VALUE;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.squareup.moshi.Moshi;
+
 import de.gesellix.docker.builder.BuildContextBuilder;
 import de.gesellix.docker.registry.DockerRegistry;
 import de.gesellix.docker.remote.api.BuildInfo;
@@ -25,40 +61,6 @@ import de.gesellix.docker.remote.api.testutil.TarUtil;
 import de.gesellix.docker.remote.api.testutil.TestImage;
 import de.gesellix.testutil.ResourceReader;
 import okio.Okio;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetSocketAddress;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import static de.gesellix.docker.remote.api.testutil.Constants.LABEL_KEY;
-import static de.gesellix.docker.remote.api.testutil.Constants.LABEL_VALUE;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static java.util.Collections.singletonMap;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DockerEngineAvailable
 class ImageApiIntegrationTest {
@@ -115,14 +117,13 @@ class ImageApiIntegrationTest {
       }
     };
     assertDoesNotThrow(() -> imageApi.imageBuild(Paths.get(dockerfile).getFileName().toString(), "test:build", null, null, null, null, null, null,
-                                                 null, null, null, null, null, null, null,
-                                                 null, null, null, null, null, null, null,
-                                                 null, null, null, null, buildContext,
-                                                 callback, timeout.toMillis()));
+        null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null,
+        null, null, null, null, buildContext,
+        callback, timeout.toMillis()));
     try {
       latch.await(2, TimeUnit.MINUTES);
-    }
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       log.error("Wait interrupted", e);
     }
 
@@ -260,9 +261,11 @@ class ImageApiIntegrationTest {
     assertDoesNotThrow(() -> imageApi.imageLoad(false, tarFile));
 
     List<String> actualRepoDigests = imageApi.imageInspect("test:load-image").getRepoDigests();
-    assertEquals(originalRepoDigests, actualRepoDigests);
-
-    imageApi.imageDelete("test:load-image", null, null);
+    try {
+      assertEquals(originalRepoDigests, actualRepoDigests);
+    } finally {
+      imageApi.imageDelete("test:load-image", null, null);
+    }
   }
 
   @Test
