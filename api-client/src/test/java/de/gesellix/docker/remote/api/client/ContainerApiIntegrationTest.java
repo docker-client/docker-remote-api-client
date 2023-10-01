@@ -225,12 +225,12 @@ class ContainerApiIntegrationTest {
     containerApi.containerStart("container-archive-info-test", null);
     IdResponse containerExec = engineApiClient.getExecApi().containerExec(
         "container-archive-info-test",
-        new ExecConfig(null, null, null, null, null, null,
+        new ExecConfig(null, null, null, null, null, null, null,
                        execCmd,
                        null, null, null));
     engineApiClient.getExecApi().execStart(
         containerExec.getId(),
-        new ExecStartConfig(null, null));
+        new ExecStartConfig(null, null, null));
 
     // filesystem operations against a running Hyper-V container are not supported,
     // so we stop the container before using the archive container api

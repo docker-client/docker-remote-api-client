@@ -16,7 +16,6 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import de.gesellix.docker.engine.DockerClientConfig
 import de.gesellix.docker.engine.RequestMethod.*
-import de.gesellix.docker.remote.api.ContainerChangeResponseItem
 import de.gesellix.docker.remote.api.ContainerCreateRequest
 import de.gesellix.docker.remote.api.ContainerCreateResponse
 import de.gesellix.docker.remote.api.ContainerInspectResponse
@@ -26,6 +25,7 @@ import de.gesellix.docker.remote.api.ContainerTopResponse
 import de.gesellix.docker.remote.api.ContainerUpdateRequest
 import de.gesellix.docker.remote.api.ContainerUpdateResponse
 import de.gesellix.docker.remote.api.ContainerWaitResponse
+import de.gesellix.docker.remote.api.FilesystemChange
 import de.gesellix.docker.remote.api.core.ApiClient
 import de.gesellix.docker.remote.api.core.ClientError
 import de.gesellix.docker.remote.api.core.ClientException
@@ -400,15 +400,15 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
    * @throws ServerException If the API returns a server error response
    */
   @Throws(UnsupportedOperationException::class, ClientException::class, ServerException::class)
-  fun containerChanges(id: String): List<ContainerChangeResponseItem> {
+  fun containerChanges(id: String): List<FilesystemChange> {
     val localVariableConfig = containerChangesRequestConfig(id = id)
 
-    val localVarResponse = request<List<ContainerChangeResponseItem>>(
+    val localVarResponse = request<List<FilesystemChange>>(
       localVariableConfig
     )
 
     return when (localVarResponse.responseType) {
-      ResponseType.Success -> (localVarResponse as Success<*>).data as List<ContainerChangeResponseItem>
+      ResponseType.Success -> (localVarResponse as Success<*>).data as List<FilesystemChange>
       ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
       ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
       ResponseType.ClientError -> {
@@ -439,7 +439,7 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
       query = localVariableQuery,
       headers = localVariableHeaders,
       body = localVariableBody,
-      elementType = ContainerChangeResponseItem::class.java
+      elementType = FilesystemChange::class.java
     )
   }
 

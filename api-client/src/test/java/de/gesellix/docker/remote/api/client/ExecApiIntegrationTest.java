@@ -68,13 +68,13 @@ class ExecApiIntegrationTest {
 
     IdResponse exec = execApi.containerExec(
         "container-exec-test",
-        new ExecConfig(null, true, true, null, null,
+        new ExecConfig(null, true, true, null, null, null,
                        null,
                        asList("echo", "'aus dem Wald'"),
                        null, null, null));
     assertNotNull(exec.getId());
 
-    execApi.execStart(exec.getId(), new ExecStartConfig(false, null));
+    execApi.execStart(exec.getId(), new ExecStartConfig(false, null, null));
 
     ExecInspectResponse execInspect = execApi.execInspect(exec.getId());
     assertFalse(execInspect.getRunning());
