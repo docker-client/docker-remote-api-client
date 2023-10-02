@@ -84,7 +84,7 @@ dependencies {
   testImplementation("org.junit.platform:junit-platform-commons:1.10.0")
 
   testImplementation("org.apache.commons:commons-compress:1.24.0")
-  testImplementation("de.gesellix:testutil:[2023-09-30T01-01-01,)")
+  testImplementation("de.gesellix:testutil:[2023-08-30T01-01-01,)")
   testImplementation("de.gesellix:docker-registry:2023-08-15T22-14-00")
 }
 
