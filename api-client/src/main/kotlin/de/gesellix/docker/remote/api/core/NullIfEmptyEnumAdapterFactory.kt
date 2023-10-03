@@ -11,9 +11,9 @@ import java.lang.reflect.Type
 class NullIfEmptyEnumAdapterFactory : JsonAdapter.Factory {
 
   override fun create(
-    type: Type,
-    annotations: MutableSet<out Annotation>,
-    moshi: Moshi
+      type: Type,
+      annotations: MutableSet<out Annotation>,
+      moshi: Moshi
   ): JsonAdapter<*>? {
 //    if (!Types.getRawType(type).isAnnotationPresent(
 //        DefaultIfEmpty::class.java)) {
@@ -27,12 +27,29 @@ class NullIfEmptyEnumAdapterFactory : JsonAdapter.Factory {
 
     return object : JsonAdapter<Any>() {
       override fun fromJson(reader: JsonReader): Any? {
-//        @Suppress("UNCHECKED_CAST")
-        val blob = reader.readJsonValue() as String?
-//        val blob = reader.readJsonValue() as Map<String, Any?>
-        val nullOrValue = when {
-          (blob.isNullOrEmpty()) -> null
-          else -> blob
+        val nullOrValue = when (val peek = reader.peek()) {
+          JsonReader.Token.NULL -> null
+
+          JsonReader.Token.STRING -> {
+            val value = reader.readJsonValue() as String
+            when {
+              value.isEmpty() -> null
+              else -> value
+            }
+          }
+
+          JsonReader.Token.NUMBER -> {
+            val value = reader.readJsonValue() as Double
+            when {
+              value.toInt().compareTo(value) == 0 -> value.toInt().toString()
+              value.toLong().compareTo(value) == 0 -> value.toLong().toString()
+              else -> value
+            }
+          }
+
+          JsonReader.Token.BOOLEAN -> reader.readJsonValue() as Boolean
+
+          else -> throw IllegalArgumentException("Token type not supported: $peek")
         }
         return delegate.fromJsonValue(nullOrValue)
       }
