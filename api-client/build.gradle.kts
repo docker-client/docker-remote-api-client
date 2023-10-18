@@ -39,7 +39,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp") {
       version {
         strictly("[4.9,5)")
-        prefer("4.11.0")
+        prefer("4.12.0")
       }
     }
     implementation("de.gesellix:docker-remote-api-model-1-41") {
