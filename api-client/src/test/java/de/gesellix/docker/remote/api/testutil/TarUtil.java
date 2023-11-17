@@ -3,7 +3,6 @@ package de.gesellix.docker.remote.api.testutil;
 import okio.BufferedSink;
 import okio.Okio;
 import okio.Sink;
-import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -55,7 +54,7 @@ public class TarUtil {
     tmpFile.deleteOnExit();
 
     TarArchiveOutputStream tos = new TarArchiveOutputStream(Files.newOutputStream(tmpFile.toPath()));
-    ArchiveEntry archiveEntry = tos.createArchiveEntry(file, file.getName());
+    TarArchiveEntry archiveEntry = tos.createArchiveEntry(file, file.getName());
     tos.putArchiveEntry(archiveEntry);
     Sink sink = Okio.sink(tos);
     Okio.buffer(Okio.source(file)).readAll(sink);
