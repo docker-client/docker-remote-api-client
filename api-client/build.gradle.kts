@@ -66,7 +66,7 @@ dependencies {
   }
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-  implementation("com.squareup.moshi:moshi:1.15.0")
+  implementation("com.squareup.moshi:moshi:1.15.1")
   implementation("com.squareup.okhttp3:okhttp:4.12.0")
 //  implementation("com.squareup.okhttp3:logging-interceptor:[4.9,5)!!4.11.0")
   implementation("de.gesellix:docker-remote-api-model-1-41:2024-01-13T21-55-00")
