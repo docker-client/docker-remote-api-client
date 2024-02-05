@@ -81,7 +81,7 @@ dependencies {
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
   testRuntimeOnly("cglib:cglib-nodep:3.3.0")
   testImplementation("org.junit.platform:junit-platform-launcher:1.10.1")
-  testImplementation("org.junit.platform:junit-platform-commons:1.10.1")
+  testImplementation("org.junit.platform:junit-platform-commons:1.10.2")
 
   testImplementation("org.apache.commons:commons-compress:1.25.0")
   testImplementation("de.gesellix:testutil:[2024-01-01T01-01-01,)")
