@@ -78,7 +78,7 @@ dependencies {
 
   testImplementation("io.kotest:kotest-runner-junit5-jvm:5.8.0")
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
-  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
+  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
   testRuntimeOnly("cglib:cglib-nodep:3.3.0")
   testImplementation("org.junit.platform:junit-platform-launcher:1.10.1")
   testImplementation("org.junit.platform:junit-platform-commons:1.10.1")
