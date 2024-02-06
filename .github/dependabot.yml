@@ -14,6 +14,7 @@ updates:
       # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#groups
       junit:
         patterns:
+          - "org.junit:*"
           - "org.junit.jupiter:*"
           - "org.junit.platform:*"
       kotlin:
