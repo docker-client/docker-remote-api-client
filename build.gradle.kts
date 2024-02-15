@@ -23,7 +23,7 @@ val dependencyVersions = listOf(
   "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.22",
   "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22",
   "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3",
-  "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.3",
+  "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0",
   "org.jetbrains.kotlinx:kotlinx-coroutines-debug:1.7.3",
   "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.7.3",
   "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3",
