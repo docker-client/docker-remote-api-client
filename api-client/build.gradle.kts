@@ -83,7 +83,7 @@ dependencies {
   testImplementation("org.junit.platform:junit-platform-launcher:1.10.2")
   testImplementation("org.junit.platform:junit-platform-commons:1.10.2")
 
-  testImplementation("org.apache.commons:commons-compress:1.26.0")
+  testImplementation("org.apache.commons:commons-compress:1.26.1")
   // declared as optional by commons-compress-1.26, but we need it for org.apache.commons.compress.archivers.tar.TarArchiveOutputStream
   implementation("commons-codec:commons-codec:1.16.1")
   testImplementation("de.gesellix:testutil:[2024-01-01T01-01-01,)")
