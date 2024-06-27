@@ -77,11 +77,11 @@ dependencies {
   testImplementation("ch.qos.logback:logback-classic:[1.2,2)!!1.3.14")
 
   testImplementation("io.kotest:kotest-runner-junit5-jvm:5.9.1")
-  testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
-  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+  testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.3")
+  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.3")
   testRuntimeOnly("cglib:cglib-nodep:3.3.0")
-  testImplementation("org.junit.platform:junit-platform-launcher:1.10.2")
-  testImplementation("org.junit.platform:junit-platform-commons:1.10.2")
+  testImplementation("org.junit.platform:junit-platform-launcher:1.10.3")
+  testImplementation("org.junit.platform:junit-platform-commons:1.10.3")
 
   testImplementation("org.apache.commons:commons-compress:1.26.2")
   testImplementation("de.gesellix:testutil:[2024-01-01T01-01-01,)")
