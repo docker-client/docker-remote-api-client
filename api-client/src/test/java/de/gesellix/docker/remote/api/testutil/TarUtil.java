@@ -3,6 +3,7 @@ package de.gesellix.docker.remote.api.testutil;
 import okio.BufferedSink;
 import okio.Okio;
 import okio.Sink;
+
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -27,6 +28,9 @@ public class TarUtil {
     TarArchiveEntry tarEntry;
     while ((tarEntry = tis.getNextEntry()) != null) {
       File outputFile = new File(destDir, tarEntry.getName());
+      if (!outputFile.toPath().normalize().startsWith(destDir.toPath())) {
+        throw new RuntimeException("Bad zip entry");
+      }
       if (tarEntry.isDirectory()) {
         if (!outputFile.exists()) {
           outputFile.mkdirs();
