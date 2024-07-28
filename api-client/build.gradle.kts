@@ -44,17 +44,17 @@ dependencies {
     }
     implementation("de.gesellix:docker-remote-api-model-1-41") {
       version {
-        strictly("[2023-10-01T01-01-01,)")
+        strictly("[2024-01-01T01-01-01,)")
       }
     }
     implementation("de.gesellix:docker-engine") {
       version {
-        strictly("[2023-10-01T01-01-01,)")
+        strictly("[2024-01-01T01-01-01,)")
       }
     }
     implementation("de.gesellix:docker-filesocket") {
       version {
-        strictly("[2023-09-30T01-01-01,)")
+        strictly("[2024-01-01T01-01-01,)")
       }
     }
     implementation("org.slf4j:slf4j-api") {

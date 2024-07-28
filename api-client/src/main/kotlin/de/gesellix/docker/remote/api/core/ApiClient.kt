@@ -136,7 +136,7 @@ open class ApiClient(
     return requestStream(request, client)
   }
 
-  protected inline fun requestFrames(requestConfig: RequestConfig, expectMultiplexedResponse: Boolean = false): ApiInfrastructureResponse<Frame> {
+  protected fun requestFrames(requestConfig: RequestConfig, expectMultiplexedResponse: Boolean = false): ApiInfrastructureResponse<Frame> {
     val engineRequest = EngineRequest(requestConfig.method, requestConfig.path).also {
       it.headers = requestConfig.headers
       it.query = requestConfig.query
@@ -302,7 +302,7 @@ open class ApiClient(
     }
   }
 
-  protected inline fun requestFrames(request: Request, client: OkHttpClient, expectMultiplexedResponse: Boolean = false): ApiInfrastructureResponse<Frame> {
+  protected fun requestFrames(request: Request, client: OkHttpClient, expectMultiplexedResponse: Boolean = false): ApiInfrastructureResponse<Frame> {
     val response = client.newCall(request).execute()
     val mediaType = response.header(ContentType)?.substringBefore(";")?.lowercase(Locale.getDefault())
 

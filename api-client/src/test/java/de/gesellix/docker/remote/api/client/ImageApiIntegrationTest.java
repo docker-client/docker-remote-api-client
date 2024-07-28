@@ -65,7 +65,7 @@ import okio.Okio;
 @DockerEngineAvailable
 class ImageApiIntegrationTest {
 
-  private static Logger log = LoggerFactory.getLogger(ImageApiIntegrationTest.class);
+  private static final Logger log = LoggerFactory.getLogger(ImageApiIntegrationTest.class);
 
   @InjectDockerClient
   private EngineApiClient engineApiClient;
