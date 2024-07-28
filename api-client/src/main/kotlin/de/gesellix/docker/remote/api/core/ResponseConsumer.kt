@@ -57,7 +57,7 @@ inline fun <reified T : Any?> ResponseBody?.consumeStream(mediaType: String?): F
   }
 }
 
-inline fun ResponseBody?.consumeFrames(mediaType: String?, expectMultiplexedResponse: Boolean = false): Flow<Frame> {
+fun ResponseBody?.consumeFrames(mediaType: String?, expectMultiplexedResponse: Boolean = false): Flow<Frame> {
   if (this == null) {
     return emptyFlow()
   }
