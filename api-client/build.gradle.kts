@@ -73,7 +73,7 @@ dependencies {
   implementation("de.gesellix:docker-engine:2024-07-28T18-40-00")
   implementation("de.gesellix:docker-filesocket:2024-07-23T22-35-00")
 
-  implementation("org.slf4j:slf4j-api:2.0.13")
+  implementation("org.slf4j:slf4j-api:2.0.16")
   testImplementation("ch.qos.logback:logback-classic:[1.2,2)!!1.3.14")
 
   testImplementation("io.kotest:kotest-runner-junit5-jvm:5.9.1")
