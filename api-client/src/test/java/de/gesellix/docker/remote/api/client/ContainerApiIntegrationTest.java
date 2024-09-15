@@ -205,6 +205,7 @@ class ContainerApiIntegrationTest {
         null,
         null
     );
+    removeContainer(engineApiClient, "container-archive-info-test");
     containerApi.containerCreate(containerCreateRequest, "container-archive-info-test");
 
     // filesystem operations against a running Hyper-V container are not supported,

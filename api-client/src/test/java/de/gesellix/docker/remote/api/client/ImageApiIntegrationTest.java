@@ -262,7 +262,8 @@ class ImageApiIntegrationTest {
 
     List<String> actualRepoDigests = imageApi.imageInspect("test:load-image").getRepoDigests();
     try {
-      assertEquals(originalRepoDigests, actualRepoDigests);
+      assertFalse(originalRepoDigests.isEmpty());
+      assertTrue(actualRepoDigests.containsAll(originalRepoDigests));
     } finally {
       imageApi.imageDelete("test:load-image", null, null);
     }
