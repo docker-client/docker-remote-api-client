@@ -54,7 +54,8 @@ class NetworkApiIntegrationTest {
     List<Network> networks = networkApi.networkList(null);
     assertFalse(networks.isEmpty());
     Network firstNetwork = networks.get(0);
-    assertTrue(firstNetwork.getName().matches("\\w+"));
+    // is "WSL (Hyper-V firewall)" when running with WCOW
+    assertTrue(firstNetwork.getName().matches("\\w+") || firstNetwork.getName().startsWith("WSL "));
   }
 
   @Test
