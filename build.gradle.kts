@@ -9,7 +9,7 @@ plugins {
   id("net.ossindex.audit") version "0.4.11"
   id("io.freefair.maven-central.validate-poms") version "8.10"
   id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
-  id("org.jetbrains.kotlin.jvm") version "1.9.23" apply false
+  id("org.jetbrains.kotlin.jvm") version "1.9.25" apply false
 }
 
 val dependencyVersions = listOf(
@@ -17,12 +17,12 @@ val dependencyVersions = listOf(
   "org.apache.commons:commons-compress:1.27.1",
   "org.apiguardian:apiguardian-api:1.1.2",
   "org.jetbrains:annotations:24.1.0",
-  "org.jetbrains.kotlin:kotlin-reflect:1.9.23",
-  "org.jetbrains.kotlin:kotlin-scripting-jvm:1.9.23",
-  "org.jetbrains.kotlin:kotlin-stdlib:1.9.23",
-  "org.jetbrains.kotlin:kotlin-stdlib-common:1.9.23",
-  "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.23",
-  "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.23",
+  "org.jetbrains.kotlin:kotlin-reflect:1.9.25",
+  "org.jetbrains.kotlin:kotlin-scripting-jvm:1.9.25",
+  "org.jetbrains.kotlin:kotlin-stdlib:1.9.25",
+  "org.jetbrains.kotlin:kotlin-stdlib-common:1.9.25",
+  "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.25",
+  "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.25",
   "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0",
   "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0",
   "org.jetbrains.kotlinx:kotlinx-coroutines-debug:1.8.0",

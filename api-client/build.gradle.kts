@@ -32,7 +32,7 @@ dependencies {
       implementation(it) {
         version {
           strictly("[3,4)")
-          prefer("3.9.0")
+          prefer("3.9.1")
         }
       }
     }
@@ -64,7 +64,7 @@ dependencies {
       }
     }
   }
-  implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.23")
+  implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.25")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
   implementation("com.squareup.moshi:moshi:1.15.1")
   implementation("com.squareup.okhttp3:okhttp:4.12.0")
