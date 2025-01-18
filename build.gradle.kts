@@ -9,7 +9,7 @@ plugins {
   id("net.ossindex.audit") version "0.4.11"
   id("io.freefair.maven-central.validate-poms") version "8.11"
   id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
-  id("org.jetbrains.kotlin.jvm") version "2.1.0" apply false
+  alias(libs.plugins.kotlinJvm) apply false
 }
 
 val dependencyVersions = listOf(
@@ -34,7 +34,7 @@ val dependencyVersions = listOf(
 )
 
 val dependencyVersionsByGroup = mapOf(
-  "org.junit.platform" to "1.11.0",
+  "org.junit.platform" to libs.versions.junitPlatform.get(),
 )
 
 subprojects {
