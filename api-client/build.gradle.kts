@@ -62,7 +62,7 @@ dependencies {
     }
   }
   implementation(libs.kotlinJdk8)
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
   implementation(libs.moshi)
   implementation(libs.okhttp)
 //  implementation("com.squareup.okhttp3:logging-interceptor:[4.9,5)!!4.11.0")
