@@ -141,7 +141,7 @@ class SystemApiIntegrationTest {
   @Test
   public void systemVersion() {
     SystemVersion systemVersion = systemApi.systemVersion();
-    assertTrue(asList("1.42", "1.43", "1.44", "1.45", "1.46", "1.47").contains(systemVersion.getApiVersion()));
+    assertTrue(asList("1.42", "1.43", "1.44", "1.45", "1.46", "1.47", "1.48").contains(systemVersion.getApiVersion()));
   }
 
   static class SystemEventsCallback implements StreamCallback<EventMessage> {
