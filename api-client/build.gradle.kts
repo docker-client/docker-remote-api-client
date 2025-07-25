@@ -66,9 +66,9 @@ dependencies {
   implementation(libs.moshi)
   implementation(libs.okhttp)
 //  implementation("com.squareup.okhttp3:logging-interceptor:[4.9,5)!!4.11.0")
-  implementation("de.gesellix:docker-remote-api-model-1-41:2025-06-08T17-40-00")
+  implementation("de.gesellix:docker-remote-api-model-1-41:2025-07-24T23-40-00")
   implementation("de.gesellix:docker-engine:2025-05-17T10-55-00")
-  implementation("de.gesellix:docker-filesocket:2025-06-08T17-40-00")
+  implementation("de.gesellix:docker-filesocket:2025-07-24T23-40-00")
 
   implementation(libs.slf4j)
   testImplementation("ch.qos.logback:logback-classic:${libs.versions.logbackVersionrange.get()}!!${libs.versions.logback.get()}")
@@ -82,7 +82,7 @@ dependencies {
 
   testImplementation("org.apache.commons:commons-compress:1.27.1")
   testImplementation("de.gesellix:testutil:[2024-01-01T01-01-01,)")
-  testImplementation("de.gesellix:docker-registry:2025-06-08T17-40-00")
+  testImplementation("de.gesellix:docker-registry:2025-07-24T23-40-00")
 }
 
 tasks {
