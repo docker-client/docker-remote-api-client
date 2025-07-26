@@ -66,7 +66,7 @@ dependencies {
   implementation(libs.moshi)
   implementation(libs.okhttp)
 //  implementation("com.squareup.okhttp3:logging-interceptor:[4.9,5)!!4.11.0")
-  implementation("de.gesellix:docker-remote-api-model-1-41:2025-06-08T17-40-00")
+  implementation("de.gesellix:docker-remote-api-model-1-41:2025-07-26T18-21-00")
   implementation("de.gesellix:docker-engine:2025-07-26T18-20-00")
   implementation("de.gesellix:docker-filesocket:2025-07-24T23-40-00")
 
