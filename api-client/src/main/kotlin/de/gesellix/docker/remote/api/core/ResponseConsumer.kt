@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import okhttp3.ResponseBody
-import okhttp3.internal.closeQuietly
+import okio.Closeable
 import okio.appendingSink
 import okio.buffer
 import java.io.File
@@ -112,3 +112,12 @@ inline fun <reified T : Any?> ResponseBody.consumeJson(type: Type): T? {
 //    //ignore
 //  }
 //}
+
+fun Closeable.closeQuietly() {
+  try {
+    close()
+  } catch (rethrown: RuntimeException) {
+    throw rethrown
+  } catch (_: Exception) {
+  }
+}
