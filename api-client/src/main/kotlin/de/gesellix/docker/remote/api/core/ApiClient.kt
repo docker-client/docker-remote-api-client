@@ -77,6 +77,7 @@ open class ApiClient(
 
   protected inline fun <reified T> requestBody(content: T, mediaType: String = JsonMediaType): RequestBody =
     when {
+      content is RequestBody -> content
       content is File -> content.asRequestBody(
         mediaType.toMediaTypeOrNull()
       )
@@ -316,6 +317,11 @@ open class ApiClient(
     // TODO: handle specific mapping types. e.g. Map<int, Class<?>>
     when {
       response.isRedirect -> return Redirection(
+        response.code,
+        response.headers.toMultimap()
+      )
+      response.code == 101 && request.isTcpUpgrade() && response.isTcpUpgrade() -> return SuccessStream(
+        response.socket.consumeFrames(mediaType),
         response.code,
         response.headers.toMultimap()
       )
