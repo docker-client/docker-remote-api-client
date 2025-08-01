@@ -26,7 +26,10 @@ import de.gesellix.docker.remote.api.testutil.Failsafe;
 import de.gesellix.docker.remote.api.testutil.InjectDockerClient;
 import de.gesellix.docker.remote.api.testutil.TarUtil;
 import de.gesellix.docker.remote.api.testutil.TestImage;
+import okio.BufferedSink;
 import okio.Okio;
+import okio.Sink;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -759,6 +762,8 @@ class ContainerApiIntegrationTest {
 
   @Test
   public void containerAttachNonInteractive() {
+    removeContainer(engineApiClient, "container-attach-non-interactive-test");
+
     imageApi.imageCreate(testImage.getImageName(), null, null, testImage.getImageTag(), null, null, null, null, null);
 
     ContainerCreateRequest containerCreateRequest = new ContainerCreateRequest(
@@ -816,21 +821,88 @@ class ContainerApiIntegrationTest {
     removeContainer(engineApiClient, "container-attach-non-interactive-test");
   }
 
-  static class LogFrameStreamCallback implements StreamCallback<Frame> {
+  @Test
+  public void containerAttachInteractive() {
+    removeContainer(engineApiClient, "container-attach-interactive-test");
 
-    List<Frame> frames = new ArrayList<>();
-    Cancellable job = null;
+    imageApi.imageCreate(testImage.getImageName(), null, null, testImage.getImageTag(), null, null, null, null, null);
 
-    @Override
-    public void onStarting(Cancellable cancellable) {
-      job = cancellable;
+    ContainerCreateRequest containerCreateRequest = new ContainerCreateRequest(
+        null, null, null,
+        true, true, true,
+        null,
+        true, true, null,
+        null,
+        null,
+        null,
+        null,
+        testImage.getImageWithTag(),
+        null, null, singletonList("/cat"),
+        null, null,
+        null,
+        singletonMap(LABEL_KEY, LABEL_VALUE),
+        null, null,
+        null,
+        null,
+        null
+    );
+    containerApi.containerCreate(containerCreateRequest, "container-attach-interactive-test");
+    containerApi.containerStart("container-attach-interactive-test", null);
+
+    Duration timeout = Duration.of(5, SECONDS);
+    LogFrameStreamCallback callback = new LogFrameStreamCallback() {
+      @Override
+      public void attachInput(Sink sink) {
+        System.out.println("attachInput, sending data...");
+        new Thread(() -> {
+          BufferedSink buffer = Okio.buffer(sink);
+          try {
+            buffer.writeUtf8("hello echo\n");
+            buffer.flush();
+            System.out.println("... data sent");
+          } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Failed to write to stdin: " + e.getMessage());
+          } finally {
+            try {
+              Thread.sleep(100);
+              sink.close();
+            } catch (Exception ignored) {
+              // ignore
+            }
+          }
+        }).start();
+      }
+    };
+
+    new Thread(() -> containerApi.containerAttach(
+        "container-attach-interactive-test",
+        null, true, true, true, true, true,
+        callback, timeout.toMillis())).start();
+
+    CountDownLatch wait = new CountDownLatch(1);
+    new Timer().schedule(new TimerTask() {
+      @Override
+      public void run() {
+        if (callback.job != null) {
+          callback.job.cancel();
+        }
+        wait.countDown();
+      }
+    }, 5000);
+
+    try {
+      wait.await();
     }
-
-    @Override
-    public void onNext(Frame frame) {
-      frames.add(frame);
-      log.info("next: {}", frame);
+    catch (InterruptedException e) {
+      e.printStackTrace();
     }
+    assertSame(Frame.StreamType.RAW, callback.frames.stream().findAny().get().getStreamType());
+    assertEquals(
+        "hello echo\nhello echo".replaceAll("[\\n\\r]", ""),
+        callback.frames.stream().map(Frame::getPayloadAsString).collect(Collectors.joining()).replaceAll("[\\n\\r]", ""));
+
+    removeContainer(engineApiClient, "container-attach-interactive-test");
   }
 
   static class LogObjectStreamCallback implements StreamCallback<Object> {

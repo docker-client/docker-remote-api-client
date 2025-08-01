@@ -1,6 +1,7 @@
 package de.gesellix.docker.remote.api.core
 
 import kotlinx.coroutines.flow.Flow
+import okio.Socket
 
 enum class ResponseType {
   Success, Informational, Redirection, ClientError, ServerError
@@ -14,8 +15,15 @@ abstract class ApiInfrastructureResponse<T>(val responseType: ResponseType) : Re
   abstract val headers: Map<String, List<String>>
 }
 
-class SuccessStream<T>(
-  val data: Flow<T>,
+class SuccessBidirectionalStream<T>(
+  override val data: Flow<T>,
+  val socket: Socket,
+  override val statusCode: Int = -1,
+  override val headers: Map<String, List<String>> = mapOf()
+) : SuccessStream<T>(data, statusCode, headers)
+
+open class SuccessStream<T>(
+  open val data: Flow<T>,
   override val statusCode: Int = -1,
   override val headers: Map<String, List<String>> = mapOf()
 ) : ApiInfrastructureResponse<T>(ResponseType.Success)
