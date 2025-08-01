@@ -320,8 +320,9 @@ open class ApiClient(
         response.code,
         response.headers.toMultimap()
       )
-      response.code == 101 && request.isTcpUpgrade() && response.isTcpUpgrade() -> return SuccessStream(
+      response.code == 101 && request.isTcpUpgrade() && response.isTcpUpgrade() -> return SuccessBidirectionalStream(
         response.socket.consumeFrames(mediaType),
+        response.socket!!,
         response.code,
         response.headers.toMultimap()
       )
