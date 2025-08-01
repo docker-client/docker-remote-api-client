@@ -81,11 +81,7 @@ fun Socket?.consumeFrames(mediaType: String?): Flow<Frame> {
     return emptyFlow()
   }
   when (mediaType) {
-    // Requires api v1.42
-    // multiplexed-stream: without attached Tty
     ApiClient.Companion.DockerMultiplexedStreamMediaType,
-    // Requires api v1.42
-    // raw-stream: with attached Tty
     ApiClient.Companion.DockerRawStreamMediaType -> {
       val reader = FrameReader(source, mediaType)
       val events = flow {
@@ -109,11 +105,7 @@ fun ResponseBody?.consumeFrames(mediaType: String?): Flow<Frame> {
     return emptyFlow()
   }
   when (mediaType) {
-    // Requires api v1.42
-    // multiplexed-stream: without attached Tty
     ApiClient.Companion.DockerMultiplexedStreamMediaType,
-    // Requires api v1.42
-    // raw-stream: with attached Tty
     ApiClient.Companion.DockerRawStreamMediaType -> {
       val reader = FrameReader(source(), mediaType)
       val events = flow {
