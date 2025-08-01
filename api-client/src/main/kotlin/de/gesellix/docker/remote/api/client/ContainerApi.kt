@@ -214,7 +214,8 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
     )
 
     when (localVarResponse.responseType) {
-      ResponseType.Success -> {
+      ResponseType.Success,
+      ResponseType.Informational -> {
         runBlocking {
           launch {
             withTimeout(timeoutMillis) {
@@ -225,7 +226,6 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
           }
         }
       }
-      ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
       ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
       ResponseType.ClientError -> {
         val localVarError = localVarResponse as ClientError<*>
@@ -282,6 +282,12 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
         }
       }
     val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+    val requiresConnectionUpgrade = stdin != null
+    if (requiresConnectionUpgrade)
+      localVariableHeaders.apply {
+        put("Upgrade", "tcp")
+        put("Connection", "Upgrade")
+      }
 
     return RequestConfig(
       method = POST,

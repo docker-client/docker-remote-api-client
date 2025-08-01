@@ -319,6 +319,11 @@ open class ApiClient(
         response.code,
         response.headers.toMultimap()
       )
+      response.code == 101 && request.isTcpUpgrade() && response.isTcpUpgrade() -> return SuccessStream(
+        response.socket.consumeFrames(mediaType),
+        response.code,
+        response.headers.toMultimap()
+      )
       response.isInformational -> return Informational(
         response.message,
         response.code,
