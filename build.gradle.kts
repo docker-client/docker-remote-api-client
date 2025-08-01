@@ -40,13 +40,19 @@ val dependencyVersionsByGroup = mapOf(
 subprojects {
   repositories {
 //    mavenLocal()
-//    fun findProperty(s: String) = project.findProperty(s) as String?
-//    maven {
-//      name = "github"
-//      setUrl("https://maven.pkg.github.com/docker-client/*")
-//      credentials {
-//        username = System.getenv("PACKAGE_REGISTRY_USER") ?: findProperty("github.package-registry.username")
-//        password = System.getenv("PACKAGE_REGISTRY_TOKEN") ?: findProperty("github.package-registry.password")
+//    listOf<String>(
+////      "gesellix/okhttp",
+////      "docker-client/*",
+//    ).forEach { slug ->
+////      fun findProperty(s: String) = project.findProperty(s) as String?
+//      maven {
+//        name = "githubPackages"
+//        url = uri("https://maven.pkg.github.com/${slug}")
+//        credentials(PasswordCredentials::class)
+////        credentials {
+////          username = System.getenv("PACKAGE_REGISTRY_USER") ?: findProperty("github.package-registry.username")
+////          password = System.getenv("PACKAGE_REGISTRY_TOKEN") ?: findProperty("github.package-registry.password")
+////        }
 //      }
 //    }
     mavenCentral()
@@ -64,6 +70,10 @@ allprojects {
           useVersion(forcedVersion)
         }
       }
+//      dependencySubstitution {
+//        substitute(module("com.squareup.okhttp3:okhttp-jvm"))
+//          .using(module("de.gesellix.okhttp3-forked:okhttp-jvm:${libs.versions.okhttp.get()}"))
+//      }
     }
   }
 }

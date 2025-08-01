@@ -6,14 +6,33 @@ import de.gesellix.docker.response.JsonChunksReader
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
+import okhttp3.Request
+import okhttp3.Response
 import okhttp3.ResponseBody
 import okio.Closeable
+import okio.Socket
 import okio.appendingSink
 import okio.buffer
 import java.io.File
 import java.io.InputStream
 import java.lang.reflect.Type
 import java.nio.file.Files
+
+fun Request?.isTcpUpgrade(): Boolean {
+  if (this == null) {
+    return false
+  }
+  return this.header("Connection")?.contains("Upgrade", ignoreCase = true) ?: false &&
+      this.header("Upgrade")?.contains("tcp", ignoreCase = true) ?: false
+}
+
+fun Response?.isTcpUpgrade(): Boolean {
+  if (this == null) {
+    return false
+  }
+  return this.header("Connection")?.contains("Upgrade", ignoreCase = true) ?: false &&
+      this.header("Upgrade")?.contains("tcp", ignoreCase = true) ?: false
+}
 
 fun ResponseBody?.consumeFile(): File? {
   if (this == null) {
@@ -48,6 +67,34 @@ inline fun <reified T : Any?> ResponseBody?.consumeStream(mediaType: String?): F
           emit(next)
         }
         this@consumeStream.closeQuietly()
+      }
+      return events
+    }
+    else -> {
+      throw UnsupportedOperationException("Can't handle media type $mediaType")
+    }
+  }
+}
+
+fun Socket?.consumeFrames(mediaType: String?): Flow<Frame> {
+  if (this == null) {
+    return emptyFlow()
+  }
+  when (mediaType) {
+    // Requires api v1.42
+    // multiplexed-stream: without attached Tty
+    ApiClient.Companion.DockerMultiplexedStreamMediaType,
+    // Requires api v1.42
+    // raw-stream: with attached Tty
+    ApiClient.Companion.DockerRawStreamMediaType -> {
+      val reader = FrameReader(source, mediaType)
+      val events = flow {
+        while (reader.hasNext()) {
+          val next = reader.readNext(Frame::class.java)
+          emit(next)
+        }
+        source.closeQuietly()
+//        this@consumeFrames.cancel()
       }
       return events
     }
