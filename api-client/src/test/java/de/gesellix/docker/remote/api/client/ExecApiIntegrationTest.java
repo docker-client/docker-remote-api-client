@@ -41,7 +41,9 @@ class ExecApiIntegrationTest {
   }
 
   @Test
-  public void containerExec() {
+  public void containerExecNonInteractive() {
+    removeContainer(engineApiClient, "container-exec-test");
+
     imageApi.imageCreate(testImage.getImageName(), null, null, testImage.getImageTag(), null, null, null, null, null);
 
     ContainerCreateRequest containerCreateRequest = new ContainerCreateRequest(
