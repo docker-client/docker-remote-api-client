@@ -795,7 +795,9 @@ class ContainerApiIntegrationTest {
     new Timer().schedule(new TimerTask() {
       @Override
       public void run() {
-        callback.job.cancel();
+        if (callback.job != null) {
+          callback.job.cancel();
+        }
         wait.countDown();
       }
     }, 5000);

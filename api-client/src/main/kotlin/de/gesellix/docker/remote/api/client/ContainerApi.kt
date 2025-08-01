@@ -15,7 +15,11 @@ package de.gesellix.docker.remote.api.client
 import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import de.gesellix.docker.engine.DockerClientConfig
-import de.gesellix.docker.engine.RequestMethod.*
+import de.gesellix.docker.engine.RequestMethod.DELETE
+import de.gesellix.docker.engine.RequestMethod.GET
+import de.gesellix.docker.engine.RequestMethod.HEAD
+import de.gesellix.docker.engine.RequestMethod.POST
+import de.gesellix.docker.engine.RequestMethod.PUT
 import de.gesellix.docker.remote.api.ContainerCreateRequest
 import de.gesellix.docker.remote.api.ContainerCreateResponse
 import de.gesellix.docker.remote.api.ContainerInspectResponse
@@ -39,7 +43,6 @@ import de.gesellix.docker.remote.api.core.StreamCallback
 import de.gesellix.docker.remote.api.core.Success
 import de.gesellix.docker.remote.api.core.SuccessStream
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -217,7 +220,7 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
           launch {
             withTimeout(timeoutMillis) {
               callback.onStarting(this@launch::cancel)
-              ((localVarResponse as SuccessStream<*>).data as Flow<Frame>).collect { callback.onNext(it) }
+              (localVarResponse as SuccessStream<Frame>).data.collect { callback.onNext(it) }
               callback.onFinished()
             }
           }
@@ -766,7 +769,7 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
     )
 
     return when (localVarResponse.responseType) {
-      ResponseType.Success -> (localVarResponse as Success<*>).data as List<ContainerSummary>
+      ResponseType.Success -> (localVarResponse as Success<List<ContainerSummary>>).data
       ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
       ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
       ResponseType.ClientError -> {
@@ -859,7 +862,7 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
           launch {
             withTimeout(timeoutMillis) {
               callback.onStarting(this@launch::cancel)
-              ((localVarResponse as SuccessStream<*>).data as Flow<Frame>).collect { callback.onNext(it) }
+              (localVarResponse as SuccessStream<Frame>).data.collect { callback.onNext(it) }
               callback.onFinished()
             }
           }

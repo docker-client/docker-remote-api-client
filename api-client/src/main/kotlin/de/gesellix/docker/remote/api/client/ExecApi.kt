@@ -33,8 +33,6 @@ import de.gesellix.docker.remote.api.core.StreamCallback
 import de.gesellix.docker.remote.api.core.Success
 import de.gesellix.docker.remote.api.core.SuccessStream
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
@@ -263,7 +261,7 @@ class ExecApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, prox
           launch {
             withTimeoutOrNull(timeout.toMillis()) {
               actualCallback.onStarting(this@launch::cancel)
-              ((localVarResponse as SuccessStream<*>).data as Flow<Frame>).collect { actualCallback.onNext(it) }
+              (localVarResponse as SuccessStream<Frame>).data.collect { actualCallback.onNext(it) }
               actualCallback.onFinished()
             }
           }
