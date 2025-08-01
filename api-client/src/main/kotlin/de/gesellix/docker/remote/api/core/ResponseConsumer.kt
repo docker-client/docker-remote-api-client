@@ -57,16 +57,18 @@ inline fun <reified T : Any?> ResponseBody?.consumeStream(mediaType: String?): F
   }
 }
 
-fun ResponseBody?.consumeFrames(mediaType: String?, expectMultiplexedResponse: Boolean = false): Flow<Frame> {
+fun ResponseBody?.consumeFrames(mediaType: String?): Flow<Frame> {
   if (this == null) {
     return emptyFlow()
   }
   when (mediaType) {
+    // Requires api v1.42
     // multiplexed-stream: without attached Tty
     ApiClient.Companion.DockerMultiplexedStreamMediaType,
-      // raw-stream: with attached Tty
+    // Requires api v1.42
+    // raw-stream: with attached Tty
     ApiClient.Companion.DockerRawStreamMediaType -> {
-      val reader = FrameReader(source(), expectMultiplexedResponse)
+      val reader = FrameReader(source(), mediaType)
       val events = flow {
         while (reader.hasNext()) {
           val next = reader.readNext(Frame::class.java)

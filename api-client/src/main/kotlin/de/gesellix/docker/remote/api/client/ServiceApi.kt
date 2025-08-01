@@ -315,7 +315,7 @@ class ServiceApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, p
     val localVariableConfig = serviceLogsRequestConfig(id = id, details = details, follow = follow, stdout = stdout, stderr = stderr, since = since, timestamps = timestamps, tail = tail)
 
     val localVarResponse = requestFrames(
-      localVariableConfig, true /* do services/tasks always have container.tty == false? */
+      localVariableConfig
     )
 
     when (localVarResponse.responseType) {

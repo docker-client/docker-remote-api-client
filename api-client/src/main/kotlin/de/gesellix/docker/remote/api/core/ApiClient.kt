@@ -143,15 +143,15 @@ open class ApiClient(
     return requestStream(request, client)
   }
 
-  protected fun requestFrames(requestConfig: RequestConfig, expectMultiplexedResponse: Boolean = false): ApiInfrastructureResponse<Frame> {
+  protected fun requestFrames(requestConfig: RequestConfig): ApiInfrastructureResponse<Frame> {
     val engineRequest = EngineRequest(requestConfig.method, requestConfig.path).also {
       it.headers = requestConfig.headers
       it.query = requestConfig.query
       it.body = requestConfig.body
     }
-    val request = prepareRequest(engineRequest, DockerRawStreamMediaType)
+    val request = prepareRequest(engineRequest)
     val client = prepareClient(engineRequest)
-    return requestFrames(request, client, expectMultiplexedResponse)
+    return requestFrames(request, client)
   }
 
   protected fun prepareRequest(requestConfig: EngineRequest, fallbackContentType: String = ""): Request {
@@ -309,7 +309,7 @@ open class ApiClient(
     }
   }
 
-  protected fun requestFrames(request: Request, client: OkHttpClient, expectMultiplexedResponse: Boolean = false): ApiInfrastructureResponse<Frame> {
+  protected fun requestFrames(request: Request, client: OkHttpClient): ApiInfrastructureResponse<Frame> {
     val response = client.newCall(request).execute()
     val mediaType = response.header(ContentType)?.substringBefore(";")?.lowercase(Locale.getDefault())
 
@@ -325,7 +325,7 @@ open class ApiClient(
         response.headers.toMultimap()
       )
       response.isSuccessful -> return SuccessStream(
-        response.body.consumeFrames(mediaType, expectMultiplexedResponse),
+        response.body.consumeFrames(mediaType),
         response.code,
         response.headers.toMultimap()
       )
