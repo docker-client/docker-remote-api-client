@@ -209,9 +209,8 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
   ) {
     val localVariableConfig = containerAttachRequestConfig(id = id, detachKeys = detachKeys, logs = logs, stream = stream, stdin = stdin, stdout = stdout, stderr = stderr)
 
-    val expectMultiplexedResponse = !(containerInspect(id, false).config?.tty ?: false)
     val localVarResponse = requestFrames(
-      localVariableConfig, expectMultiplexedResponse
+      localVariableConfig
     )
 
     when (localVarResponse.responseType) {
@@ -851,9 +850,8 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
   ) {
     val localVariableConfig = containerLogsRequestConfig(id = id, follow = follow, stdout = stdout, stderr = stderr, since = since, until = until, timestamps = timestamps, tail = tail)
 
-    val expectMultiplexedResponse = !(containerInspect(id, false).config?.tty ?: false)
     val localVarResponse = requestFrames(
-      localVariableConfig, expectMultiplexedResponse
+      localVariableConfig
     )
 
     when (localVarResponse.responseType) {

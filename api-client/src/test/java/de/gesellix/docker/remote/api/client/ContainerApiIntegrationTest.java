@@ -808,7 +808,10 @@ class ContainerApiIntegrationTest {
     catch (InterruptedException e) {
       e.printStackTrace();
     }
-    assertSame(callback.frames.stream().findAny().get().getStreamType(), Frame.StreamType.STDOUT);
+
+    // we receive a RAW response because the connection is not upgraded - which is ok for non-interactive usage
+//    assertSame(Frame.StreamType.STDOUT, callback.frames.stream().findAny().get().getStreamType());
+    assertSame(Frame.StreamType.RAW, callback.frames.stream().findAny().get().getStreamType());
 
     removeContainer(engineApiClient, "container-attach-non-interactive-test");
   }

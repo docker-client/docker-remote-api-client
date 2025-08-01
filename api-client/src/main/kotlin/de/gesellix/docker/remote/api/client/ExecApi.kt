@@ -245,7 +245,7 @@ class ExecApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, prox
       !(execInspect(id).processConfig?.tty ?: false)
     }
     val localVarResponse = requestFrames(
-      localVariableConfig, expectMultiplexedResponse
+      localVariableConfig
     )
 
     val timeout = if (timeoutMillis == null) {
