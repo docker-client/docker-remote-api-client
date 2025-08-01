@@ -7,7 +7,9 @@ import java.net.HttpURLConnection.HTTP_NO_CONTENT
 data class EnforceResponseContentTypeConfig(val fallbackContentType: String = "")
 
 // This one would work automatically, when the response content-type would be set correctly :-/
-// - for /attach, /logs and similar endpoints see https://github.com/gesellix/docker-client/issues/21
+// see https://github.com/gesellix/docker-client/issues/21
+// see https://github.com/moby/moby/pull/39812
+// - for /attach, /logs and similar endpoints the issue has been fixed with api version 1.42
 // - for /stats see (?)
 class EnforceResponseContentTypeInterceptor : Interceptor {
 

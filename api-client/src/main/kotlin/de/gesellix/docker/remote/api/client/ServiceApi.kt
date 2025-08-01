@@ -35,7 +35,6 @@ import de.gesellix.docker.remote.api.core.StreamCallback
 import de.gesellix.docker.remote.api.core.Success
 import de.gesellix.docker.remote.api.core.SuccessStream
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -241,7 +240,7 @@ class ServiceApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, p
     )
 
     return when (localVarResponse.responseType) {
-      ResponseType.Success -> (localVarResponse as Success<*>).data as List<Service>
+      ResponseType.Success -> (localVarResponse as Success<List<Service>>).data
       ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
       ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
       ResponseType.ClientError -> {
@@ -325,7 +324,7 @@ class ServiceApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, p
           launch {
             withTimeout(timeoutMillis) {
               callback.onStarting(this@launch::cancel)
-              ((localVarResponse as SuccessStream<*>).data as Flow<Frame>).collect { callback.onNext(it) }
+              (localVarResponse as SuccessStream<Frame>).data.collect { callback.onNext(it) }
               callback.onFinished()
             }
           }

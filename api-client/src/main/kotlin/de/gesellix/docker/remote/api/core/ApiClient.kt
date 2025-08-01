@@ -44,7 +44,14 @@ open class ApiClient(
     protected const val TextPlainMediaType = "text/plain"
     protected const val JsonMediaType = "application/json"
     protected const val OctetStreamMediaType = "application/octet-stream"
-    protected const val DockerRawStreamMediaType = "application/vnd.docker.raw-stream"
+    // see https://docs.docker.com/engine/api/version-history/#v142-api-changes
+    // see https://github.com/moby/moby/pull/39812
+    // raw-stream: with attached Tty
+    const val DockerRawStreamMediaType = "application/vnd.docker.raw-stream"
+    // see https://docs.docker.com/engine/api/version-history/#v142-api-changes
+    // see https://github.com/moby/moby/pull/39812
+    // multiplexed-stream: without attached Tty
+    const val DockerMultiplexedStreamMediaType = "application/vnd.docker.multiplexed-stream"
 
     //    val apiKey: MutableMap<String, String> = mutableMapOf()
 //    val apiKeyPrefix: MutableMap<String, String> = mutableMapOf()
@@ -254,13 +261,13 @@ open class ApiClient(
       )
       response.isClientError -> return ClientError(
         response.message,
-        response.body?.string(),
+        response.body.string(),
         response.code,
         response.headers.toMultimap()
       )
       else -> return ServerError(
         response.message,
-        response.body?.string(),
+        response.body.string(),
         response.code,
         response.headers.toMultimap()
       )
@@ -289,13 +296,13 @@ open class ApiClient(
       )
       response.isClientError -> return ClientError(
         response.message,
-        response.body?.string(),
+        response.body.string(),
         response.code,
         response.headers.toMultimap()
       )
       else -> return ServerError(
         response.message,
-        response.body?.string(),
+        response.body.string(),
         response.code,
         response.headers.toMultimap()
       )
@@ -324,13 +331,13 @@ open class ApiClient(
       )
       response.isClientError -> return ClientError(
         response.message,
-        response.body?.string(),
+        response.body.string(),
         response.code,
         response.headers.toMultimap()
       )
       else -> return ServerError(
         response.message,
-        response.body?.string(),
+        response.body.string(),
         response.code,
         response.headers.toMultimap()
       )

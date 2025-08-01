@@ -28,7 +28,6 @@ import de.gesellix.docker.remote.api.core.StreamCallback
 import de.gesellix.docker.remote.api.core.Success
 import de.gesellix.docker.remote.api.core.SuccessStream
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -115,7 +114,7 @@ class TaskApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, prox
     )
 
     return when (localVarResponse.responseType) {
-      ResponseType.Success -> (localVarResponse as Success<*>).data as List<Task>
+      ResponseType.Success -> (localVarResponse as Success<List<Task>>).data
       ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
       ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
       ResponseType.ClientError -> {
@@ -195,7 +194,7 @@ class TaskApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, prox
           launch {
             withTimeout(timeoutMillis) {
               callback.onStarting(this@launch::cancel)
-              ((localVarResponse as SuccessStream<*>).data as Flow<Frame>).collect { callback.onNext(it) }
+              (localVarResponse as SuccessStream<Frame>).data.collect { callback.onNext(it) }
               callback.onFinished()
             }
           }
