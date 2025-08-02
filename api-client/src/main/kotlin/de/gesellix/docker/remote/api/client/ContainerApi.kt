@@ -41,11 +41,13 @@ import de.gesellix.docker.remote.api.core.ServerError
 import de.gesellix.docker.remote.api.core.ServerException
 import de.gesellix.docker.remote.api.core.StreamCallback
 import de.gesellix.docker.remote.api.core.Success
+import de.gesellix.docker.remote.api.core.SuccessBidirectionalStream
 import de.gesellix.docker.remote.api.core.SuccessStream
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
+import okhttp3.RequestBody
 import okio.Source
 import okio.source
 import java.io.InputStream
@@ -214,18 +216,33 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
     )
 
     when (localVarResponse.responseType) {
-      ResponseType.Success -> {
-        runBlocking {
-          launch {
-            withTimeout(timeoutMillis) {
-              callback.onStarting(this@launch::cancel)
-              (localVarResponse as SuccessStream<Frame>).data.collect { callback.onNext(it) }
-              callback.onFinished()
+      ResponseType.Success,
+      ResponseType.Informational -> {
+        when (localVarResponse) {
+          is SuccessBidirectionalStream ->
+            runBlocking {
+              launch {
+                withTimeout(timeoutMillis) {
+                  callback.onStarting(this@launch::cancel)
+                  callback.attachInput(localVarResponse.socket.sink)
+                  localVarResponse.data.collect { callback.onNext(it) }
+                  callback.onFinished()
+                }
+              }
             }
-          }
+
+          else ->
+            runBlocking {
+              launch {
+                withTimeout(timeoutMillis) {
+                  callback.onStarting(this@launch::cancel)
+                  (localVarResponse as SuccessStream<Frame>).data.collect { callback.onNext(it) }
+                  callback.onFinished()
+                }
+              }
+            }
         }
       }
-      ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
       ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
       ResponseType.ClientError -> {
         val localVarError = localVarResponse as ClientError<*>
@@ -259,7 +276,7 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
     stdout: Boolean?,
     stderr: Boolean?
   ): RequestConfig {
-    val localVariableBody = null
+    val localVariableBody = RequestBody.EMPTY
     val localVariableQuery: MultiValueMap = mutableMapOf<String, List<String>>()
       .apply {
         if (detachKeys != null) {
@@ -282,6 +299,17 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
         }
       }
     val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+    val requiresConnectionUpgrade = stdin != null && stdin
+    if (requiresConnectionUpgrade)
+      localVariableHeaders.apply {
+        put("Connection", "Upgrade")
+        put("Upgrade", "tcp")
+      }
+//    else
+//      localVariableHeaders.apply {
+//        put("Connection", "Upgrade")
+//        put("Upgrade", "tcp")
+//      }
 
     return RequestConfig(
       method = POST,
