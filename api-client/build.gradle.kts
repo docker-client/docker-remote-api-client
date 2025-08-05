@@ -60,6 +60,17 @@ dependencies {
         prefer(libs.versions.slf4j.get())
       }
     }
+    listOf(
+      "net.java.dev.jna:jna",
+      "net.java.dev.jna:jna-platform"
+    ).forEach {
+      testImplementation(it) {
+        version {
+          strictly("[5.0.0,)")
+          prefer("5.17.0")
+        }
+      }
+    }
   }
   implementation(libs.kotlinJdk8)
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
