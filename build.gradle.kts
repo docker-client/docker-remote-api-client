@@ -16,7 +16,7 @@ val dependencyVersions = listOf(
   "commons-io:commons-io:2.20.0",
   "org.apache.commons:commons-compress:1.28.0",
   "org.apiguardian:apiguardian-api:1.1.2",
-  "org.jetbrains:annotations:26.0.2",
+  "org.jetbrains:annotations:26.0.2-1",
   "org.jetbrains.kotlin:kotlin-reflect:2.1.0",
   "org.jetbrains.kotlin:kotlin-scripting-jvm:2.1.0",
   "org.jetbrains.kotlin:kotlin-stdlib:2.1.0",
