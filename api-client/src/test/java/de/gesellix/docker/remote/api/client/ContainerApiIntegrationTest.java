@@ -494,7 +494,7 @@ class ContainerApiIntegrationTest {
         null, null, null, null,
         null, null, null, null, null,
         null, null, null, null,
-        new RestartPolicy(RestartPolicy.Name.UnlessMinusStopped, null));
+        new RestartPolicy(RestartPolicy.Name.UnlessStopped, null));
     ContainerUpdateResponse updateResponse = containerApi.containerUpdate("container-update-test", updateRequest);
     assertTrue(updateResponse.getWarnings() == null || updateResponse.getWarnings().isEmpty());
 
