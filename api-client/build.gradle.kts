@@ -54,6 +54,17 @@ dependencies {
         strictly("[2024-01-01T01-01-01,)")
       }
     }
+    listOf(
+      "net.java.dev.jna:jna",
+      "net.java.dev.jna:jna-platform"
+    ).forEach {
+      implementation(it) {
+        version {
+          strictly("[5.0.0,)")
+          prefer("5.9.0")
+        }
+      }
+    }
     implementation(libs.slf4j) {
       version {
         strictly(libs.versions.slf4jVersionrange.get())
