@@ -54,6 +54,17 @@ dependencies {
         strictly("[2024-01-01T01-01-01,)")
       }
     }
+    listOf(
+      "net.java.dev.jna:jna",
+      "net.java.dev.jna:jna-platform"
+    ).forEach {
+      implementation(it) {
+        version {
+          strictly("[5.0.0,)")
+          prefer("5.9.0")
+        }
+      }
+    }
     implementation(libs.slf4j) {
       version {
         strictly(libs.versions.slf4jVersionrange.get())
@@ -68,7 +79,7 @@ dependencies {
 //  implementation("com.squareup.okhttp3:logging-interceptor:[4.9,5)!!4.11.0")
   implementation("de.gesellix:docker-remote-api-model-1-41:2025-10-11T21-57-00")
   implementation("de.gesellix:docker-engine:2025-10-11T21-55-00")
-  implementation("de.gesellix:docker-filesocket:2025-07-24T23-40-00")
+  implementation("de.gesellix:docker-filesocket:2025-10-11T21-54-00")
 
   implementation(libs.slf4j)
   testImplementation("ch.qos.logback:logback-classic:${libs.versions.logbackVersionrange.get()}!!${libs.versions.logback.get()}")
