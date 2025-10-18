@@ -6,19 +6,37 @@ import de.gesellix.docker.remote.api.ExecConfig;
 import de.gesellix.docker.remote.api.ExecInspectResponse;
 import de.gesellix.docker.remote.api.ExecStartConfig;
 import de.gesellix.docker.remote.api.IdResponse;
+import de.gesellix.docker.remote.api.core.Frame;
 import de.gesellix.docker.remote.api.testutil.DockerEngineAvailable;
 import de.gesellix.docker.remote.api.testutil.InjectDockerClient;
 import de.gesellix.docker.remote.api.testutil.TestImage;
+import okio.BufferedSink;
+import okio.Okio;
+import okio.Sink;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static de.gesellix.docker.remote.api.testutil.Constants.LABEL_KEY;
 import static de.gesellix.docker.remote.api.testutil.Constants.LABEL_VALUE;
+import static de.gesellix.docker.remote.api.testutil.Failsafe.perform;
 import static de.gesellix.docker.remote.api.testutil.Failsafe.removeContainer;
+import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 
 @DockerEngineAvailable
 class ExecApiIntegrationTest {
@@ -82,5 +100,106 @@ class ExecApiIntegrationTest {
     assertFalse(execInspect.getRunning());
 
     removeContainer(engineApiClient, "container-exec-test");
+  }
+
+  @Test
+  public void containerExecInteractive() {
+    removeContainer(engineApiClient, "container-exec-interactive-test");
+
+    imageApi.imageCreate(testImage.getImageName(), null, null, testImage.getImageTag(), null, null, null, null, null);
+
+    ContainerCreateRequest containerCreateRequest = new ContainerCreateRequest(
+        null, null, null,
+        true, true, true,
+        null,
+        true, true, null,
+        null,
+        null,
+        null,
+        null,
+        testImage.getImageWithTag(),
+        null, null, null,
+        null, null,
+        null,
+        singletonMap(LABEL_KEY, LABEL_VALUE),
+        null, null,
+        null,
+        null,
+        null
+    );
+    containerApi.containerCreate(containerCreateRequest, "container-exec-interactive-test");
+    containerApi.containerStart("container-exec-interactive-test", null);
+
+    IdResponse exec = execApi.containerExec(
+        "container-exec-interactive-test",
+        new ExecConfig(true, true, true, null, null, true,
+            null,
+            singletonList("/cat"),
+            null, null, null));
+    assertNotNull(exec.getId());
+
+    Duration timeout = Duration.of(5, SECONDS);
+    LogFrameStreamCallback callback = new LogFrameStreamCallback() {
+      @Override
+      public void attachInput(Sink sink) {
+        System.out.println("attachInput, sending data...");
+        new Thread(() -> {
+          BufferedSink buffer = Okio.buffer(sink);
+          try {
+            buffer.writeUtf8("hello echo\n");
+            buffer.flush();
+            System.out.println("... data sent");
+          } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Failed to write to stdin: " + e.getMessage());
+          } finally {
+            try {
+              Thread.sleep(100);
+              sink.close();
+            } catch (Exception ignored) {
+              // ignore
+            }
+          }
+        }).start();
+      }
+    };
+
+    new Thread(() -> execApi.execStart(
+        exec.getId(),
+        new ExecStartConfig(false, true, null),
+        callback, timeout.toMillis())).start();
+
+    CountDownLatch wait = new CountDownLatch(1);
+    new Timer().schedule(new TimerTask() {
+      @Override
+      public void run() {
+        if (callback.job != null) {
+          callback.job.cancel();
+        }
+        wait.countDown();
+      }
+    }, 5000);
+
+    try {
+      wait.await();
+    }
+    catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
+    ExecInspectResponse execInspect = execApi.execInspect(exec.getId());
+    assertTrue(execInspect.getRunning());
+
+    assertSame(Frame.StreamType.RAW, callback.frames.stream().findAny().get().getStreamType());
+    assertEquals(
+        "hello echo\nhello echo".replaceAll("[\\n\\r]", ""),
+        callback.frames.stream().map(Frame::getPayloadAsString).collect(Collectors.joining()).replaceAll("[\\n\\r]", ""));
+
+    removeContainer(engineApiClient, "container-exec-interactive-test");
+
+    perform(() -> {
+      ExecInspectResponse execInspectAfterStop = execApi.execInspect(exec.getId());
+      assertFalse(execInspectAfterStop.getRunning());
+    });
   }
 }
