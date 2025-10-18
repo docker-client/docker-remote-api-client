@@ -31,6 +31,7 @@ import de.gesellix.docker.remote.api.core.ServerError
 import de.gesellix.docker.remote.api.core.ServerException
 import de.gesellix.docker.remote.api.core.StreamCallback
 import de.gesellix.docker.remote.api.core.Success
+import de.gesellix.docker.remote.api.core.SuccessBidirectionalStream
 import de.gesellix.docker.remote.api.core.SuccessStream
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -239,11 +240,6 @@ class ExecApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, prox
   ) {
     val localVariableConfig = execStartRequestConfig(id = id, execStartConfig = execStartConfig)
 
-    val expectMultiplexedResponse: Boolean = if (execStartConfig?.tty != null) {
-      !(execStartConfig.tty ?: false)
-    } else {
-      !(execInspect(id).processConfig?.tty ?: false)
-    }
     val localVarResponse = requestFrames(
       localVariableConfig
     )
@@ -256,18 +252,32 @@ class ExecApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, prox
     val actualCallback = callback ?: LoggingCallback<Frame?>()
 
     when (localVarResponse.responseType) {
-      ResponseType.Success -> {
-        runBlocking {
-          launch {
-            withTimeoutOrNull(timeout.toMillis()) {
-              actualCallback.onStarting(this@launch::cancel)
-              (localVarResponse as SuccessStream<Frame>).data.collect { actualCallback.onNext(it) }
-              actualCallback.onFinished()
+      ResponseType.Success,
+      ResponseType.Informational -> {
+        when (localVarResponse) {
+          is SuccessBidirectionalStream ->
+            runBlocking {
+              launch {
+                withTimeoutOrNull(timeout.toMillis()) {
+                  actualCallback.onStarting(this@launch::cancel)
+                  actualCallback.attachInput(localVarResponse.socket.sink)
+                  localVarResponse.data.collect { actualCallback.onNext(it) }
+                  actualCallback.onFinished()
+                }
+              }
             }
-          }
+          else ->
+            runBlocking {
+              launch {
+                withTimeoutOrNull(timeout.toMillis()) {
+                  actualCallback.onStarting(this@launch::cancel)
+                  (localVarResponse as SuccessStream<Frame>).data.collect { actualCallback.onNext(it) }
+                  actualCallback.onFinished()
+                }
+              }
+            }
         }
       }
-      ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
       ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
       ResponseType.ClientError -> {
         val localVarError = localVarResponse as ClientError<*>
@@ -291,6 +301,18 @@ class ExecApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, prox
     val localVariableBody = execStartConfig
     val localVariableQuery: MultiValueMap = mutableMapOf()
     val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+//    val expectMultiplexedResponse: Boolean = if (execStartConfig?.tty != null) {
+//      !(execStartConfig.tty ?: false)
+//    } else {
+//      !(execInspect(id).processConfig?.tty ?: false)
+//    }
+    val requiresConnectionUpgrade = execStartConfig?.tty != null && execStartConfig.tty!!
+    if (requiresConnectionUpgrade)
+      localVariableHeaders.apply {
+        put("Connection", "Upgrade")
+        put("Upgrade", "tcp")
+      }
 
     return RequestConfig(
       method = POST,
