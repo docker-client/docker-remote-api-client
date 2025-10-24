@@ -41,7 +41,7 @@ subprojects {
   repositories {
 //    mavenLocal()
 //    listOf<String>(
-////      "gesellix/okhttp",
+//      "gesellix/okhttp",
 ////      "docker-client/*",
 //    ).forEach { slug ->
 ////      fun findProperty(s: String) = project.findProperty(s) as String?
@@ -71,6 +71,8 @@ allprojects {
         }
       }
 //      dependencySubstitution {
+//        substitute(module("com.squareup.okhttp3:okhttp"))
+//          .using(module("de.gesellix.okhttp3-forked:okhttp:${libs.versions.okhttp.get()}"))
 //        substitute(module("com.squareup.okhttp3:okhttp-jvm"))
 //          .using(module("de.gesellix.okhttp3-forked:okhttp-jvm:${libs.versions.okhttp.get()}"))
 //      }
