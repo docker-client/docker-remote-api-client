@@ -15,6 +15,7 @@ import okio.Okio;
 import okio.Sink;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static de.gesellix.docker.remote.api.testutil.Constants.LABEL_KEY;
@@ -103,6 +104,8 @@ class ExecApiIntegrationTest {
   }
 
   @Test
+  // see https://github.com/square/okhttp/pull/9159
+  @Disabled("Pending OkHttp to support upgrade requests with non-empty body")
   public void containerExecInteractive() {
     removeContainer(engineApiClient, "container-exec-interactive-test");
 
