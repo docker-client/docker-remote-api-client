@@ -312,7 +312,6 @@ class ExecApi(dockerClientConfig: DockerClientConfig = defaultClientConfig, prox
       localVariableHeaders.apply {
         put("Connection", "Upgrade")
         put("Upgrade", "tcp")
-        put("ReadRequestBodyBeforeUpgrade", "true")
       }
 
     return RequestConfig(
