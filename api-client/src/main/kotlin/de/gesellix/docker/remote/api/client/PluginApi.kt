@@ -27,7 +27,6 @@ import de.gesellix.docker.remote.api.core.ResponseType
 import de.gesellix.docker.remote.api.core.ServerError
 import de.gesellix.docker.remote.api.core.ServerException
 import de.gesellix.docker.remote.api.core.Success
-import okio.Source
 import okio.source
 import java.io.InputStream
 import java.net.Proxy
