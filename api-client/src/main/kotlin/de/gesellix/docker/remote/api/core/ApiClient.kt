@@ -23,6 +23,8 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
 import okio.Source
 import java.io.File
 import java.io.InputStream
@@ -131,6 +133,17 @@ open class ApiClient(
     val request = prepareRequest(engineRequest)
     val client = prepareClient(engineRequest)
     return request<T>(request, client, requestConfig.elementType)
+  }
+
+  protected fun requestWebSocket(requestConfig: RequestConfig, wsListener: WebSocketListener): WebSocket {
+    val engineRequest = EngineRequest(requestConfig.method, requestConfig.path).also {
+      it.headers = requestConfig.headers
+      it.query = requestConfig.query
+      it.body = requestConfig.body
+    }
+    val request = prepareRequest(engineRequest, JsonMediaType)
+    val client = prepareClient(engineRequest)
+    return client.newWebSocket(request, wsListener)
   }
 
   protected inline fun <reified T : Any?> requestStream(requestConfig: RequestConfig): ApiInfrastructureResponse<T?> {
