@@ -48,6 +48,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import okhttp3.RequestBody
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
 import okio.Source
 import okio.source
 import java.io.InputStream
@@ -332,33 +334,17 @@ class ContainerApi(dockerClientConfig: DockerClientConfig = defaultClientConfig,
    */
   @Throws(UnsupportedOperationException::class, ClientException::class, ServerException::class)
   fun containerAttachWebsocket(
-    id: String,
-    detachKeys: String?,
-    logs: Boolean?,
-    stream: Boolean?,
-    stdin: Boolean?,
-    stdout: Boolean?,
-    stderr: Boolean?
-  ) {
+    id: String, detachKeys: String?,
+    logs: Boolean?, stream: Boolean?, stdin: Boolean?, stdout: Boolean?, stderr: Boolean?,
+    wsListener: WebSocketListener
+  ): WebSocket {
     val localVariableConfig = containerAttachWebsocketRequestConfig(id = id, detachKeys = detachKeys, logs = logs, stream = stream, stdin = stdin, stdout = stdout, stderr = stderr)
 
-    val localVarResponse = request<Any?>(
-      localVariableConfig
+    val localVarResponse = requestWebSocket(
+      localVariableConfig,
+      wsListener
     )
-
-    return when (localVarResponse.responseType) {
-      ResponseType.Success -> Unit
-      ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
-      ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
-      ResponseType.ClientError -> {
-        val localVarError = localVarResponse as ClientError<*>
-        throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
-      }
-      ResponseType.ServerError -> {
-        val localVarError = localVarResponse as ServerError<*>
-        throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
-      }
-    }
+    return localVarResponse
   }
 
   /**
