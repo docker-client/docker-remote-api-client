@@ -12,6 +12,7 @@ import de.gesellix.docker.remote.api.ContainerUpdateResponse;
 import de.gesellix.docker.remote.api.EngineApiClient;
 import de.gesellix.docker.remote.api.ExecConfig;
 import de.gesellix.docker.remote.api.ExecStartConfig;
+import de.gesellix.docker.remote.api.HostConfig;
 import de.gesellix.docker.remote.api.IdResponse;
 import de.gesellix.docker.remote.api.RestartPolicy;
 import de.gesellix.docker.remote.api.core.Cancellable;
@@ -22,14 +23,22 @@ import de.gesellix.docker.remote.api.core.StreamCallback;
 import de.gesellix.docker.remote.api.testutil.DisabledIfDaemonOnWindowsOs;
 import de.gesellix.docker.remote.api.testutil.DisabledIfNotPausable;
 import de.gesellix.docker.remote.api.testutil.DockerEngineAvailable;
+import de.gesellix.docker.remote.api.testutil.EnabledIfSupportsWebSocket;
 import de.gesellix.docker.remote.api.testutil.Failsafe;
 import de.gesellix.docker.remote.api.testutil.InjectDockerClient;
+import de.gesellix.docker.remote.api.testutil.SocatContainer;
 import de.gesellix.docker.remote.api.testutil.TarUtil;
 import de.gesellix.docker.remote.api.testutil.TestImage;
+import de.gesellix.docker.websocket.DefaultWebSocketListener;
+import okhttp3.Response;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
 import okio.BufferedSink;
+import okio.ByteString;
 import okio.Okio;
 import okio.Sink;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -48,11 +57,15 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static de.gesellix.docker.remote.api.testutil.Constants.LABEL_KEY;
 import static de.gesellix.docker.remote.api.testutil.Constants.LABEL_VALUE;
 import static de.gesellix.docker.remote.api.testutil.Failsafe.removeContainer;
+import static de.gesellix.docker.websocket.WebsocketStatusCode.NORMAL_CLOSURE;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
@@ -220,18 +233,18 @@ class ContainerApiIntegrationTest {
     assertEquals("The wind\ncaught it.\n", fileContent.replaceAll("\r", ""));
 
     String testPath = testImage.isWindowsContainer()
-                      ? "tmp\\test"
-                      : "/tmp/test/";
+        ? "tmp\\test"
+        : "/tmp/test/";
     List<String> execCmd = testImage.isWindowsContainer()
-                           ? Arrays.asList("cmd", "/C", "mkdir " + testPath)
-                           : Arrays.asList("mkdir", testPath);
+        ? Arrays.asList("cmd", "/C", "mkdir " + testPath)
+        : Arrays.asList("mkdir", testPath);
 
     containerApi.containerStart("container-archive-info-test", null);
     IdResponse containerExec = engineApiClient.getExecApi().containerExec(
         "container-archive-info-test",
         new ExecConfig(null, null, null, null, null, null, null,
-                       execCmd,
-                       null, null, null));
+            execCmd,
+            null, null, null));
     engineApiClient.getExecApi().execStart(
         containerExec.getId(),
         new ExecStartConfig(null, null, null));
@@ -391,8 +404,7 @@ class ContainerApiIntegrationTest {
 
     try {
       wait.await();
-    }
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       e.printStackTrace();
     }
 
@@ -453,8 +465,7 @@ class ContainerApiIntegrationTest {
 
     try {
       wait.await();
-    }
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       e.printStackTrace();
     }
     Optional<Frame> anyFrame = callback.frames.stream().findAny();
@@ -761,6 +772,103 @@ class ContainerApiIntegrationTest {
   }
 
   @Test
+  @EnabledIfSupportsWebSocket
+  public void containerAttachWebSocketNonInteractive() throws InterruptedException {
+    SocatContainer socatContainer = new SocatContainer(engineApiClient);
+    EngineApiClient tcpClient = socatContainer.startSocatContainer();
+
+    removeContainer(engineApiClient, "container-attach-ws-non-interactive-test");
+
+    imageApi.imageCreate(testImage.getImageName(), null, null, testImage.getImageTag(), null, null, null, null, null);
+
+    HostConfig hostConfig = new HostConfig();
+    hostConfig.setAutoRemove(true);
+    ContainerCreateRequest containerCreateRequest = new ContainerCreateRequest(
+        null, null, null,
+        true, true, true,
+        null,
+        true, true, null,
+        null,
+        null,
+        null,
+        null,
+        testImage.getImageWithTag(),
+        null, null, singletonList("/cat"),
+        null, null,
+        null,
+        singletonMap(LABEL_KEY, LABEL_VALUE),
+        null, null,
+        null,
+        hostConfig,
+        null
+    );
+    containerApi.containerCreate(containerCreateRequest, "container-attach-ws-non-interactive-test");
+    containerApi.containerStart("container-attach-ws-non-interactive-test", null);
+
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+    String ourMessage = "hallo welt " + UUID.randomUUID();
+
+    CountDownLatch messageReceived = new CountDownLatch(1);
+    List<String> receivedMessages = new ArrayList<>();
+    WebSocketListener listener = new DefaultWebSocketListener() {
+      @Override
+      public void onOpen(@NotNull WebSocket webSocket, @NotNull Response response) {
+        super.onOpen(webSocket, response);
+        executor.execute(() -> webSocket.send(ourMessage));
+      }
+
+      @Override
+      public void onFailure(@NotNull WebSocket webSocket, Throwable t, Response response) {
+        super.onFailure(webSocket, t, response);
+      }
+
+      @Override
+      public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) {
+        super.onMessage(webSocket, text);
+        receivedMessages.add(text);
+        messageReceived.countDown();
+      }
+
+      @Override
+      public void onMessage(@NotNull WebSocket webSocket, ByteString bytes) {
+        super.onMessage(webSocket, bytes);
+        receivedMessages.add(bytes.utf8());
+        messageReceived.countDown();
+      }
+
+      @Override
+      public void onClosing(@NotNull WebSocket webSocket, int code, @NotNull String reason) {
+        super.onClosing(webSocket, code, reason);
+      }
+
+      @Override
+      public void onClosed(@NotNull WebSocket webSocket, int code, @NotNull String reason) {
+        super.onClosed(webSocket, code, reason);
+      }
+    };
+
+    WebSocket webSocket = tcpClient.getContainerApi().containerAttachWebsocket(
+        "container-attach-ws-non-interactive-test",
+        null, true, true, true, true, true,
+        listener);
+
+//    boolean enqueued = webSocket.send(ourMessage);
+//    assertTrue(enqueued);
+
+    Duration timeout = Duration.of(5, SECONDS);
+    boolean success = messageReceived.await(timeout.toMillis(), TimeUnit.MILLISECONDS);
+
+    webSocket.close(NORMAL_CLOSURE.getCode(), "cleanup");
+    socatContainer.stopSocatContainer();
+
+    assertTrue(success);
+
+    assertTrue(receivedMessages.contains(ourMessage));
+
+    removeContainer(engineApiClient, "container-attach-ws-non-interactive-test");
+  }
+
+  @Test
   public void containerAttachNonInteractive() {
     removeContainer(engineApiClient, "container-attach-non-interactive-test");
 
@@ -809,8 +917,7 @@ class ContainerApiIntegrationTest {
 
     try {
       wait.await();
-    }
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       e.printStackTrace();
     }
 
@@ -893,8 +1000,7 @@ class ContainerApiIntegrationTest {
 
     try {
       wait.await();
-    }
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       e.printStackTrace();
     }
     assertSame(Frame.StreamType.RAW, callback.frames.stream().findAny().get().getStreamType());
