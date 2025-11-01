@@ -19,10 +19,12 @@ java {
 
 dependencies {
   constraints {
-    implementation(libs.moshi) {
-      version {
-        strictly(libs.versions.moshiVersionrange.get())
-        prefer(libs.versions.moshi.get())
+    listOf(libs.bundles.moshi).forEach {
+      implementation(it) {
+        version {
+          strictly(libs.versions.moshiVersionrange.get())
+          prefer(libs.versions.moshi.get())
+        }
       }
     }
     listOf(libs.bundles.okio).forEach {
@@ -33,10 +35,12 @@ dependencies {
         }
       }
     }
-    implementation(libs.okhttp) {
-      version {
-        strictly(libs.versions.okhttpVersionrange.get())
-        prefer(libs.versions.okhttp.get())
+    listOf(libs.bundles.okhttp).forEach {
+      implementation(it) {
+        version {
+          strictly(libs.versions.okhttpVersionrange.get())
+          prefer(libs.versions.okhttp.get())
+        }
       }
     }
     implementation("de.gesellix:docker-remote-api-model-1-41") {
@@ -76,7 +80,7 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
   implementation(libs.moshi)
   implementation(libs.okhttp)
-//  implementation("com.squareup.okhttp3:logging-interceptor:[4.9,5)!!4.11.0")
+//  implementation(libs.okhttpLoggingInterceptor)
   implementation("de.gesellix:docker-remote-api-model-1-41:2025-10-31T17-49-00")
   implementation("de.gesellix:docker-engine:2025-10-31T18-10-00")
   implementation("de.gesellix:docker-filesocket:2025-10-31T17-48-00")
@@ -173,6 +177,9 @@ publishing {
 }
 
 signing {
+  setRequired {
+    project.version != "unspecified"
+  }
   val signingKey: String? by project
   val signingPassword: String? by project
   useInMemoryPgpKeys(signingKey, signingPassword)

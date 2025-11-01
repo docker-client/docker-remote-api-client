@@ -250,6 +250,8 @@ open class ApiClient(
       .connectTimeout(requestConfig.timeout.toLong(), TimeUnit.MILLISECONDS)
       .readTimeout(requestConfig.timeout.toLong(), TimeUnit.MILLISECONDS)
       .addInterceptor(EnforceResponseContentTypeInterceptor())
+//      .addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY })
+//      .eventListenerFactory(LoggingEventListener.Factory())
     return actualClient.build()
   }
 
