@@ -30,7 +30,6 @@ import de.gesellix.docker.remote.api.testutil.SocatContainer;
 import de.gesellix.docker.remote.api.testutil.TarUtil;
 import de.gesellix.docker.remote.api.testutil.TestImage;
 import de.gesellix.docker.websocket.DefaultWebSocketListener;
-import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.BufferedSink;
@@ -57,8 +56,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -805,22 +802,11 @@ class ContainerApiIntegrationTest {
     containerApi.containerCreate(containerCreateRequest, "container-attach-ws-non-interactive-test");
     containerApi.containerStart("container-attach-ws-non-interactive-test", null);
 
-    ExecutorService executor = Executors.newSingleThreadExecutor();
     String ourMessage = "hallo welt " + UUID.randomUUID();
 
     CountDownLatch messageReceived = new CountDownLatch(1);
     List<String> receivedMessages = new ArrayList<>();
     WebSocketListener listener = new DefaultWebSocketListener() {
-      @Override
-      public void onOpen(@NotNull WebSocket webSocket, @NotNull Response response) {
-        super.onOpen(webSocket, response);
-        executor.execute(() -> webSocket.send(ourMessage));
-      }
-
-      @Override
-      public void onFailure(@NotNull WebSocket webSocket, Throwable t, Response response) {
-        super.onFailure(webSocket, t, response);
-      }
 
       @Override
       public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) {
@@ -835,16 +821,6 @@ class ContainerApiIntegrationTest {
         receivedMessages.add(bytes.utf8());
         messageReceived.countDown();
       }
-
-      @Override
-      public void onClosing(@NotNull WebSocket webSocket, int code, @NotNull String reason) {
-        super.onClosing(webSocket, code, reason);
-      }
-
-      @Override
-      public void onClosed(@NotNull WebSocket webSocket, int code, @NotNull String reason) {
-        super.onClosed(webSocket, code, reason);
-      }
     };
 
     WebSocket webSocket = tcpClient.getContainerApi().containerAttachWebsocket(
@@ -852,11 +828,13 @@ class ContainerApiIntegrationTest {
         null, true, true, true, true, true,
         listener);
 
-//    boolean enqueued = webSocket.send(ourMessage);
-//    assertTrue(enqueued);
+    boolean enqueued = webSocket.send(ourMessage);
+    assertTrue(enqueued);
 
     Duration timeout = Duration.of(5, SECONDS);
     boolean success = messageReceived.await(timeout.toMillis(), TimeUnit.MILLISECONDS);
+
+    System.out.println("Received: " + receivedMessages);
 
     webSocket.close(NORMAL_CLOSURE.getCode(), "cleanup");
     socatContainer.stopSocatContainer();
