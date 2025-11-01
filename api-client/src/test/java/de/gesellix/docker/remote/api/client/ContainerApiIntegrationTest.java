@@ -773,7 +773,7 @@ class ContainerApiIntegrationTest {
 
   @Test
   @EnabledIfSupportsWebSocket
-  public void containerAttachWebSocketNonInteractive() throws InterruptedException {
+  public void containerAttachWebSocket() throws InterruptedException {
     SocatContainer socatContainer = new SocatContainer(engineApiClient);
     EngineApiClient tcpClient = socatContainer.startSocatContainer();
 
