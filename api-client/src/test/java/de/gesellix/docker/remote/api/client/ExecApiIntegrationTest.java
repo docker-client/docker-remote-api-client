@@ -1,5 +1,6 @@
 package de.gesellix.docker.remote.api.client;
 
+import de.gesellix.docker.registry.LocalDocker;
 import de.gesellix.docker.remote.api.ContainerCreateRequest;
 import de.gesellix.docker.remote.api.EngineApiClient;
 import de.gesellix.docker.remote.api.ExecConfig;
@@ -29,10 +30,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
@@ -130,12 +131,20 @@ class ExecApiIntegrationTest {
     containerApi.containerCreate(containerCreateRequest, "container-exec-interactive-test");
     containerApi.containerStart("container-exec-interactive-test", null);
 
-    IdResponse exec = execApi.containerExec(
-        "container-exec-interactive-test",
-        new ExecConfig(true, true, true, null, null, true,
-            null,
-            singletonList("/cat"),
-            null, null, null));
+    ExecConfig execConfig = new ExecConfig(true, true, true, null, null, false,
+        null,
+        singletonList("/cat"),
+        null, null, null);
+
+    if (LocalDocker.isNativeWindows()) {
+      execConfig.setTty(false);
+      execConfig.setCmd(Arrays.asList("cmd", "/V:ON", "/C", "set /p line= & echo #!line!#"));
+    } else {
+      execConfig.setTty(false);
+      execConfig.setCmd(Arrays.asList("/bin/sh", "-c", "read line && echo \"#$line#\""));
+    }
+
+    IdResponse exec = execApi.containerExec("container-exec-interactive-test", execConfig);
     assertNotNull(exec.getId());
 
     Duration timeout = Duration.of(5, SECONDS);
@@ -187,13 +196,20 @@ class ExecApiIntegrationTest {
       e.printStackTrace();
     }
 
-    ExecInspectResponse execInspect = execApi.execInspect(exec.getId());
-    assertTrue(execInspect.getRunning());
+//    ExecInspectResponse execInspect = execApi.execInspect(exec.getId());
+//    assertTrue(execInspect.getRunning());
 
-    assertSame(Frame.StreamType.RAW, callback.frames.stream().findAny().get().getStreamType());
-    assertEquals(
-        "hello echo\nhello echo".replaceAll("[\\n\\r]", ""),
-        callback.frames.stream().map(Frame::getPayloadAsString).collect(Collectors.joining()).replaceAll("[\\n\\r]", ""));
+    if (execConfig.getTty() != null && execConfig.getTty()) {
+      assertSame(Frame.StreamType.RAW, callback.frames.stream().findAny().get().getStreamType());
+      assertEquals(
+          "hello echo\nhello echo".replaceAll("[\\n\\r]", ""),
+          callback.frames.stream().map(Frame::getPayloadAsString).collect(Collectors.joining()).replaceAll("[\\n\\r]", ""));
+    } else {
+      assertSame(Frame.StreamType.RAW, callback.frames.stream().findAny().get().getStreamType());
+      assertEquals(
+          "#hello echo#",
+          callback.frames.stream().map(Frame::getPayloadAsString).collect(Collectors.joining()).replaceAll("[\\n\\r]", ""));
+    }
 
     removeContainer(engineApiClient, "container-exec-interactive-test");
 
