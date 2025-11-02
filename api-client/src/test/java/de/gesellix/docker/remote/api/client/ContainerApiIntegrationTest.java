@@ -1,6 +1,8 @@
 package de.gesellix.docker.remote.api.client;
 
 import com.squareup.moshi.Moshi;
+
+import de.gesellix.docker.registry.LocalDocker;
 import de.gesellix.docker.remote.api.ContainerCreateRequest;
 import de.gesellix.docker.remote.api.ContainerCreateResponse;
 import de.gesellix.docker.remote.api.ContainerInspectResponse;
@@ -931,6 +933,16 @@ class ContainerApiIntegrationTest {
         null,
         null
     );
+    if (LocalDocker.isNativeWindows()) {
+      containerCreateRequest.setTty(false);
+      containerCreateRequest.setEntrypoint(singletonList("cmd"));
+      containerCreateRequest.setCmd(Arrays.asList("/V:ON", "/C", "set /p line= & echo #!line!#"));
+    } else {
+      containerCreateRequest.setTty(false);
+      containerCreateRequest.setEntrypoint(singletonList("/bin/sh"));
+      containerCreateRequest.setCmd(Arrays.asList("-c", "read line && echo \"#$line#\""));
+    }
+
     containerApi.containerCreate(containerCreateRequest, "container-attach-interactive-test");
     containerApi.containerStart("container-attach-interactive-test", null);
 
@@ -981,10 +993,18 @@ class ContainerApiIntegrationTest {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    assertSame(Frame.StreamType.RAW, callback.frames.stream().findAny().get().getStreamType());
-    assertEquals(
-        "hello echo\nhello echo".replaceAll("[\\n\\r]", ""),
-        callback.frames.stream().map(Frame::getPayloadAsString).collect(Collectors.joining()).replaceAll("[\\n\\r]", ""));
+
+    if (containerCreateRequest.getTty() != null && containerCreateRequest.getTty()) {
+      assertSame(Frame.StreamType.RAW, callback.frames.stream().findAny().get().getStreamType());
+      assertEquals(
+          "hello echo\nhello echo".replaceAll("[\\n\\r]", ""),
+          callback.frames.stream().map(Frame::getPayloadAsString).collect(Collectors.joining()).replaceAll("[\\n\\r]", ""));
+    } else {
+      assertSame(Frame.StreamType.STDOUT, callback.frames.stream().findAny().get().getStreamType());
+      assertEquals(
+          "#hello echo#",
+          callback.frames.stream().map(Frame::getPayloadAsString).collect(Collectors.joining()).replaceAll("[\\n\\r]", ""));
+    }
 
     removeContainer(engineApiClient, "container-attach-interactive-test");
   }
