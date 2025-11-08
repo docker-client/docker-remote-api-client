@@ -7,8 +7,20 @@
   </appender>
 
   <logger name="de.gesellix.docker.remote.api" level="DEBUG"/>
+  <logger name="de.gesellix.docker.remote.api.core" level="DEBUG"/>
   <!--  <logger name="de.gesellix.docker.engine" level="DEBUG"/>-->
   <logger name="de.gesellix.docker.client.filesocket" level="INFO"/>
+
+  <!--
+  Aug 08, 2025 10:55:49 PM okhttp3.internal.platform.Platform log
+  WARNING: A connection to http://2f55736572732f676573656c6c69782f2e646f636b65722f72756e2f646f636.b65722e736f636b.socket/
+  was leaked.
+  Did you forget to close a response body?
+  To see where this was allocated,
+  set the OkHttpClient logger level to FINE:
+  Logger.getLogger(OkHttpClient.class.getName()).setLevel(Level.FINE);
+  -->
+  <logger name="okhttp3.OkHttpClient" level="FINE"/>
 
   <root level="INFO">
     <appender-ref ref="STDOUT"/>

@@ -85,6 +85,7 @@ dependencies {
   implementation("de.gesellix:docker-filesocket:2025-10-31T17-48-00")
 
   implementation(libs.slf4j)
+  runtimeOnly(libs.slf4jJul)
   testImplementation("ch.qos.logback:logback-classic:${libs.versions.logbackVersionrange.get()}!!${libs.versions.logback.get()}")
 
   testImplementation("io.kotest:kotest-runner-junit5-jvm:5.9.1")
@@ -108,6 +109,7 @@ tasks {
   }
   withType<Test> {
     useJUnitPlatform()
+    systemProperties["java.util.logging.config.file"] = project.layout.buildDirectory.file("logging.properties").get().asFile.absolutePath
   }
 }
 
