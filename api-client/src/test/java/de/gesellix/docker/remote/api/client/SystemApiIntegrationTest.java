@@ -1,6 +1,6 @@
 package de.gesellix.docker.remote.api.client;
 
-import de.gesellix.docker.authentication.AuthConfigReader;
+import de.gesellix.docker.client.core.authentication.AuthConfigReader;
 import de.gesellix.docker.remote.api.AuthConfig;
 import de.gesellix.docker.remote.api.EngineApiClient;
 import de.gesellix.docker.remote.api.EventMessage;
@@ -64,7 +64,7 @@ class SystemApiIntegrationTest {
 
   @Test
   public void systemAuthWhenAuthorized() {
-    de.gesellix.docker.authentication.AuthConfig defaultAuthConfig = new AuthConfigReader().readDefaultAuthConfig();
+    de.gesellix.docker.client.core.authentication.AuthConfig defaultAuthConfig = new AuthConfigReader().readDefaultAuthConfig();
     SystemAuthResponse authResponse = systemApi.systemAuth(new AuthConfig(defaultAuthConfig.getUsername(), defaultAuthConfig.getPassword(), null, null));
     assertEquals("Login Succeeded", authResponse.getStatus());
   }

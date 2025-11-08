@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import com.squareup.moshi.Moshi;
 
-import de.gesellix.docker.builder.BuildContextBuilder;
+import de.gesellix.docker.client.core.builder.BuildContextBuilder;
 import de.gesellix.docker.registry.DockerRegistry;
 import de.gesellix.docker.remote.api.BuildInfo;
 import de.gesellix.docker.remote.api.BuildPruneResponse;

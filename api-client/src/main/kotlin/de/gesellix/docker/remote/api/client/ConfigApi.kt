@@ -12,8 +12,7 @@
  */
 package de.gesellix.docker.remote.api.client
 
-import de.gesellix.docker.engine.DockerClientConfig
-import de.gesellix.docker.engine.RequestMethod
+import de.gesellix.docker.client.core.config.DockerClientConfig
 import de.gesellix.docker.remote.api.Config
 import de.gesellix.docker.remote.api.ConfigCreateRequest
 import de.gesellix.docker.remote.api.ConfigSpec
@@ -23,6 +22,7 @@ import de.gesellix.docker.remote.api.core.ClientError
 import de.gesellix.docker.remote.api.core.ClientException
 import de.gesellix.docker.remote.api.core.MultiValueMap
 import de.gesellix.docker.remote.api.core.RequestConfig
+import de.gesellix.docker.remote.api.core.RequestMethod
 import de.gesellix.docker.remote.api.core.ResponseType
 import de.gesellix.docker.remote.api.core.ServerError
 import de.gesellix.docker.remote.api.core.ServerException

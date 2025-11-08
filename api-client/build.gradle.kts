@@ -3,6 +3,7 @@ import java.util.*
 
 plugins {
   id("java")
+  id("groovy")
   id("org.jetbrains.kotlin.jvm")
   id("maven-publish")
   id("signing")
@@ -76,9 +77,11 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
   implementation(libs.moshi)
   implementation(libs.okhttp)
+  implementation("org.bouncycastle:bcpkix-jdk18on:1.82")
+  implementation("org.apache.commons:commons-compress:1.28.0")
 //  implementation("com.squareup.okhttp3:logging-interceptor:[4.9,5)!!4.11.0")
   implementation("de.gesellix:docker-remote-api-model-1-41:2025-10-31T17-49-00")
-  implementation("de.gesellix:docker-engine:2025-10-31T18-10-00")
+//  implementation("de.gesellix:docker-engine:2025-10-31T18-10-00")
   implementation("de.gesellix:docker-filesocket:2025-10-31T17-48-00")
 
   implementation(libs.slf4j)
@@ -91,8 +94,11 @@ dependencies {
   testImplementation(libs.junitPlatformLauncher)
   testImplementation(libs.junitPlatformCommons)
 
+  testImplementation("org.spockframework:spock-core:2.3-groovy-4.0")
+  testRuntimeOnly("net.bytebuddy:byte-buddy:1.17.8")
+
   testImplementation("org.apache.commons:commons-compress:1.28.0")
-  testImplementation("de.gesellix:testutil:[2024-01-01T01-01-01,)")
+  testImplementation("de.gesellix:testutil:[2025-01-01T01-01-01,)")
   testImplementation("de.gesellix:docker-registry:2025-10-31T17-45-00")
 }
 

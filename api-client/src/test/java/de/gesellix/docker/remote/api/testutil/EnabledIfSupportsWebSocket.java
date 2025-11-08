@@ -13,7 +13,7 @@ import org.junit.jupiter.api.extension.ExecutionCondition;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-import de.gesellix.docker.engine.DockerClientConfig;
+import de.gesellix.docker.client.core.config.DockerClientConfig;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

@@ -14,8 +14,11 @@ import de.gesellix.docker.remote.api.client.SwarmApi;
 import de.gesellix.docker.remote.api.client.SystemApi;
 import de.gesellix.docker.remote.api.client.TaskApi;
 import de.gesellix.docker.remote.api.client.VolumeApi;
+import de.gesellix.docker.remote.api.core.GenericApi;
 
 public interface EngineApiClient {
+
+  GenericApi getGenericApi();
 
   ConfigApi getConfigApi();
 

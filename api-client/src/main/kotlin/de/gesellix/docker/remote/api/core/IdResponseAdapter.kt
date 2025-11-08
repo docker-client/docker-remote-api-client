@@ -25,7 +25,7 @@ class IdResponseAdapter : JsonAdapter.Factory {
         val peekJson = reader.peekJson()
         return try {
           delegate.fromJson(reader)
-        } catch (e: JsonDataException) {
+        } catch (_: JsonDataException) {
           val idResponseHack = idAdapter.fromJson(peekJson)
           IdResponse(id = idResponseHack.id)
         }

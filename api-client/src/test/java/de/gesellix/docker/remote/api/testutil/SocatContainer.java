@@ -5,7 +5,7 @@ import static de.gesellix.docker.remote.api.testutil.Constants.LABEL_VALUE;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 
-import de.gesellix.docker.engine.DockerClientConfig;
+import de.gesellix.docker.client.core.config.DockerClientConfig;
 import de.gesellix.docker.remote.api.ContainerCreateRequest;
 import de.gesellix.docker.remote.api.ContainerCreateResponse;
 import de.gesellix.docker.remote.api.ContainerInspectResponse;

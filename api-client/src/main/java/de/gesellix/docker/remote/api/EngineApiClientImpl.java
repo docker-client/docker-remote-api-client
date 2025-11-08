@@ -1,6 +1,6 @@
 package de.gesellix.docker.remote.api;
 
-import de.gesellix.docker.engine.DockerClientConfig;
+import de.gesellix.docker.client.core.config.DockerClientConfig;
 import de.gesellix.docker.remote.api.client.ConfigApi;
 import de.gesellix.docker.remote.api.client.ContainerApi;
 import de.gesellix.docker.remote.api.client.DistributionApi;
@@ -15,11 +15,13 @@ import de.gesellix.docker.remote.api.client.SwarmApi;
 import de.gesellix.docker.remote.api.client.SystemApi;
 import de.gesellix.docker.remote.api.client.TaskApi;
 import de.gesellix.docker.remote.api.client.VolumeApi;
+import de.gesellix.docker.remote.api.core.GenericApi;
 
 import java.net.Proxy;
 
 public class EngineApiClientImpl implements EngineApiClient {
 
+  private final GenericApi genericApi;
   private final ConfigApi configApi;
   private final ContainerApi containerApi;
   private final DistributionApi distributionApi;
@@ -45,6 +47,7 @@ public class EngineApiClientImpl implements EngineApiClient {
   }
 
   public EngineApiClientImpl(DockerClientConfig dockerClientConfig, Proxy proxy) {
+    genericApi = new GenericApi(dockerClientConfig, proxy);
     configApi = new ConfigApi(dockerClientConfig, proxy);
     containerApi = new ContainerApi(dockerClientConfig, proxy);
     distributionApi = new DistributionApi(dockerClientConfig, proxy);
@@ -59,6 +62,11 @@ public class EngineApiClientImpl implements EngineApiClient {
     systemApi = new SystemApi(dockerClientConfig, proxy);
     taskApi = new TaskApi(dockerClientConfig, proxy);
     volumeApi = new VolumeApi(dockerClientConfig, proxy);
+  }
+
+  @Override
+  public GenericApi getGenericApi() {
+    return genericApi;
   }
 
   @Override

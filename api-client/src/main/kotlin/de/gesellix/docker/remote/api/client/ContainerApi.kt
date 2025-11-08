@@ -14,12 +14,7 @@ package de.gesellix.docker.remote.api.client
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
-import de.gesellix.docker.engine.DockerClientConfig
-import de.gesellix.docker.engine.RequestMethod.DELETE
-import de.gesellix.docker.engine.RequestMethod.GET
-import de.gesellix.docker.engine.RequestMethod.HEAD
-import de.gesellix.docker.engine.RequestMethod.POST
-import de.gesellix.docker.engine.RequestMethod.PUT
+import de.gesellix.docker.client.core.config.DockerClientConfig
 import de.gesellix.docker.remote.api.ContainerCreateRequest
 import de.gesellix.docker.remote.api.ContainerCreateResponse
 import de.gesellix.docker.remote.api.ContainerInspectResponse
@@ -36,6 +31,11 @@ import de.gesellix.docker.remote.api.core.ClientException
 import de.gesellix.docker.remote.api.core.Frame
 import de.gesellix.docker.remote.api.core.MultiValueMap
 import de.gesellix.docker.remote.api.core.RequestConfig
+import de.gesellix.docker.remote.api.core.RequestMethod.DELETE
+import de.gesellix.docker.remote.api.core.RequestMethod.GET
+import de.gesellix.docker.remote.api.core.RequestMethod.HEAD
+import de.gesellix.docker.remote.api.core.RequestMethod.POST
+import de.gesellix.docker.remote.api.core.RequestMethod.PUT
 import de.gesellix.docker.remote.api.core.ResponseType
 import de.gesellix.docker.remote.api.core.ServerError
 import de.gesellix.docker.remote.api.core.ServerException
