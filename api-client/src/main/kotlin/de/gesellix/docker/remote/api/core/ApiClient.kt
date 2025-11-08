@@ -6,7 +6,6 @@ import de.gesellix.docker.client.filesocket.UnixSocket
 import de.gesellix.docker.client.filesocket.UnixSocketFactory
 import de.gesellix.docker.client.filesocket.UnixSocketFactorySupport
 import de.gesellix.docker.engine.DockerClientConfig
-import de.gesellix.docker.engine.EngineRequest
 import de.gesellix.docker.engine.RequestMethod.DELETE
 import de.gesellix.docker.engine.RequestMethod.GET
 import de.gesellix.docker.engine.RequestMethod.HEAD
@@ -32,6 +31,8 @@ import java.lang.reflect.Type
 import java.net.Proxy
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
 
 open class ApiClient(
   private val dockerClientConfig: DockerClientConfig = DockerClientConfig(),
@@ -62,11 +63,6 @@ open class ApiClient(
 //    var accessToken: String? = null
 
     val socketFactories: MutableMap<String, (OkHttpClient.Builder) -> OkHttpClient.Builder> = mutableMapOf()
-
-//    @JvmStatic
-//    val engineClient: EngineClient by lazy {
-//      OkDockerClient()
-//    }
 
     @JvmStatic
     val client: OkHttpClient by lazy {
@@ -125,50 +121,30 @@ open class ApiClient(
   }
 
   protected inline fun <reified T : Any?> request(requestConfig: RequestConfig): ApiInfrastructureResponse<T?> {
-    val engineRequest = EngineRequest(requestConfig.method, requestConfig.path).also {
-      it.headers = requestConfig.headers
-      it.query = requestConfig.query
-      it.body = requestConfig.body
-    }
-    val request = prepareRequest(engineRequest)
-    val client = prepareClient(engineRequest)
+    val request = prepareRequest(requestConfig)
+    val client = prepareClient(requestConfig.timeout)
     return request<T>(request, client, requestConfig.elementType)
   }
 
   protected fun requestWebSocket(requestConfig: RequestConfig, wsListener: WebSocketListener): WebSocket {
-    val engineRequest = EngineRequest(requestConfig.method, requestConfig.path).also {
-      it.headers = requestConfig.headers
-      it.query = requestConfig.query
-      it.body = requestConfig.body
-    }
-    val request = prepareRequest(engineRequest, JsonMediaType)
-    val client = prepareClient(engineRequest)
+    val request = prepareRequest(requestConfig, JsonMediaType)
+    val client = prepareClient(requestConfig.timeout)
     return client.newWebSocket(request, wsListener)
   }
 
   protected inline fun <reified T : Any?> requestStream(requestConfig: RequestConfig): ApiInfrastructureResponse<T?> {
-    val engineRequest = EngineRequest(requestConfig.method, requestConfig.path).also {
-      it.headers = requestConfig.headers
-      it.query = requestConfig.query
-      it.body = requestConfig.body
-    }
-    val request = prepareRequest(engineRequest, JsonMediaType)
-    val client = prepareClient(engineRequest)
+    val request = prepareRequest(requestConfig, JsonMediaType)
+    val client = prepareClient(requestConfig.timeout)
     return requestStream(request, client)
   }
 
   protected fun requestFrames(requestConfig: RequestConfig): ApiInfrastructureResponse<Frame> {
-    val engineRequest = EngineRequest(requestConfig.method, requestConfig.path).also {
-      it.headers = requestConfig.headers
-      it.query = requestConfig.query
-      it.body = requestConfig.body
-    }
-    val request = prepareRequest(engineRequest)
-    val client = prepareClient(engineRequest)
+    val request = prepareRequest(requestConfig)
+    val client = prepareClient(requestConfig.timeout)
     return requestFrames(request, client)
   }
 
-  protected fun prepareRequest(requestConfig: EngineRequest, fallbackContentType: String = ""): Request {
+  protected fun prepareRequest(requestConfig: RequestConfig, fallbackContentType: String = ""): Request {
     val httpUrl = buildHttpUrl().build()
 
     val pathWithOptionalApiVersion = when {
@@ -241,14 +217,14 @@ open class ApiClient(
     return requestBuilder.build()
   }
 
-  protected fun prepareClient(requestConfig: EngineRequest): OkHttpClient {
+  protected fun prepareClient(timeout: Duration): OkHttpClient {
 //    Logger.getLogger(OkHttpClient::class.java.name).level = Level.FINE
 //    val engineResponse = engineClient.request(requestConfig)
     val actualClient = buildHttpClient(client.newBuilder())
       //      .proxy(proxy) // TODO
       // do we need to disable the timeout for streaming?
-      .connectTimeout(requestConfig.timeout.toLong(), TimeUnit.MILLISECONDS)
-      .readTimeout(requestConfig.timeout.toLong(), TimeUnit.MILLISECONDS)
+      .connectTimeout(timeout.toLong(DurationUnit.MILLISECONDS), TimeUnit.MILLISECONDS)
+      .readTimeout(timeout.toLong(DurationUnit.MILLISECONDS), TimeUnit.MILLISECONDS)
       .addInterceptor(EnforceResponseContentTypeInterceptor())
     return actualClient.build()
   }

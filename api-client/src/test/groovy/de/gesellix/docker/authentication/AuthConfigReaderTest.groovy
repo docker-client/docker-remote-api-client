@@ -127,7 +127,7 @@ class AuthConfigReaderTest extends Specification {
     String configFile = "/auth/dockercfg-with-credsStore-${System.properties['os.name'].toString().toLowerCase().capitalize().replaceAll("\\s", "_")}"
     File expectedConfigFile = new ResourceReader().getClasspathResourceAsFile(configFile, AuthConfigReader)
     env.indexUrl_v1 >> 'https://index.docker.io/v1/'
-    env.getDockerConfigFile() >> expectedConfigFile
+    dockerConfigReader.getDockerConfigFile() >> expectedConfigFile
 
     when:
     AuthConfig authConfig = authConfigReader.readDefaultAuthConfig()
@@ -147,19 +147,20 @@ class AuthConfigReaderTest extends Specification {
   def "read default authConfig"() {
     given:
     String oldDockerConfig = System.clearProperty("docker.config")
-    File expectedConfigFile = new ResourceReader().getClasspathResourceAsFile('/auth/config.json', AuthConfigReader)
+    String configFile = "/auth/config.json"
+    File expectedConfigFile = new ResourceReader().getClasspathResourceAsFile(configFile, AuthConfigReader)
     env.indexUrl_v1 >> 'https://index.docker.io/v1/'
     dockerConfigReader.getDockerConfigFile() >> expectedConfigFile
 
     when:
-    AuthConfig result = authConfigReader.readDefaultAuthConfig()
+    AuthConfig authConfig = authConfigReader.readDefaultAuthConfig()
 
     then:
     1 * authConfigReader.readAuthConfig(null, expectedConfigFile)
-    result == new AuthConfig(username: "gesellix",
-        password: "-yet-another-password-",
-        email: "tobias@gesellix.de",
-        serveraddress: "https://index.docker.io/v1/")
+    authConfig.serveraddress == "https://index.docker.io/v1/"
+    authConfig.email == "tobias@gesellix.de"
+    authConfig.username == "gesellix"
+    authConfig.password == "-yet-another-password-"
 
     cleanup:
     if (oldDockerConfig) {

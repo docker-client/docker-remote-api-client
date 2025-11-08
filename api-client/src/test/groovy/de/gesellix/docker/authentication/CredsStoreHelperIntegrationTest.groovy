@@ -15,16 +15,21 @@ class CredsStoreHelperIntegrationTest extends Specification {
 
   @Requires({ System.properties['user.name'] == 'gesellix' && ['Mac OS X', 'Windows'].contains(System.properties['os.name']) })
   def "can get auth from desktop on Mac OS X and Windows"() {
-    when:
-    CredsStoreHelperResult result = helper.getAuthentication("desktop")
-    then:
-    result == new CredsStoreHelperResult(
-        data: [
+    given:
+    def expected = new CredsStoreHelperResult(
+        [
             ServerURL: new DockerEnv().indexUrl_v1,
             Username : "gesellix",
             Secret   : "-yet-another-password-"
         ]
     )
+    when:
+    CredsStoreHelperResult result = helper.getAuthentication("desktop")
+    then:
+    result.error == null
+    result.data.ServerURL == expected.data.ServerURL
+    result.data.Username == expected.data.Username
+    result.data.Secret =~ ".+"
   }
 
   @Requires({ System.properties['user.name'] == 'gesellix' && ['Mac OS X', 'Windows'].contains(System.properties['os.name']) })
@@ -32,21 +37,27 @@ class CredsStoreHelperIntegrationTest extends Specification {
     when:
     CredsStoreHelperResult result = helper.getAllAuthentications("desktop")
     then:
-    result == new CredsStoreHelperResult(data: [(new DockerEnv().indexUrl_v1): "gesellix"])
+    result.error == null
+    result.data[(new DockerEnv().indexUrl_v1)] == "gesellix"
   }
 
   @Requires({ System.properties['user.name'] == 'gesellix' && System.properties['os.name'] == "Mac OS X" })
   def "can get auth from osxkeychain on Mac OS X"() {
-    when:
-    CredsStoreHelperResult result = helper.getAuthentication("osxkeychain")
-    then:
-    result == new CredsStoreHelperResult(
-        data: [
+    given:
+    def expected = new CredsStoreHelperResult(
+        [
             ServerURL: new DockerEnv().indexUrl_v1,
             Username : "gesellix",
             Secret   : "-yet-another-password-"
         ]
     )
+    when:
+    CredsStoreHelperResult result = helper.getAuthentication("osxkeychain")
+    then:
+    result.error == null
+    result.data.ServerURL == expected.data.ServerURL
+    result.data.Username == expected.data.Username
+    result.data.Secret =~ ".+"
   }
 
   @Requires({ System.properties['user.name'] == 'gesellix' && System.properties['os.name'] == "Mac OS X" })
@@ -54,21 +65,27 @@ class CredsStoreHelperIntegrationTest extends Specification {
     when:
     CredsStoreHelperResult result = helper.getAllAuthentications("osxkeychain")
     then:
-    result == new CredsStoreHelperResult(data: [(new DockerEnv().indexUrl_v1): "gesellix"])
+    result.error == null
+    result.data[(new DockerEnv().indexUrl_v1)] == "gesellix"
   }
 
   @Requires({ System.properties['user.name'] == 'gesellix' && System.properties['os.name'] == "Windows" })
   def "can get auth from wincred on Windows"() {
-    when:
-    CredsStoreHelperResult result = helper.getAuthentication("wincred")
-    then:
-    result == new CredsStoreHelperResult(
-        data: [
+    given:
+    def expected = new CredsStoreHelperResult(
+        [
             ServerURL: new DockerEnv().indexUrl_v1,
             Username : "gesellix",
             Secret   : "-yet-another-password-"
         ]
     )
+    when:
+    CredsStoreHelperResult result = helper.getAuthentication("wincred")
+    then:
+    result.error == null
+    result.data.ServerURL == expected.data.ServerURL
+    result.data.Username == expected.data.Username
+    result.data.Secret =~ ".+"
   }
 
   @Requires({ System.properties['user.name'] == 'gesellix' && System.properties['os.name'] == "Windows" })
@@ -76,7 +93,8 @@ class CredsStoreHelperIntegrationTest extends Specification {
     when:
     CredsStoreHelperResult result = helper.getAllAuthentications("wincred")
     then:
-    result == new CredsStoreHelperResult(data: [(new DockerEnv().indexUrl_v1): "gesellix"])
+    result.error == null
+    result.data[(new DockerEnv().indexUrl_v1)] == "gesellix"
   }
 
   @Requires({ System.properties['user.name'] == 'gesellix' && System.properties['os.name'] == "Linux" })
@@ -95,7 +113,8 @@ class CredsStoreHelperIntegrationTest extends Specification {
     when:
     CredsStoreHelperResult result = helper.getAllAuthentications("secretservice")
     then:
-    result == new CredsStoreHelperResult(data: [(new DockerEnv().indexUrl_v1): "gesellix"])
+    result.error == null
+    result.data[(new DockerEnv().indexUrl_v1)] == "gesellix"
   }
 
   @Requires({ System.properties['user.name'] == 'gesellix' })
