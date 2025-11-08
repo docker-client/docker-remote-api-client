@@ -1,6 +1,7 @@
 package de.gesellix.docker.builder;
 
-import de.gesellix.util.IOUtils;
+import okio.Okio;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,9 @@ public class DockerignoreFileFilter {
       return result;
     }
     try {
-      Collections.addAll(result, IOUtils.toString(Files.newInputStream(dockerignoreFile.get().toPath())).split("[\r\n]+"));
+      Collections.addAll(result, Okio.buffer(Okio.source(Files.newInputStream(dockerignoreFile.get().toPath())))
+          .readUtf8()
+          .split("[\r\n]+"));
       return result;
     }
     catch (IOException e) {

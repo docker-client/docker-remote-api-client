@@ -1,6 +1,6 @@
 package de.gesellix.docker.builder
 
-import de.gesellix.util.IOUtils
+import okio.Okio
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import spock.lang.Specification
 
@@ -95,6 +95,6 @@ class BuildContextBuilderSpec extends Specification {
     BuildContextBuilder.copyFile(inputFile, outputStream)
 
     then:
-    new String(outputStream.toByteArray()) == IOUtils.toString(new FileInputStream(inputFile))
+    new String(outputStream.toByteArray()) == Okio.buffer(Okio.source(new FileInputStream(inputFile))).readUtf8()
   }
 }

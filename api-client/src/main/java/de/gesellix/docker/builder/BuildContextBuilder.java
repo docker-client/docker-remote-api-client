@@ -1,8 +1,9 @@
 package de.gesellix.docker.builder;
 
-import de.gesellix.util.IOUtils;
+import okio.BufferedSink;
+import okio.BufferedSource;
 import okio.Okio;
-import okio.Source;
+
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.slf4j.Logger;
@@ -74,13 +75,11 @@ public class BuildContextBuilder {
   }
 
   public static long copyFile(File input, OutputStream output) throws IOException {
-    Source source = null;
-    try {
-      source = Okio.source(input);
-      return IOUtils.copy(source, Okio.sink(output));
-    }
-    finally {
-      IOUtils.closeQuietly(source);
+    BufferedSink sink = Okio.buffer(Okio.sink(output));
+    try (BufferedSource source = Okio.buffer(Okio.source(input))) {
+      long read = source.readAll(sink);
+      sink.flush();
+      return read;
     }
   }
 }
