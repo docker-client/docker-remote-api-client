@@ -14,7 +14,7 @@ public enum WebsocketStatusCode {
   INTERNAL_SERVER_ERROR(1011),
   TLS_HANDSHAKE(1015);
 
-  private WebsocketStatusCode(int code) {
+  WebsocketStatusCode(int code) {
     this.code = code;
   }
 
@@ -22,5 +22,5 @@ public enum WebsocketStatusCode {
     return code;
   }
 
-  private int code;
+  private final int code;
 }

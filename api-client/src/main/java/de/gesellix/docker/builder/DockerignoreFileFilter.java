@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -58,7 +57,7 @@ public class DockerignoreFileFilter {
       return result;
     }
     try {
-      Collections.addAll(result, IOUtils.toString(new FileInputStream(dockerignoreFile.get())).split("[\r\n]+"));
+      Collections.addAll(result, IOUtils.toString(Files.newInputStream(dockerignoreFile.get().toPath())).split("[\r\n]+"));
       return result;
     }
     catch (IOException e) {

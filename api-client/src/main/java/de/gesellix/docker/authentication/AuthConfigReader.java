@@ -15,7 +15,7 @@ public class AuthConfigReader {
   private final static Logger log = LoggerFactory.getLogger(AuthConfigReader.class);
 
   private final DockerEnv env;
-  private DockerConfigReader dockerConfigReader;
+  private final DockerConfigReader dockerConfigReader;
 
   public AuthConfigReader() {
     this(new DockerEnv());

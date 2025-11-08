@@ -60,7 +60,7 @@ class BuildContextBuilderSpec extends Specification {
     def tarArchiveInputStream = new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(tarArchive)))
 
     def entry
-    while (entry = tarArchiveInputStream.nextTarEntry) {
+    while (entry = tarArchiveInputStream.nextEntry) {
       collectedEntryNames << entry.name
     }
     collectedEntryNames
@@ -70,7 +70,7 @@ class BuildContextBuilderSpec extends Specification {
     def tarArchiveInputStream = new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(tarArchive)))
 
     def entry
-    while (entry = tarArchiveInputStream.nextTarEntry) {
+    while (entry = tarArchiveInputStream.nextEntry) {
       if (entry.name == filename) {
         return entry.getMode()
       }

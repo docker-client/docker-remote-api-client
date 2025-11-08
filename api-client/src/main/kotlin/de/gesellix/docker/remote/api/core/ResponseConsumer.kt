@@ -81,8 +81,8 @@ fun Socket?.consumeFrames(mediaType: String?): Flow<Frame> {
     return emptyFlow()
   }
   when (mediaType) {
-    ApiClient.Companion.DockerMultiplexedStreamMediaType,
-    ApiClient.Companion.DockerRawStreamMediaType -> {
+    ApiClient.DockerMultiplexedStreamMediaType,
+    ApiClient.DockerRawStreamMediaType -> {
       val reader = FrameReader(source, mediaType)
       val events = flow {
         while (reader.hasNext()) {
@@ -105,8 +105,8 @@ fun ResponseBody?.consumeFrames(mediaType: String?): Flow<Frame> {
     return emptyFlow()
   }
   when (mediaType) {
-    ApiClient.Companion.DockerMultiplexedStreamMediaType,
-    ApiClient.Companion.DockerRawStreamMediaType -> {
+    ApiClient.DockerMultiplexedStreamMediaType,
+    ApiClient.DockerRawStreamMediaType -> {
       val reader = FrameReader(source(), mediaType)
       val events = flow {
         while (reader.hasNext()) {

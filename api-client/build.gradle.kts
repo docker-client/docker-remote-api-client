@@ -81,7 +81,6 @@ dependencies {
   implementation("org.apache.commons:commons-compress:1.28.0")
 //  implementation("com.squareup.okhttp3:logging-interceptor:${libs.versions.okhttpVersionrange.get()}!!${libs.versions.okhttp.get()}")
   implementation("de.gesellix:docker-remote-api-model-1-41:2025-10-31T17-49-00")
-//  implementation("de.gesellix:docker-engine:2025-10-31T18-10-00")
   implementation("de.gesellix:docker-filesocket:2025-10-31T17-48-00")
 
   implementation(libs.slf4j)
