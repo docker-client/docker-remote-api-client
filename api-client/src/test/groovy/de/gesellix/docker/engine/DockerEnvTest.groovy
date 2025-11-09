@@ -40,6 +40,8 @@ class DockerEnvTest extends Specification {
     cleanup:
     if (oldDockerConfigDir) {
       System.setProperty("docker.config", oldDockerConfigDir)
+    } else {
+      System.clearProperty("docker.config")
     }
   }
 
@@ -66,6 +68,8 @@ class DockerEnvTest extends Specification {
     cleanup:
     if (oldDockerConfig) {
       System.setProperty("docker.config", oldDockerConfig)
+    } else {
+      System.clearProperty("docker.config")
     }
   }
 }

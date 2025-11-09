@@ -90,4 +90,17 @@ public class AuthConfig {
   public int hashCode() {
     return Objects.hash(username, password, auth, email, serveraddress, identitytoken, registrytoken);
   }
+
+  @Override
+  public String toString() {
+    return "AuthConfig{" +
+        "username='" + username + '\'' +
+        ", password=_redacted_'" + '\'' +
+        ", auth=_redacted_'" + '\'' +
+        ", email='" + email + '\'' +
+        ", serveraddress='" + serveraddress + '\'' +
+        ", identitytoken=_redacted_'" + '\'' +
+        ", registrytoken=_redacted_'" + '\'' +
+        '}';
+  }
 }

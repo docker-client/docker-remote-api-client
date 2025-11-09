@@ -38,6 +38,8 @@ class AuthConfigReaderTest extends Specification {
     cleanup:
     if (oldDockerConfig) {
       System.setProperty("docker.config", oldDockerConfig)
+    } else {
+      System.clearProperty("docker.config")
     }
   }
 
@@ -59,6 +61,8 @@ class AuthConfigReaderTest extends Specification {
     cleanup:
     if (oldDockerConfig) {
       System.setProperty("docker.config", oldDockerConfig)
+    } else {
+      System.clearProperty("docker.config")
     }
   }
 
@@ -141,6 +145,8 @@ class AuthConfigReaderTest extends Specification {
     cleanup:
     if (oldDockerConfig) {
       System.setProperty("docker.config", oldDockerConfig)
+    } else {
+      System.clearProperty("docker.config")
     }
   }
 
@@ -165,6 +171,8 @@ class AuthConfigReaderTest extends Specification {
     cleanup:
     if (oldDockerConfig) {
       System.setProperty("docker.config", oldDockerConfig)
+    } else {
+      System.clearProperty("docker.config")
     }
   }
 }
