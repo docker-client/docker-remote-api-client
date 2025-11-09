@@ -2,6 +2,7 @@ package de.gesellix.docker.remote.api.core
 
 import de.gesellix.docker.engine.RequestMethod
 import java.lang.reflect.Type
+import kotlin.time.Duration
 
 /**
  * Defines a config object for a given request.
@@ -17,5 +18,7 @@ data class RequestConfig(
   val headers: MutableMap<String, String> = mutableMapOf(),
   val query: MutableMap<String, List<String>> = mutableMapOf(),
   val body: Any? = null,
-  val elementType: Type? = null
+  val elementType: Type? = null,
+  val apiVersion: String? = null,
+  val timeout: Duration = Duration.ZERO
 )

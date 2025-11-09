@@ -15,7 +15,7 @@ class FrameReader(source: Source, private val mediaType: String) : Reader<Frame>
   override fun readNext(type: Class<Frame>?): Frame {
     // see https://docs.docker.com/reference/api/engine/version-history/#v142-api-changes
     // see https://github.com/moby/moby/pull/39812
-    return if (mediaType == ApiClient.Companion.DockerMultiplexedStreamMediaType) {
+    return if (mediaType == ApiClient.DockerMultiplexedStreamMediaType) {
       // See https://docs.docker.com/engine/api/v1.41/#operation/ContainerAttach for the stream format documentation.
       // header := [8]byte{STREAM_TYPE, 0, 0, 0, SIZE1, SIZE2, SIZE3, SIZE4}
 
@@ -40,7 +40,7 @@ class FrameReader(source: Source, private val mediaType: String) : Reader<Frame>
       !Thread.currentThread().isInterrupted
 //          && bufferedSource.isOpen
           && !bufferedSource.peek().exhausted()
-    } catch (e: Exception) {
+    } catch (_: Exception) {
       return false
     }
   }
