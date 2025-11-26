@@ -77,7 +77,7 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
   implementation(libs.moshi)
   implementation(libs.okhttp)
-  implementation("org.bouncycastle:bcpkix-jdk18on:1.82")
+  implementation("org.bouncycastle:bcpkix-jdk18on:1.83")
   implementation("org.apache.commons:commons-compress:1.28.0")
 //  implementation("com.squareup.okhttp3:logging-interceptor:${libs.versions.okhttpVersionrange.get()}!!${libs.versions.okhttp.get()}")
   implementation("de.gesellix:docker-remote-api-model-1-44:2025-11-30T16-46-00")
