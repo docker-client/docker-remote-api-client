@@ -77,6 +77,10 @@ allprojects {
 //        substitute(module("com.squareup.okhttp3:okhttp-jvm"))
 //          .using(module("de.gesellix.okhttp3-forked:okhttp-jvm:${libs.versions.okhttp.get()}"))
 //      }
+      dependencySubstitution {
+        substitute(module("de.gesellix:docker-remote-api-model-1-41"))
+          .using(module("de.gesellix:docker-remote-api-model-1-44:2025-11-30T16-46-00"))
+      }
     }
   }
 }
