@@ -65,25 +65,13 @@ class ExecApiIntegrationTest {
 
     imageApi.imageCreate(testImage.getImageName(), null, null, testImage.getImageTag(), null, null, null, null, null);
 
-    ContainerCreateRequest containerCreateRequest = new ContainerCreateRequest(
-        null, null, null,
-        false, false, false,
-        null,
-        false, null, null,
-        null,
-        null,
-        null,
-        null,
-        testImage.getImageWithTag(),
-        null, null, null,
-        null, null,
-        null,
-        singletonMap(LABEL_KEY, LABEL_VALUE),
-        null, null,
-        null,
-        null,
-        null
-    );
+    ContainerCreateRequest containerCreateRequest = new ContainerCreateRequest();
+    containerCreateRequest.setAttachStdin(false);
+    containerCreateRequest.setAttachStdout(false);
+    containerCreateRequest.setAttachStderr(false);
+    containerCreateRequest.setTty(false);
+    containerCreateRequest.setImage(testImage.getImageWithTag());
+    containerCreateRequest.setLabels(singletonMap(LABEL_KEY, LABEL_VALUE));
     containerApi.containerCreate(containerCreateRequest, "container-exec-test");
     containerApi.containerStart("container-exec-test", null);
 
@@ -109,25 +97,14 @@ class ExecApiIntegrationTest {
 
     imageApi.imageCreate(testImage.getImageName(), null, null, testImage.getImageTag(), null, null, null, null, null);
 
-    ContainerCreateRequest containerCreateRequest = new ContainerCreateRequest(
-        null, null, null,
-        true, true, true,
-        null,
-        true, true, null,
-        null,
-        null,
-        null,
-        null,
-        testImage.getImageWithTag(),
-        null, null, null,
-        null, null,
-        null,
-        singletonMap(LABEL_KEY, LABEL_VALUE),
-        null, null,
-        null,
-        null,
-        null
-    );
+    ContainerCreateRequest containerCreateRequest = new ContainerCreateRequest();
+    containerCreateRequest.setAttachStdin(true);
+    containerCreateRequest.setAttachStdout(true);
+    containerCreateRequest.setAttachStderr(true);
+    containerCreateRequest.setTty(true);
+    containerCreateRequest.setOpenStdin(true);
+    containerCreateRequest.setImage(testImage.getImageWithTag());
+    containerCreateRequest.setLabels(singletonMap(LABEL_KEY, LABEL_VALUE));
     containerApi.containerCreate(containerCreateRequest, "container-exec-interactive-test");
     containerApi.containerStart("container-exec-interactive-test", null);
 

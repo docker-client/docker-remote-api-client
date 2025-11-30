@@ -68,7 +68,12 @@ class NetworkApiIntegrationTest {
 
   @Test
   public void networkCreateDelete() {
-    NetworkCreateResponse response = networkApi.networkCreate(new NetworkCreateRequest("test-network", null, null, null, null, null, null, null, null, singletonMap(LABEL_KEY, LABEL_VALUE)));
+    NetworkCreateRequest networkConfig = new NetworkCreateRequest(
+        "test-network",
+        null, null, null, null,
+        null, null, null, null, null, null, null,
+        singletonMap(LABEL_KEY, LABEL_VALUE));
+    NetworkCreateResponse response = networkApi.networkCreate(networkConfig);
 
     Map<String, List<String>> filter = new HashMap<>();
     filter.put("label", singletonList(LABEL_KEY));
@@ -83,7 +88,12 @@ class NetworkApiIntegrationTest {
 
   @Test
   public void networkPrune() {
-    networkApi.networkCreate(new NetworkCreateRequest("test-network", null, null, null, null, null, null, null, null, singletonMap(LABEL_KEY, LABEL_VALUE)));
+    NetworkCreateRequest networkConfig = new NetworkCreateRequest(
+        "test-network",
+        null, null, null, null,
+        null, null, null, null, null, null, null,
+        singletonMap(LABEL_KEY, LABEL_VALUE));
+    networkApi.networkCreate(networkConfig);
 
     Map<String, List<String>> filter = new HashMap<>();
     filter.put("label", singletonList(LABEL_KEY));
@@ -102,28 +112,21 @@ class NetworkApiIntegrationTest {
   public void networkConnectDisconnect() {
     imageApi.imageCreate(testImage.getImageName(), null, null, testImage.getImageTag(), null, null, null, null, null);
 
-    ContainerCreateRequest containerCreateRequest = new ContainerCreateRequest(
-        null, null, null,
-        false, false, false,
-        null,
-        false, null, null,
-        null,
-        null,
-        null,
-        null,
-        testImage.getImageWithTag(),
-        null, null, null,
-        null, null,
-        null,
-        singletonMap(LABEL_KEY, LABEL_VALUE),
-        null, null,
-        null,
-        null,
-        null
-    );
+    ContainerCreateRequest containerCreateRequest = new ContainerCreateRequest();
+    containerCreateRequest.setAttachStdin(false);
+    containerCreateRequest.setAttachStdout(false);
+    containerCreateRequest.setAttachStderr(false);
+    containerCreateRequest.setTty(false);
+    containerCreateRequest.setImage(testImage.getImageWithTag());
+    containerCreateRequest.setLabels(singletonMap(LABEL_KEY, LABEL_VALUE));
     containerApi.containerCreate(containerCreateRequest, "container-network-test");
 
-    networkApi.networkCreate(new NetworkCreateRequest("test-network", null, null, null, null, null, null, null, null, singletonMap(LABEL_KEY, LABEL_VALUE)));
+    NetworkCreateRequest networkConfig = new NetworkCreateRequest(
+        "test-network",
+        null, null, null, null,
+        null, null, null, null, null, null, null,
+        singletonMap(LABEL_KEY, LABEL_VALUE));
+    networkApi.networkCreate(networkConfig);
 
     assertDoesNotThrow(() -> networkApi.networkConnect("test-network", new NetworkConnectRequest("container-network-test", null)));
     assertDoesNotThrow(() -> networkApi.networkDisconnect("test-network", new NetworkDisconnectRequest("container-network-test", null)));

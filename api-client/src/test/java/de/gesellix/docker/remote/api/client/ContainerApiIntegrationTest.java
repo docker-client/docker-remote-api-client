@@ -107,25 +107,14 @@ class ContainerApiIntegrationTest {
   public void containerCreate() {
     imageApi.imageCreate(testImage.getImageName(), null, null, testImage.getImageTag(), null, null, null, null, null);
 
-    ContainerCreateRequest containerCreateRequest = new ContainerCreateRequest(
-        null, null, null,
-        false, false, false,
-        null,
-        false, null, null,
-        null,
-        singletonList("-"),
-        null,
-        null,
-        testImage.getImageWithTag(),
-        null, null, null,
-        null, null,
-        null,
-        singletonMap(LABEL_KEY, LABEL_VALUE),
-        null, null,
-        null,
-        null,
-        null
-    );
+    ContainerCreateRequest containerCreateRequest = new ContainerCreateRequest();
+    containerCreateRequest.setAttachStdin(false);
+    containerCreateRequest.setAttachStdout(false);
+    containerCreateRequest.setAttachStderr(false);
+    containerCreateRequest.setTty(false);
+    containerCreateRequest.setCmd(singletonList("-"));
+    containerCreateRequest.setImage(testImage.getImageWithTag());
+    containerCreateRequest.setLabels(singletonMap(LABEL_KEY, LABEL_VALUE));
     ContainerCreateResponse container = containerApi.containerCreate(containerCreateRequest, "container-create-test");
     assertTrue(container.getId().matches("\\w+"));
 
@@ -136,25 +125,14 @@ class ContainerApiIntegrationTest {
   public void containerDelete() {
     imageApi.imageCreate(testImage.getImageName(), null, null, testImage.getImageTag(), null, null, null, null, null);
 
-    ContainerCreateRequest containerCreateRequest = new ContainerCreateRequest(
-        null, null, null,
-        false, false, false,
-        null,
-        false, null, null,
-        null,
-        singletonList("-"),
-        null,
-        null,
-        testImage.getImageWithTag(),
-        null, null, null,
-        null, null,
-        null,
-        singletonMap(LABEL_KEY, LABEL_VALUE),
-        null, null,
-        null,
-        null,
-        null
-    );
+    ContainerCreateRequest containerCreateRequest = new ContainerCreateRequest();
+    containerCreateRequest.setAttachStdin(false);
+    containerCreateRequest.setAttachStdout(false);
+    containerCreateRequest.setAttachStderr(false);
+    containerCreateRequest.setTty(false);
+    containerCreateRequest.setCmd(singletonList("-"));
+    containerCreateRequest.setImage(testImage.getImageWithTag());
+    containerCreateRequest.setLabels(singletonMap(LABEL_KEY, LABEL_VALUE));
     containerApi.containerCreate(containerCreateRequest, "container-delete-test");
     assertDoesNotThrow(() -> containerApi.containerDelete("container-delete-test", null, null, null));
     assertDoesNotThrow(() -> containerApi.containerDelete("container-delete-missing", null, null, null));
