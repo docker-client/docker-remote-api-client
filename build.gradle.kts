@@ -17,6 +17,7 @@ val dependencyVersions = listOf(
   "net.bytebuddy:byte-buddy:1.18.2",
   "org.apache.commons:commons-compress:1.28.0",
   "org.apiguardian:apiguardian-api:1.1.2",
+  "org.bouncycastle:bcpkix-jdk18on:1.83",
   "org.jetbrains:annotations:26.0.2-1",
   "org.jetbrains.kotlin:kotlin-reflect:2.1.0",
   "org.jetbrains.kotlin:kotlin-scripting-jvm:2.1.0",
