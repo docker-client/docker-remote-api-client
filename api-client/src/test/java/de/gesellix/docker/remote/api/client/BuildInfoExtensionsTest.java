@@ -17,18 +17,26 @@ class BuildInfoExtensionsTest {
 
   @Test
   public void getErrorFromFailedBuild() {
+    ErrorDetail errorDetail = new ErrorDetail(null, "invalid reference format");
+    BuildInfo buildInfo = new BuildInfo();
+    buildInfo.setError(errorDetail.getMessage());
+    buildInfo.setErrorDetail(errorDetail);
     List<BuildInfo> infos = new ArrayList<>();
-    infos.add(new BuildInfo(null, null, "invalid reference format", new ErrorDetail(null, "invalid reference format"), null, null, null, null));
+    infos.add(buildInfo);
 
     BuildInfo errorInfo = BuildInfoExtensionsKt.getError(infos);
 
-    assertEquals("invalid reference format", errorInfo.getError());
+    assertEquals("invalid reference format", errorInfo.getErrorDetail().getMessage());
   }
 
   @Test
   public void getHasErrorInFailedBuild() {
+    ErrorDetail errorDetail = new ErrorDetail(null, "invalid reference format");
+    BuildInfo buildInfo = new BuildInfo();
+    buildInfo.setError(errorDetail.getMessage());
+    buildInfo.setErrorDetail(errorDetail);
     List<BuildInfo> infos = new ArrayList<>();
-    infos.add(new BuildInfo(null, null, "invalid reference format", new ErrorDetail(null, "invalid reference format"), null, null, null, null));
+    infos.add(buildInfo);
 
     boolean hasError = BuildInfoExtensionsKt.hasError(infos);
 
@@ -37,8 +45,10 @@ class BuildInfoExtensionsTest {
 
   @Test
   public void getHasNoErrorInSuccessfulBuild() {
+    BuildInfo buildInfo = new BuildInfo();
+    buildInfo.setStream("Successfully built the wind\ncaught it");
     List<BuildInfo> infos = new ArrayList<>();
-    infos.add(new BuildInfo(null, "Successfully built the wind\ncaught it", null, null, null, null, null, null));
+    infos.add(buildInfo);
 
     boolean hasError = BuildInfoExtensionsKt.hasError(infos);
 
@@ -47,8 +57,12 @@ class BuildInfoExtensionsTest {
 
   @Test
   public void getImageIdFromFailedBuild() {
+    ErrorDetail errorDetail = new ErrorDetail(null, "invalid reference format");
+    BuildInfo buildInfo = new BuildInfo();
+    buildInfo.setError(errorDetail.getMessage());
+    buildInfo.setErrorDetail(errorDetail);
     List<BuildInfo> infos = new ArrayList<>();
-    infos.add(new BuildInfo(null, null, "invalid reference format", new ErrorDetail(null, "invalid reference format"), null, null, null, null));
+    infos.add(buildInfo);
 
     ImageID imageId = BuildInfoExtensionsKt.getImageId(infos);
 
@@ -57,11 +71,19 @@ class BuildInfoExtensionsTest {
 
   @Test
   public void getImageIdFromAux() {
+    BuildInfo buildInfo1 = new BuildInfo();
+    buildInfo1.setAux(new ImageID("sha256:expected-id"));
+    BuildInfo buildInfo2 = new BuildInfo();
+    buildInfo2.setStream("Successfully built the wind\ncaught it");;
+    BuildInfo buildInfo3 = new BuildInfo();
+    buildInfo3.setStream("Successfully built f9d5f290d048\nfoo bar");
+    BuildInfo buildInfo4 = new BuildInfo();
+    buildInfo4.setStream("Successfully tagged image:tag\nbar baz");
     List<BuildInfo> infos = new ArrayList<>();
-    infos.add(new BuildInfo(null, null, null, null, null, null, null, new ImageID("sha256:expected-id")));
-    infos.add(new BuildInfo(null, "Successfully built the wind\ncaught it", null, null, null, null, null, null));
-    infos.add(new BuildInfo(null, "Successfully built f9d5f290d048\nfoo bar", null, null, null, null, null, null));
-    infos.add(new BuildInfo(null, "Successfully tagged image:tag\nbar baz", null, null, null, null, null, null));
+    infos.add(buildInfo1);
+    infos.add(buildInfo2);
+    infos.add(buildInfo3);
+    infos.add(buildInfo4);
 
     ImageID imageId = BuildInfoExtensionsKt.getImageId(infos);
 
@@ -70,10 +92,16 @@ class BuildInfoExtensionsTest {
 
   @Test
   public void getImageIdFromStreamWithBuildMessage() {
+    BuildInfo buildInfo1 = new BuildInfo();
+    buildInfo1.setStream("Successfully built the wind\ncaught it");
+    BuildInfo buildInfo2 = new BuildInfo();
+    buildInfo2.setStream("Successfully built f9d5f290d048\nfoo bar");
+    BuildInfo buildInfo3 = new BuildInfo();
+    buildInfo3.setStream("Successfully tagged image:tag\nbar baz");
     List<BuildInfo> infos = new ArrayList<>();
-    infos.add(new BuildInfo(null, "Successfully built the wind\ncaught it", null, null, null, null, null, null));
-    infos.add(new BuildInfo(null, "Successfully built f9d5f290d048\nfoo bar", null, null, null, null, null, null));
-    infos.add(new BuildInfo(null, "Successfully tagged image:tag\nbar baz", null, null, null, null, null, null));
+    infos.add(buildInfo1);
+    infos.add(buildInfo2);
+    infos.add(buildInfo3);
 
     ImageID imageId = BuildInfoExtensionsKt.getImageId(infos);
 
@@ -82,8 +110,10 @@ class BuildInfoExtensionsTest {
 
   @Test
   public void getImageIdFromStreamWithTagMessage() {
+    BuildInfo buildInfo = new BuildInfo();
+    buildInfo.setStream("Successfully tagged image:tag\nbar baz");
     List<BuildInfo> infos = new ArrayList<>();
-    infos.add(new BuildInfo(null, "Successfully tagged image:tag\nbar baz", null, null, null, null, null, null));
+    infos.add(buildInfo);
 
     ImageID imageId = BuildInfoExtensionsKt.getImageId(infos);
 

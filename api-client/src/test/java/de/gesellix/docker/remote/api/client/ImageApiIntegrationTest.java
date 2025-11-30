@@ -184,25 +184,14 @@ class ImageApiIntegrationTest {
   @Test
   public void imageCommit() {
     imageApi.imageTag(testImage.getImageWithTag(), "test", "commit");
-    ContainerCreateRequest containerCreateRequest = new ContainerCreateRequest(
-        null, null, null,
-        false, false, false,
-        null,
-        false, null, null,
-        null,
-        singletonList("-"),
-        null,
-        null,
-        "test:commit",
-        null, null, null,
-        null, null,
-        null,
-        singletonMap(LABEL_KEY, LABEL_VALUE),
-        null, null,
-        null,
-        null,
-        null
-    );
+    ContainerCreateRequest containerCreateRequest = new ContainerCreateRequest();
+    containerCreateRequest.setAttachStdin(false);
+    containerCreateRequest.setAttachStdout(false);
+    containerCreateRequest.setAttachStderr(false);
+    containerCreateRequest.setTty(false);
+    containerCreateRequest.setCmd(singletonList("-"));
+    containerCreateRequest.setImage("test:commit");
+    containerCreateRequest.setLabels(singletonMap(LABEL_KEY, LABEL_VALUE));
     ContainerCreateResponse container = containerApi.containerCreate(containerCreateRequest, "container-commit-test");
     IdResponse image = imageApi.imageCommit(container.getId(), "test", "committed", null, null, null, null, null);
     assertTrue(image.getId().matches("sha256:\\w+"));

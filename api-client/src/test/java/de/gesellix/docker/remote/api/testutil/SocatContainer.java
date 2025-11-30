@@ -43,25 +43,15 @@ public class SocatContainer {
     hostConfig.setAutoRemove(true);
     hostConfig.setPublishAllPorts(true);
     hostConfig.setBinds(singletonList("/var/run/docker.sock:/var/run/docker.sock"));
-    ContainerCreateRequest socatContainerConfig = new ContainerCreateRequest(
-        null, null, null,
-        true, true, true,
-        null,
-        true, true, null,
-        null,
-        null,
-        null,
-        null,
-        getImageWithTag(),
-        null, null, null,
-        null, null,
-        null,
-        singletonMap(LABEL_KEY, LABEL_VALUE),
-        null, null,
-        null,
-        hostConfig,
-        null
-    );
+    ContainerCreateRequest socatContainerConfig = new ContainerCreateRequest();
+    socatContainerConfig.setAttachStdin(true);
+    socatContainerConfig.setAttachStdout(true);
+    socatContainerConfig.setAttachStderr(true);
+    socatContainerConfig.setTty(true);
+    socatContainerConfig.setOpenStdin(true);
+    socatContainerConfig.setImage(getImageWithTag());
+    socatContainerConfig.setLabels(singletonMap(LABEL_KEY, LABEL_VALUE));
+    socatContainerConfig.setHostConfig(hostConfig);
     ContainerCreateResponse socatContainer = engineApiClient.getContainerApi().containerCreate(socatContainerConfig, "socat");
     engineApiClient.getContainerApi().containerStart("socat", null);
     String socatId = socatContainer.getId();

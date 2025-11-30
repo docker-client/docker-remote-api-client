@@ -88,15 +88,12 @@ class ServiceApiIntegrationTest {
     // - https://github.com/moby/moby/issues/40621
     // - https://github.com/moby/moby/issues/41094
 
+    TaskSpecContainerSpec taskSpecContainerSpec = new TaskSpecContainerSpec();
+    taskSpecContainerSpec.setImage(testImage.getImageWithTag());
+    taskSpecContainerSpec.setLabels(singletonMap(LABEL_KEY, LABEL_VALUE));
     serviceApi.serviceCreate(
         new ServiceCreateRequest("test-service", singletonMap(LABEL_KEY, LABEL_VALUE),
-                                 new TaskSpec(null, new TaskSpecContainerSpec(testImage.getImageWithTag(), singletonMap(LABEL_KEY, LABEL_VALUE),
-                                                                              null, null, null, null, null,
-                                                                              null, null, null,
-                                                                              null, null, null, null,
-                                                                              null, null, null,
-                                                                              null, null, null, null,
-                                                                              null, null, null, null, null, null),
+                                 new TaskSpec(null, taskSpecContainerSpec,
                                               null, null, null, null, null, null, null, null),
                                  new ServiceSpecMode(new ServiceSpecModeReplicated(1L), null, null, null),
                                  new ServiceSpecUpdateConfig(1L, null, null, null, null, null),
@@ -151,14 +148,11 @@ class ServiceApiIntegrationTest {
 
   @Test
   public void serviceCreateInspectUpdateDelete() throws InterruptedException {
+    TaskSpecContainerSpec taskSpecContainerSpec = new TaskSpecContainerSpec();
+    taskSpecContainerSpec.setImage(testImage.getImageWithTag());
+    taskSpecContainerSpec.setLabels(singletonMap(LABEL_KEY, LABEL_VALUE));
     serviceApi.serviceCreate(new ServiceCreateRequest("test-service", singletonMap(LABEL_KEY, LABEL_VALUE),
-                                                      new TaskSpec(null, new TaskSpecContainerSpec(testImage.getImageWithTag(), singletonMap(LABEL_KEY, LABEL_VALUE),
-                                                                                                   null, null, null, null, null,
-                                                                                                   null, null, null,
-                                                                                                   null, null, null, null,
-                                                                                                   null, null, null,
-                                                                                                   null, null, null, null,
-                                                                                                   null, null, null, null, null, null),
+                                                      new TaskSpec(null, taskSpecContainerSpec,
                                                                    null, null, null, null, null, null, null, null),
                                                       new ServiceSpecMode(new ServiceSpecModeReplicated(1L), null, null, null),
                                                       new ServiceSpecUpdateConfig(1L, null, null, null, null, null),
@@ -178,14 +172,11 @@ class ServiceApiIntegrationTest {
     Map<String, String> labels = new HashMap<>();
     labels.putAll(serviceInspect.getSpec().getLabels());
     labels.put("another-label", "another-value");
+    TaskSpecContainerSpec taskSpecContainerSpec1 = new TaskSpecContainerSpec();
+    taskSpecContainerSpec1.setImage(testImage.getImageWithTag());
+    taskSpecContainerSpec1.setLabels(labels);
     ServiceUpdateRequest spec = new ServiceUpdateRequest("test-service", labels,
-                                                         new TaskSpec(null, new TaskSpecContainerSpec(testImage.getImageWithTag(), labels,
-                                                                                                      null, null, null, null, null,
-                                                                                                      null, null, null,
-                                                                                                      null, null, null, null,
-                                                                                                      null, null, null,
-                                                                                                      null, null, null, null,
-                                                                                                      null, null, null, null, null, null),
+                                                         new TaskSpec(null, taskSpecContainerSpec1,
                                                                       null, null, null, null, null, null, null, null),
                                                          new ServiceSpecMode(new ServiceSpecModeReplicated(1L), null, null, null),
                                                          new ServiceSpecUpdateConfig(1L, null, null, null, null, null),

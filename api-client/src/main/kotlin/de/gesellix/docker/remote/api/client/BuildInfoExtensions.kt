@@ -6,7 +6,7 @@ import de.gesellix.docker.remote.api.ImageID
 fun List<BuildInfo>.getImageId(): ImageID? {
   val reversedInfos = this.reversed()
   val firstAux = reversedInfos.stream()
-    .filter { (_, _, _, _, _, _, _, aux): BuildInfo -> aux != null }
+    .filter { info -> info.aux != null }
     .findFirst()
   if (firstAux.isPresent) {
     return firstAux.get().aux
@@ -43,5 +43,5 @@ fun List<BuildInfo>.getError(): BuildInfo? {
 
 fun List<BuildInfo>.hasError(): Boolean {
   return this.stream()
-    .anyMatch { (_, _, error): BuildInfo -> error != null }
+    .anyMatch { info -> info.errorDetail != null && info.errorDetail?.message != null }
 }
