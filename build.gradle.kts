@@ -14,7 +14,7 @@ plugins {
 
 val dependencyVersions = listOf(
   "commons-io:commons-io:2.21.0",
-  "net.bytebuddy:byte-buddy:1.18.3",
+  "net.bytebuddy:byte-buddy:1.18.4",
   "org.apache.commons:commons-compress:1.28.0",
   "org.apiguardian:apiguardian-api:1.1.2",
   "org.bouncycastle:bcpkix-jdk18on:1.83",
