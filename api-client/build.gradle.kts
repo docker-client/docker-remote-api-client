@@ -93,7 +93,7 @@ dependencies {
   testImplementation(libs.junitPlatformLauncher)
   testImplementation(libs.junitPlatformCommons)
 
-  testImplementation("org.spockframework:spock-core:2.3-groovy-4.0")
+  testImplementation("org.spockframework:spock-core:2.4-groovy-4.0")
   testRuntimeOnly("net.bytebuddy:byte-buddy:1.18.4")
 
   testImplementation("org.apache.commons:commons-compress:1.28.0")
