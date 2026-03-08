@@ -40,19 +40,14 @@ dependencies {
         prefer(libs.versions.okhttp.get())
       }
     }
-    implementation("de.gesellix:docker-remote-api-model-1-41") {
+    implementation("de.gesellix:docker-remote-api-model-1-44") {
       version {
-        strictly("[2024-01-01T01-01-01,)")
-      }
-    }
-    implementation("de.gesellix:docker-engine") {
-      version {
-        strictly("[2024-01-01T01-01-01,)")
+        strictly("[2026-01-01T01-01-01,)")
       }
     }
     implementation("de.gesellix:docker-filesocket") {
       version {
-        strictly("[2024-01-01T01-01-01,)")
+        strictly("[2026-01-01T01-01-01,)")
       }
     }
     listOf(
@@ -80,8 +75,8 @@ dependencies {
   implementation("org.bouncycastle:bcpkix-jdk18on:1.83")
   implementation("org.apache.commons:commons-compress:1.28.0")
 //  implementation("com.squareup.okhttp3:logging-interceptor:${libs.versions.okhttpVersionrange.get()}!!${libs.versions.okhttp.get()}")
-  implementation("de.gesellix:docker-remote-api-model-1-44:2025-11-30T16-46-00")
-  implementation("de.gesellix:docker-filesocket:2025-11-30T20-20-00")
+  implementation("de.gesellix:docker-remote-api-model-1-44:2026-03-08T21-27-00")
+  implementation("de.gesellix:docker-filesocket:2026-03-08T13-37-00")
 
   implementation(libs.slf4j)
   testImplementation("ch.qos.logback:logback-classic:${libs.versions.logbackVersionrange.get()}!!${libs.versions.logback.get()}")
@@ -97,8 +92,8 @@ dependencies {
   testRuntimeOnly("net.bytebuddy:byte-buddy:1.18.7")
 
   testImplementation("org.apache.commons:commons-compress:1.28.0")
-  testImplementation("de.gesellix:testutil:[2025-01-01T01-01-01,)")
-  testImplementation("de.gesellix:docker-registry:2025-11-30T21-04-00")
+  testImplementation("de.gesellix:testutil:[2026-01-01T01-01-01,)")
+  testImplementation("de.gesellix:docker-registry:2026-03-08T13-39-00")
 }
 
 tasks {
