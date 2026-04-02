@@ -14,8 +14,8 @@ plugins {
 
 val dependencyVersions = listOf(
   "commons-io:commons-io:2.21.0",
-  "net.bytebuddy:byte-buddy:1.18.7",
-  "net.bytebuddy:byte-buddy-agent:1.18.7",
+  "net.bytebuddy:byte-buddy:1.18.8",
+  "net.bytebuddy:byte-buddy-agent:1.18.8",
   "org.jetbrains:annotations:26.1.0",
   "org.jetbrains.kotlin:kotlin-reflect:${libs.versions.kotlin.get()}",
   "org.jetbrains.kotlin:kotlin-scripting-jvm:${libs.versions.kotlin.get()}",

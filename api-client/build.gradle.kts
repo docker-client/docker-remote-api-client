@@ -89,7 +89,7 @@ dependencies {
   testImplementation(libs.junitPlatformCommons)
 
   testImplementation("org.spockframework:spock-core:2.4-groovy-4.0")
-  testRuntimeOnly("net.bytebuddy:byte-buddy:1.18.7")
+  testRuntimeOnly("net.bytebuddy:byte-buddy:1.18.8")
 
   testImplementation("org.apache.commons:commons-compress:1.28.0")
   testImplementation("de.gesellix:testutil:[2026-01-01T01-01-01,)")
