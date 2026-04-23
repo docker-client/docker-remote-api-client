@@ -13,7 +13,7 @@ plugins {
 }
 
 val dependencyVersions = listOf(
-  "commons-io:commons-io:2.21.0",
+  "commons-io:commons-io:2.22.0",
   "net.bytebuddy:byte-buddy:1.18.8",
   "net.bytebuddy:byte-buddy-agent:1.18.8",
   "org.jetbrains:annotations:26.1.0",
