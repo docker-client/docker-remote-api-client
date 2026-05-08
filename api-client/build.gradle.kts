@@ -69,7 +69,7 @@ dependencies {
     }
   }
   implementation(libs.kotlinJdk8)
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
   implementation(libs.moshi)
   implementation(libs.okhttp)
   implementation("org.bouncycastle:bcpkix-jdk18on:1.83")
