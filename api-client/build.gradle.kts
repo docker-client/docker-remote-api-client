@@ -47,7 +47,7 @@ dependencies {
     }
     implementation("de.gesellix:docker-filesocket") {
       version {
-        strictly("[2026-01-01T01-01-01,)")
+        strictly("[1.0.0-202605132305,)")
       }
     }
     listOf(
@@ -76,7 +76,7 @@ dependencies {
   implementation("org.apache.commons:commons-compress:1.28.0")
 //  implementation("com.squareup.okhttp3:logging-interceptor:${libs.versions.okhttpVersionrange.get()}!!${libs.versions.okhttp.get()}")
   implementation("de.gesellix:docker-remote-api-model-1-44:2026-03-08T21-27-00")
-  implementation("de.gesellix:docker-filesocket:2026-03-08T13-37-00")
+  implementation("de.gesellix:docker-filesocket:1.0.0-202605132305")
 
   implementation(libs.slf4j)
   testImplementation("ch.qos.logback:logback-classic:${libs.versions.logbackVersionrange.get()}!!${libs.versions.logback.get()}")
@@ -93,7 +93,7 @@ dependencies {
 
   testImplementation("org.apache.commons:commons-compress:1.28.0")
   testImplementation("de.gesellix:testutil:[2026-01-01T01-01-01,)")
-  testImplementation("de.gesellix:docker-registry:2026-03-08T22-45-00")
+  testImplementation("de.gesellix:docker-registry:1.0.0-202605132355")
 }
 
 tasks {
