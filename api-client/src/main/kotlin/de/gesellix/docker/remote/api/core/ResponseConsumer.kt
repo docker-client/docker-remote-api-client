@@ -59,7 +59,8 @@ inline fun <reified T : Any?> ResponseBody?.consumeStream(mediaType: String?): F
     return emptyFlow()
   }
   when (mediaType) {
-    "application/json" -> {
+    "application/json",
+    "application/jsonl" -> {
       val reader = JsonChunksReader<T>(source(), Serializer.moshi)
       val events = flow {
         while (reader.hasNext()) {
@@ -70,6 +71,7 @@ inline fun <reified T : Any?> ResponseBody?.consumeStream(mediaType: String?): F
       }
       return events
     }
+
     else -> {
       throw UnsupportedOperationException("Can't handle media type $mediaType")
     }
@@ -94,6 +96,7 @@ fun Socket?.consumeFrames(mediaType: String?): Flow<Frame> {
       }
       return events
     }
+
     else -> {
       throw UnsupportedOperationException("Can't handle media type $mediaType")
     }
@@ -117,6 +120,7 @@ fun ResponseBody?.consumeFrames(mediaType: String?): Flow<Frame> {
       }
       return events
     }
+
     else -> {
       throw UnsupportedOperationException("Can't handle media type $mediaType")
     }
