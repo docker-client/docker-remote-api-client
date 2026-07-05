@@ -75,7 +75,7 @@ dependencies {
   implementation("org.bouncycastle:bcpkix-jdk18on:1.84")
   implementation("org.apache.commons:commons-compress:1.28.0")
 //  implementation("com.squareup.okhttp3:logging-interceptor:${libs.versions.okhttpVersionrange.get()}!!${libs.versions.okhttp.get()}")
-  implementation("de.gesellix:docker-remote-api-model-1-44:2.0.1-202606212111")
+  implementation("de.gesellix:docker-remote-api-model-1-44:2.0.202607051048")
   implementation("de.gesellix:docker-filesocket:2.0.202607051046")
 
   implementation(libs.slf4j)
