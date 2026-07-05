@@ -77,7 +77,7 @@ allprojects {
 //      }
       dependencySubstitution {
         substitute(module("de.gesellix:docker-remote-api-model-1-41"))
-          .using(module("de.gesellix:docker-remote-api-model-1-44:2.0.1-202606212111"))
+          .using(module("de.gesellix:docker-remote-api-model-1-44:2.0.202607051048"))
       }
     }
   }
