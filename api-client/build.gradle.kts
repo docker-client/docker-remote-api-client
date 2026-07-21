@@ -81,7 +81,7 @@ dependencies {
   implementation(libs.slf4j)
   testImplementation("ch.qos.logback:logback-classic:${libs.versions.logbackVersionrange.get()}!!${libs.versions.logback.get()}")
 
-  testImplementation("io.kotest:kotest-runner-junit5-jvm:6.2.2")
+  testImplementation("io.kotest:kotest-runner-junit5-jvm:6.2.3")
   testImplementation(libs.junitJupiterApi)
   testRuntimeOnly(libs.junitJupiterEngine)
   testRuntimeOnly("cglib:cglib-nodep:3.3.0")
