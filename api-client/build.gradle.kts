@@ -92,8 +92,8 @@ dependencies {
   testRuntimeOnly("net.bytebuddy:byte-buddy:1.18.11")
 
   testImplementation("org.apache.commons:commons-compress:1.28.0")
-  testImplementation("de.gesellix:testutil:[2.0.0-202606131033,)")
-  testImplementation("de.gesellix:docker-registry:2.0.202607051031")
+  testImplementation("de.gesellix:testutil:2.0.202607262216")
+  testImplementation("de.gesellix:docker-registry:2.0.202607262217")
 }
 
 tasks {
