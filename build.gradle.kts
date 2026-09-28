@@ -5,7 +5,7 @@ rootProject.extra.set("artifactVersion", SimpleDateFormat("yyyy-MM-dd\'T\'HH-mm-
 
 plugins {
   id("maven-publish")
-  id("com.github.ben-manes.versions") version "0.64.0"
+  id("io.github.ben-manes.versions") version "0.64.0"
   id("org.sonatype.gradle.plugins.scan") version "4.1.0-02"
   id("io.freefair.maven-central.validate-poms") version "9.7.0"
   id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
