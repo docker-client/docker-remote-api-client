@@ -75,13 +75,13 @@ dependencies {
   implementation("org.bouncycastle:bcpkix-jdk18on:1.86")
   implementation("org.apache.commons:commons-compress:1.28.0")
 //  implementation("com.squareup.okhttp3:logging-interceptor:${libs.versions.okhttpVersionrange.get()}!!${libs.versions.okhttp.get()}")
-  implementation("de.gesellix:docker-remote-api-model-1-44:2.0.202607262220")
+  implementation("de.gesellix:docker-remote-api-model-1-44:2.0.202609282200")
   implementation("de.gesellix:docker-filesocket:2.0.202609282158")
 
   implementation(libs.slf4j)
   testImplementation("ch.qos.logback:logback-classic:${libs.versions.logbackVersionrange.get()}!!${libs.versions.logback.get()}")
 
-  testImplementation("io.kotest:kotest-runner-junit5-jvm:6.2.5")
+  testImplementation("io.kotest:kotest-runner-junit5-jvm:6.2.6")
   testImplementation(libs.junitJupiterApi)
   testRuntimeOnly(libs.junitJupiterEngine)
   testRuntimeOnly("cglib:cglib-nodep:3.3.0")
